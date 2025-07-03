@@ -3,8 +3,10 @@ import styles from "./page.module.css";
 
 export default function Home() {
   return (
-    <div className={styles.page}>
-      In prosess
+    <div>
+      <main>
+        <h1>Welcome</h1>
+      </main>
     </div>
   );
 }

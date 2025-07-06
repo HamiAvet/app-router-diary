@@ -8,7 +8,7 @@ export default function HomePostEvent({params}: {params: Promise<{slug: string}>
   return (
     <div>
       <main>
-        <h1>{slug}</h1>
+        <h1>A new slug: "{slug}"</h1>
         <input type="text" name="event"/>
         <label htmlFor="event">event</label>
         <input type="date" name="date"/>

@@ -10,7 +10,7 @@ async function getData() {
   if (res.headers.get("content-type") !== "application/json") {
     return {items: []}
   }
-  return res.json()
+  return res.json
 }
 
 export default async function Home() {

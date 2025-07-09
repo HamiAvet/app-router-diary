@@ -5,7 +5,7 @@ import { useState } from "react"
 export default function Card({title}: {title: string}) {
     const [ status, setStatus ] = useState("Active");
 
-    const handleStatus = (event) => {
+    const handleStatus = (event:React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault()
         setStatus("Done")
     }

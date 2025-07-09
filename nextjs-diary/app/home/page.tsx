@@ -2,15 +2,23 @@ import getDomain from "@/app/lib/getDomain"
 
 async function getData() {
   const domain = getDomain()
-  const res = await fetch(`${domain}/api/posts`)
-  if (!res.ok) {
-    throw new Error("Falled to fetch data")
-  }
+  try {
+    const res = await fetch(`${domain}/api/posts`)
 
-  if (res.headers.get("content-type") !== "application/json") {
-    return {items: []}
+      if (!res.ok) {
+        throw new Error("Falled to fetch data")
+      }
+
+      if (res.headers.get("content-type") !== "application/json") {
+        return {items: []}
+      }
+
+      return res.json()
+  } catch (error) {
+    console.log("Error fetching posts", error);
+    return { items: [] };
   }
-  return res.json()
+  
 }
 
 export default async function Home() {

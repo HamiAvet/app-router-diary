@@ -1,4 +1,6 @@
+
 import getDomain from "@/app/lib/getDomain"
+import Card from "./card"
 
 async function getData() {
   const domain = getDomain()
@@ -26,7 +28,7 @@ export default async function Home() {
         <h1>It is your future calendar.</h1>
         <p>Future events: </p>
         {items && items.map((item, index) => {
-          return <li key={`post-${index}`}>{item.title}</li>
+          return <Card title={item.title} key={`post-${index}`}/>
         })}
       </main>
     </div>

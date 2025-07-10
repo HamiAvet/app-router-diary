@@ -9,6 +9,7 @@ export default function Card({title}: {title: string}) {
         event.preventDefault()
         setStatus("Done")
     }
+    
     if (!title) {return <div>Empty</div>}
     return (
         <div>

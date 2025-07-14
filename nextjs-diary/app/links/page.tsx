@@ -1,9 +1,9 @@
-import LinksCreateForm from "./createForm";
+import LinksHtmlCreateForm from "./createHtmlForm";
 
 export default function linksPage() {
     return (
         <main>
-            <LinksCreateForm/>
+            <LinksHtmlCreateForm/>
         </main>
     )
 }

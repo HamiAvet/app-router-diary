@@ -23,7 +23,7 @@ export default function LinksCreateForm() {
 
         const respons = await fetch("/api/links", options)
         const result = await respons.json()
-        setResults(result)
+        setResults(result.url)
         
     }
 

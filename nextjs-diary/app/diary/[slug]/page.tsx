@@ -2,7 +2,7 @@
 
 import { use } from "react";
 
-export default function HomePostEvent({params}: {params: Promise<{slug: string}> }) {
+export default function DiaryPostEvent({params}: {params: Promise<{slug: string}> }) {
   const { slug } = use(params)
   
   return (

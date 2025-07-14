@@ -1,4 +1,3 @@
-
 import getDomain from "@/app/lib/getDomain"
 import Card from "./card"
 
@@ -15,7 +14,7 @@ async function getData() {
   return res.json()
 }
 
-export default async function Home() {
+export default async function Diary() {
   const data = await getData()
   const items = data && data.items ? [...data.items] : []
   console.log(items);

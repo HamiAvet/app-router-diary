@@ -37,6 +37,3 @@ export default async function Diary() {
     </div>
   );
 }
-
-export const runtime = "edge"
-export const preferredRegion = "iad1"

@@ -5,7 +5,16 @@ export default async function LinksHTMLTable() {
 
     return (
         <div>
-            {linksResponse && JSON.stringify(linksResponse)}
+            <table>
+                <tbody>
+                    {linksResponse && linksResponse.map((link, index) => {
+                        return <tr key={`link-item-${link.id}-${index}`}>
+                            <td>{link.id}</td>
+                            <td>{link.url}</td>
+                        </tr>
+                    })}
+                </tbody>
+            </table>
         </div>
     )
 }

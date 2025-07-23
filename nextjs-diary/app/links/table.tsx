@@ -1,6 +1,6 @@
 'use client'
 
-import { getLink } from "@/app/lib/data";
+//import { getLink } from "@/app/lib/data";
 import useSWR from "swr";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());

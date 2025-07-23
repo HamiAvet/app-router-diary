@@ -1,6 +1,7 @@
 import getDomain from "@/app/lib/getDomain"
 import Card from "./card"
 import { timeNow } from "@/app/lib/data"
+import "./page.css"
 
 async function getData() {
   const domain = getDomain()
@@ -25,7 +26,18 @@ export default async function Diary() {
   
 
   return (
-    <div>
+        <div className="diary_container">
+          <h1>It is your diary</h1>
+          <button className="add_event">Add a event</button>
+          <div className="events_list">
+              <Card/>
+          </div>
+        </div>
+  );
+}
+
+/*
+<div>
       <main>
         <h1>It is your future calendar.</h1>
         <p>Time Now : {JSON.stringify(dbTime)}</p>
@@ -35,5 +47,4 @@ export default async function Diary() {
         })}
       </main>
     </div>
-  );
-}
+*/

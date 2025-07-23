@@ -1,0 +1,62 @@
+.event {
+    margin: 50px 0px;
+    width: 80%;
+}
+
+.event_container {
+    display: flex;
+    align-items: center;
+}
+
+.delete {
+    margin-left: 20px;
+}
+
+.main_event {
+    padding: 20px;
+    background: #fff;
+    width: 60%;
+    border-radius: 20px;
+}
+
+.date {
+    margin-left: 10px;
+    margin-bottom: 10px;
+}
+
+.event_detail {
+    display: flex;
+    flex-direction: row;
+}
+
+.event_detail div {
+    margin: 0 20px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}
+
+p.category {
+    font-size: 15px;
+    background: limegreen;
+    padding: 3px;
+    border-radius: 15px;
+}
+
+h4.title {
+    font-size: 18px;
+}
+
+.state_case {
+    width: 25px;
+}
+
+.state {
+    padding: 6px;
+    border-radius: 20px;
+    text-decoration: none;
+    border: none;
+    width: 60px;
+}

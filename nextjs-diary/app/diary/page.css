@@ -1,0 +1,9 @@
+.diary_container {
+    width: 80%;
+    margin-left: auto;
+    margin-top: 20px;
+}
+
+.events_list {
+    width: 80%;
+}

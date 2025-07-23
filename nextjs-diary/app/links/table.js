@@ -3,7 +3,7 @@
 //import { getLink } from "@/app/lib/data";
 import useSWR from "swr";
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
+const fetcher = (url) => fetch(url).then((res) => res.json());
 
 export default function LinksHTMLTable() {
     const { data, error, isLoading } = useSWR("/api/links", fetcher, {refreshInterval: 1000})

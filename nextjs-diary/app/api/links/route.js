@@ -6,7 +6,6 @@ import { addLink } from '@/app/lib/data'
 
 export async function GET() {
     const links = await getLink();
-    console.log(links);
     
     return NextResponse.json(links, {status: 200});
 }

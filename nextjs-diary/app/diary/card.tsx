@@ -28,19 +28,21 @@ export default function Card() {
     
     
     return (
-        <div className="event">
-            <h3 className="date">01/01/2026</h3>
+        <>
+        {data && data.map((event, index) => {
+            return <div className="event">
+            <h3 className="date">{event.date}</h3>
             <div className="event_container">
                 <div className="main_event">
                     <div className="event_detail">
                         <div className="hour_case">
-                            <p className="hour">00:00</p>
+                            <p className="hour">{event.hour}</p>
                         </div>
                         <div className="category_case">
-                            <p className="category">Category</p>
+                            <p className="category">{event.category}</p>
                         </div>
                         <div className="topic_case">
-                            <p className="topic">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                            <p className="topic">{event.topic}</p>
                         </div>
                         <div className="state_case">
                             <button 
@@ -53,5 +55,8 @@ export default function Card() {
                 <button className="delete">Delete</button>
             </div>
         </div>
+        })}
+        
+        </>
     )
 }

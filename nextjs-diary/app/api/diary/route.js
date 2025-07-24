@@ -2,9 +2,8 @@ import { NextResponse } from 'next/server';
 import { addEvent } from '@/app/lib/data'
 import { getEvent } from '@/app/lib/data';
 
-export async function GET() {
+export async function GET(request) {
     const events = await getEvent();
-    console.log(typeof events, events)
     return NextResponse.json(events, {status: 200});
     
     

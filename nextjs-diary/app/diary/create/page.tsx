@@ -3,8 +3,11 @@
 import { FormEvent } from "react";
 import { useState } from "react";
 
-export default function createEventForm() {
-    const [ results, setResults ] = useState(null)
+export default function CreateEventForm() {
+    const [ results, setResults ] = useState(null);
+    console.log(results);
+    
+    
 
     const handleForm = async (event: FormEvent<HTMLFormElement>) => {  
        event.preventDefault();  
@@ -23,11 +26,10 @@ export default function createEventForm() {
             body : JSONData
         }
 
-        const respons = await fetch("/api/diary/", options)
-        const result = await respons.json()
-        console.log(result);
+        const respons = await fetch("/api/diary/", options);
+        const result = await respons.json();
         
-        setResults(result)
+        setResults(result);
    };
 
     return (

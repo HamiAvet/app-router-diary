@@ -25,12 +25,18 @@ export default function Card() {
 
     }
 
-    
+        type Event = {
+            id: number;
+            topic: string;
+            category: string;
+            date: string;
+            hour: string;
+        };
     
     return (
         <>
-        {data && data.map((event, index) => {
-            return <div className="event">
+        {data && data.map((event: Event, index: number) => {
+            return <div className="event" key={`event-item-${event.id}-${index}`}>
             <h3 className="date">{event.date}</h3>
             <div className="event_container">
                 <div className="main_event">

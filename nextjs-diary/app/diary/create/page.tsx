@@ -6,8 +6,6 @@ import { useState } from "react";
 export default function CreateEventForm() {
     const [ results, setResults ] = useState(null);
     console.log(results);
-    
-    
 
     const handleForm = async (event: FormEvent<HTMLFormElement>) => {  
        event.preventDefault();  
@@ -36,7 +34,7 @@ export default function CreateEventForm() {
         <form className="createEvent_container" onSubmit={handleForm}>
             <div className="topic_input_div">
                 <label htmlFor="topic">Topic</label>
-                <input name="topic" id="topic" type="text" className="topic_input" maxLength={60} />
+                <input name="topic" id="topic" type="text" className="topic_input" maxLength={60} required/>
             </div>
             <div>
                 <label>Category</label>
@@ -54,11 +52,11 @@ export default function CreateEventForm() {
             <div>
                 <div>
                     <label htmlFor="date">Date</label>
-                    <input name="date" id="date" type="date" className="date_input" />
+                    <input name="date" id="date" type="date" className="date_input" required/>
                 </div>
                 <div>
                     <label htmlFor="hour">Hour</label>
-                    <input name="hour" id="hour" type="time" className="hour_input" />
+                    <input name="hour" id="hour" type="time" className="hour_input" required/>
                 </div>
             </div>
             <div>

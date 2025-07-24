@@ -1,9 +1,19 @@
 'use client'
 import './card.css'
+
 import { useState } from "react"
+import useSWR from "swr";
+
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function Card() {
-    const [ status, setStatus ] = useState("Active");
+    const [ status, setStatus ] = useState("Active");    
+    const { data, error, isLoading } = useSWR("/api/diary/", fetcher, {refreshInterval: 1000})
+    console.log("dd",data);
+    
+    if (error) return "An error happening"
+    if (isLoading) return "Loading..."
+
     
     const handleStatus = (event:React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault()
@@ -14,6 +24,9 @@ export default function Card() {
         }
 
     }
+
+    
+    
     return (
         <div className="event">
             <h3 className="date">01/01/2026</h3>
@@ -23,8 +36,7 @@ export default function Card() {
                         <div className="hour_case">
                             <p className="hour">00:00</p>
                         </div>
-                        <div className="title_category_case">
-                            <h4 className="title">Title</h4>
+                        <div className="category_case">
                             <p className="category">Category</p>
                         </div>
                         <div className="topic_case">

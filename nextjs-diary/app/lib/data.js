@@ -30,5 +30,26 @@ export async function getLink() {
     return await sql`SELECT * FROM links`;
 }
 
+export async function addEvent(event) {
+    await sql`CREATE TABLE IF NOT EXISTS events (
+        id SERIAL PRIMARY KEY NOT NULL,
+        topic VARCHAR(255),
+        category VARCHAR(255),
+        date VARCHAR(50),
+        hour VARCHAR(10)
+    );`
+    const inserted = await sql`
+        INSERT INTO events (topic, category, date, hour)
+        VALUES (${event.topic}, ${event.category}, ${event.date}, ${event.hour})
+        RETURNING id, topic, category, date, hour
+    `
+
+    return inserted
+}
+
+export async function getEvent() {
+    return await sql`SELECT * FROM events`;
+}
+
 
 //configureDatabase().catch(err=>console.log("db config err", err))

@@ -6,6 +6,8 @@ import { addLink } from '@/app/lib/data'
 
 export async function GET() {
     const links = await getLink();
+    console.log(links);
+    
     return NextResponse.json(links, {status: 200});
 }
 
@@ -14,8 +16,10 @@ export async function POST(request) {
     if (contentType !== "application/json") {
         return NextResponse.json({"error": "Invalid Request"}, {status: 415});
     }
+    
     const data = await request.json()    
-
+    console.log(typeof data);
+    
     const url = data && data.url ? data.url : null
     console.log("url:", url);
     

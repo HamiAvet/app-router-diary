@@ -1,9 +1,14 @@
 'use client'
 
 import { use } from "react";
+import { notFound } from "next/navigation";
 
 export default function DiaryPostEvent({params}: {params: Promise<{slug: string}> }) {
   const { slug } = use(params)
+
+  if (!slug || slug !== "create") {
+    notFound()
+  }
   
   return (
     <div>

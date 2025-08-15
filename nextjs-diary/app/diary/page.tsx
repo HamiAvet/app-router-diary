@@ -1,6 +1,7 @@
 import getDomain from "@/app/lib/getDomain"
 import Card from "./card"
 import { timeNow } from "@/app/lib/data"
+import Link from "next/link"
 import "./page.css"
 
 async function getData() {
@@ -28,7 +29,10 @@ export default async function Diary() {
   return (
         <div className="diary_container">
           <h1>It is your diary</h1>
-          <button className="add_event">Add a event</button>
+          <Link href="/diary/create">
+            <button className="add_event"><img src="/add-circle-line.svg" alt="add_event_button" />Add a event</button>
+          </Link>
+          
           <div className="events_list">
               <Card/>
           </div>

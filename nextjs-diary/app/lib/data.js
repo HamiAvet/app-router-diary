@@ -14,7 +14,8 @@ export async function addLink(url) {
             "id" serial PRIMARY KEY NOT NULL,
             "url" text NOT NULL,
             "create_at" timestamp DEFAULT now()
-        )`;
+        )
+    `;
 
     const inserted = await sql`
         INSERT INTO links (url)
@@ -27,29 +28,52 @@ export async function addLink(url) {
 
 
 export async function getLink() {
-    return await sql`SELECT * FROM links`;
+    return await sql`
+        SELECT * FROM links
+    `;
 }
 
 export async function addEvent(event) {
-    await sql`CREATE TABLE IF NOT EXISTS events (
-        id SERIAL PRIMARY KEY NOT NULL,
-        topic VARCHAR(255),
-        category VARCHAR(255),
-        date VARCHAR(50),
-        hour VARCHAR(10)
-    );`
+    await sql`
+        CREATE TABLE IF NOT EXISTS events (
+            id SERIAL PRIMARY KEY NOT NULL,
+            topic VARCHAR(255),
+            category VARCHAR(255),
+            date VARCHAR(50),
+            hour VARCHAR(10),
+            status VARCHAR(6)
+        );
+    `
     const inserted = await sql`
-        INSERT INTO events (topic, category, date, hour)
-        VALUES (${event.topic}, ${event.category}, ${event.date}, ${event.hour})
-        RETURNING id, topic, category, date, hour
+        INSERT INTO events (topic, category, date, hour, status)
+        VALUES (${event.topic}, ${event.category}, ${event.date}, ${event.hour}, ${"Active"})
+        RETURNING id, topic, category, date, hour, status;
     `
 
     return inserted
 }
 
 export async function getEvent() {
-    return await sql`SELECT * FROM events`;
+    return await sql`
+        SELECT * FROM events 
+        ORDER BY date, hour;
+    `;
 }
 
+export async function deleteEvent(event) {
+    return await sql`
+        DELETE FROM events 
+        WHERE id = ${event.id}
+    `
+}
 
-//configureDatabase().catch(err=>console.log("db config err", err))
+export async function updateEventStatus(event) {
+    console.log(event.status);
+    
+    
+    await sql`
+        UPDATE events
+        SET status = 'Done'
+        WHERE id = ${event.id}
+    `
+}

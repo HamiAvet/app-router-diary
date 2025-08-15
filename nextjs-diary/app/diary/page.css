@@ -4,6 +4,22 @@
     margin-top: 20px;
 }
 
+.add_event {
+    border-radius: 20px;
+    text-decoration: none;
+    border: none;
+    background: none;
+    width: 130px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.add_event img {
+    width: 50px;
+}
+
 .events_list {
     width: 80%;
 }

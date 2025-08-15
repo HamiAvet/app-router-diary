@@ -3,7 +3,7 @@
 import { FormEvent } from "react";
 import { useState } from "react";
 
-export default function LinksCreateForm() {
+export default function LinksCreateForm({didSubmit} : {didSubmit?: (newItem: any) => void}) {
     const [ results, setResults ] = useState(null)
 
     const handleForm = async (event:FormEvent<HTMLFormElement> ) => {
@@ -24,8 +24,14 @@ export default function LinksCreateForm() {
         const respons = await fetch("/api/links", options)
         const result = await respons.json()
         setResults(result.url)
+        console.log(typeof didSubmit);
+        if (didSubmit) {
+            didSubmit(result)
+        }
         
     }
+
+
 
     return (
         <form onSubmit={handleForm}>

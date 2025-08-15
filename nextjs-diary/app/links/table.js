@@ -1,17 +1,23 @@
 'use client'
 
 import useSWR from "swr";
+import LinksCreateForm from "./createForm";
 
 const fetcher = (url) => fetch(url).then((res) => res.json());
 
 export default function LinksHTMLTable() {
-    const { data, error, isLoading } = useSWR("/api/links", fetcher, {refreshInterval: 1000})
-    console.log(data);
+    const { data, error, isLoading, mutate } = useSWR("/api/links", fetcher);
+    const didSubmit = (newItem) => {
+        mutate();
+        console.log("New item was added :", newItem);
+    }
     
-    if (error) return "An error happening"
-    if (isLoading) return "Loading..."
+    if (error) return "An error happening";
+    if (isLoading) return "Loading...";
 
     return (
+        <>
+        <LinksCreateForm didSubmit={didSubmit} />
         <div>
             <table>
                 <tbody>
@@ -24,6 +30,7 @@ export default function LinksHTMLTable() {
                 </tbody>
             </table>
         </div>
+        </>
     )
 }
 

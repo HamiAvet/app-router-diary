@@ -2,33 +2,40 @@
 
 import { FormEvent } from "react";
 import { useState } from "react";
+import Link from "next/link"
+
+import { useRouter } from "next/navigation";
+
 
 export default function CreateEventForm() {
-    const [ results, setResults ] = useState(null);
+    const [results, setResults] = useState(null);
+    const router = useRouter();
     console.log(results);
 
-    const handleForm = async (event: FormEvent<HTMLFormElement>) => {  
-       event.preventDefault();  
-       const formData = new FormData(event.currentTarget);  
-       
-       const data = Object.fromEntries(formData);  
-       console.log(data);  
-       const JSONData = JSON.stringify(data);  
-       console.log(JSONData);  
+    const handleForm = async (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        const formData = new FormData(event.currentTarget);
+        const data = Object.fromEntries(formData);
+        console.log(data);
+        const JSONData = JSON.stringify(data);
+        console.log(JSONData);
 
-       const options = {
+        const options = {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body : JSONData
-        }
+            body: JSONData
+        };
 
-        const respons = await fetch("/api/diary/", options);
-        const result = await respons.json();
-        
+        const response = await fetch("/api/diary/", options);
+        const result = await response.json();
+
         setResults(result);
-   };
+        if (response.ok) {
+            router.push("/diary");
+        }
+    };
 
     return (
         <form className="createEvent_container" onSubmit={handleForm}>
@@ -61,9 +68,10 @@ export default function CreateEventForm() {
             </div>
             <div>
                 <button type="submit">Confirm</button>
-                <button>Cancel</button>
+                <Link href="/diary">
+                    <button type="button">Cancel</button>
+                </Link>
             </div>
         </form>
-        
-    )
+    );
 }

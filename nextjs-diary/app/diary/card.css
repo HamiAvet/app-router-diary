@@ -41,9 +41,10 @@
 
 p.category {
     font-size: 15px;
-    background: limegreen;
-    padding: 3px;
+    padding: 8px 12px;
     border-radius: 15px;
+    color: #fff;
+    font-weight: bold;
 }
 
 h4.title {
@@ -61,6 +62,12 @@ h4.title {
     border: none;
     width: 60px;
     cursor: pointer;
+    transition: 0.2s;
+;
+}
+
+.state:hover {
+    opacity: 0.8;
 }
 
 .delete {

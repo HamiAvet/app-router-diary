@@ -39,16 +39,3 @@ export default async function Diary() {
         </div>
   );
 }
-
-/*
-<div>
-      <main>
-        <h1>It is your future calendar.</h1>
-        <p>Time Now : {JSON.stringify(dbTime)}</p>
-        <p>Future events: </p>
-        {items && items.map((item, index) => {
-          return <Card title={item.title} key={`post-${index}`}/>
-        })}
-      </main>
-    </div>
-*/

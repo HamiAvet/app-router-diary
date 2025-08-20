@@ -68,12 +68,9 @@ export async function deleteEvent(event) {
 }
 
 export async function updateEventStatus(event) {
-    console.log(event.status);
-    
-    
     await sql`
         UPDATE events
-        SET status = 'Done'
+        SET status = ${event.status}
         WHERE id = ${event.id}
     `
 }

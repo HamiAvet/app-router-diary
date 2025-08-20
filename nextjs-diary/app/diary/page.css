@@ -4,20 +4,32 @@
     margin-top: 20px;
 }
 
-.add_event {
-    border-radius: 20px;
-    text-decoration: none;
-    border: none;
-    background: none;
-    width: 130px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+.diary_container h1 {
+    margin-bottom: 10px;
 }
 
+.add_event {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 8px;
+    background: #427ffa;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.add_event:hover {
+    background: #3464c4;
+    transform: scale(1.02);
+}
+
+
 .add_event img {
-    width: 50px;
+    width: 20px;
 }
 
 .events_list {

@@ -10,11 +10,19 @@ export async function DELETE(request) {
   return NextResponse.json({ success: true }, { status: 201 });
 }
 
-export async function UPDATE(request) {
-  const { id } = await request.json();
-  if (!id) { 
-    return NextResponse.json({ error: 'ID is required' }, { status: 400 });
+export async function PUT(request) {
+  const { event } = await request.json();
+  if (!event || !event.id) {
+    return NextResponse.json({ error: 'Event ID is required' }, { status: 401 });
   }
-  await updateEventStatus({ id: Number(id) });
+  if (!event.status || (event.status !== 'Active' && event.status !== 'Done')) {
+    return NextResponse.json({ error: 'Wrong status' }, { status: 400 });
+  }
+  if (event.status === 'Done') {
+    event.status = 'Active';
+  } else {
+    event.status = 'Done';
+  }
+  await updateEventStatus(event);
   return NextResponse.json({ success: true }, { status: 202 });
 }

@@ -33,15 +33,15 @@ export default function Card() {
 
     
     useEffect(() => {
-    if (!data?.length) return;
-    const now = new Date();
+        if (!data?.length) return;
+        const now = new Date();
 
-    data.forEach((event: Event) => {
-        const eventDateTime = new Date(`${event.date}T${event.hour}`);                    
-        if (eventDateTime < now) {            
-            handleDelete(event.id);
-        } 
-    });
+        data.forEach((event: Event) => {
+            const eventDateTime = new Date(`${event.date}T${event.hour}`);                    
+            if (eventDateTime < now) {            
+                handleDelete(event.id);
+            } 
+        });
 
     }, [data])
 

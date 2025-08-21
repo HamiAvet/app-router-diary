@@ -3,11 +3,18 @@
 import './card.css'
 
 import { useState, useEffect } from "react"
+import { getEventByTopic } from '@/app/lib/data';
 import useSWR from "swr";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
-export default function Card() {
+export default function Card({
+     query, currentPage 
+    }: { 
+        query?: string, 
+        currentPage?: number 
+    }) {
+    
     const [ status, setStatus ] = useState<{[key: number]: string}>({});    
     const { data, error, isLoading } = useSWR("/api/diary/", fetcher, {refreshInterval: 1000});
     
@@ -72,6 +79,8 @@ export default function Card() {
     if (!data?.length) {
         return <div className="no_events">No events planned</div>;
     }
+
+    
 
     return (
         <>

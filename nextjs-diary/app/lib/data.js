@@ -60,6 +60,13 @@ export async function getEvent() {
     `;
 }
 
+export async function getEventByTopic(query, currentPage = 1) {
+    return await sql`
+        SELECT * FROM events AS event
+        WHERE event.topic ILIKE 'Buy a milk'
+    `
+}
+
 export async function deleteEvent(event) {
     return await sql`
         DELETE FROM events 

@@ -1,5 +1,6 @@
 import getDomain from "@/app/lib/getDomain"
-import Card from "./card"
+import Card from "@/app/ui/card/card"
+import Search from "@/app/ui/search/search"
 import { timeNow } from "@/app/lib/data"
 import Link from "next/link"
 import "./page.css"
@@ -17,13 +18,21 @@ async function getData() {
   return res.json()
 }
 
-export default async function Diary() {
+export default async function Diary(props: { 
+  searchParams?: Promise<{ 
+    query?: string, page?: string 
+  }>;
+   }) {
   const data = await getData()
   const dbTime = await timeNow()
   console.log("Now is ", dbTime);
   const items = data && data.items ? [...data.items] : []
   console.log(items);
   console.log(process.env.NEXT_PUBLIC_VERCEL_URL);
+
+  const searchParams = await props.searchParams;
+  const query = searchParams?.query || '';
+  const currentPage = Number(searchParams?.page) || 1;
   
 
   return (
@@ -32,9 +41,9 @@ export default async function Diary() {
           <Link href="/diary/create">
             <button className="add_event"><img src="/add-circle-line.svg" alt="add_event_button" />Add a event</button>
           </Link>
-          
+          <Search placeholder="Search event..." />
           <div className="events_list">
-              <Card/>
+              <Card query={query} currentPage={currentPage}/>
           </div>
         </div>
   );

@@ -10,11 +10,11 @@ import useSWR from "swr";
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function Card({ currentPage }: { currentPage: number }) {
+    
     const [ status, setStatus ] = useState<{[key: number]: string}>({});    
     const { data, error, isLoading } = useSWR("/api/diary/", fetcher, {refreshInterval: 1000});
     const searchParams = useSearchParams();
     const query = searchParams.get('query') || '';
-    console.log(status);
     
 
     
@@ -72,6 +72,31 @@ export default function Card({ currentPage }: { currentPage: number }) {
             body: JSON.stringify({ id })
         });
     };
+
+    // Génère la liste des éléments de pagination (nombres + "…")
+function getPaginationItems(page: number, totalItems: number, eventsPerPage: number): (number | string)[] {
+  const totalPages = Math.ceil(totalItems / eventsPerPage);
+  const items: (number | string)[] = [];
+
+  if (totalPages <= 7) {
+    for (let i = 1; i <= totalPages; i++) items.push(i);
+  } else {
+    if (page <= 4) {
+      items.push(1, 2, 3, 4, "…", totalPages - 1, totalPages);
+    } else if (page >= totalPages - 3) {
+      items.push(1, 2, "…", totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
+    } else {
+      items.push(1, "…", page - 1, page, page + 1, "…", totalPages);
+    }
+  }
+
+  return items;
+}
+
+// Fonction pour changer de page
+function goTo(p: number) {
+  window.location.search = `?page=${p}`;
+}
 
 
     if (error) return "An error happening";

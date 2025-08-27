@@ -23,7 +23,6 @@ export default function LinksCreateForm({didSubmit} : {didSubmit?: (newItem: {ur
 
         const respons = await fetch("/api/links", options)
         const result = await respons.json()
-        
         setResults(result.url)
         console.log(typeof didSubmit);
         if (didSubmit) {

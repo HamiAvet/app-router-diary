@@ -4,6 +4,7 @@ import Search from "@/app/ui/search/search"
 import NavBar from "@/app/ui/navbar/navbar"
 import { timeNow } from "@/app/lib/data"
 import Link from "next/link"
+import Image from "next/image"
 import "./page.css"
 
 async function getData() {
@@ -43,7 +44,10 @@ export default async function Diary(props: {
           <div className="tools">
             <Search placeholder="Search event..." />
             <Link href="/diary/create">
-              <button className="add_event"><img src="/add-circle-line.svg" alt="add_event_button" />Add a event</button>
+              <button className="add_event">
+                <Image src="/add-circle-line.svg" alt="add_event_button" width={24} height={24} />
+                Add a event
+              </button>
             </Link>
           </div>
           <div className="events_list">

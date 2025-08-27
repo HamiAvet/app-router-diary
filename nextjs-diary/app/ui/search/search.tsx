@@ -2,6 +2,7 @@
  
 import './search.css';
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
+import Image from "next/image";
 
 
 export default function Search({ placeholder }: { placeholder: string }) {
@@ -24,7 +25,7 @@ export default function Search({ placeholder }: { placeholder: string }) {
     return (
         <div className="search_container">
             <label htmlFor="search" >
-                <img src="/search-line.svg" alt="Search" />
+                <Image src="/search-line.svg" alt="Search" width={20} height={20} />
             </label>
             <input 
                 type="text"

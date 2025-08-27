@@ -3,17 +3,18 @@
 import './card.css'
 
 import { useState, useEffect} from "react"
+import Image from "next/image"
 import { useSearchParams } from 'next/navigation';
 import useSWR from "swr";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function Card({ currentPage }: { currentPage: number }) {
-    
     const [ status, setStatus ] = useState<{[key: number]: string}>({});    
     const { data, error, isLoading } = useSWR("/api/diary/", fetcher, {refreshInterval: 1000});
     const searchParams = useSearchParams();
     const query = searchParams.get('query') || '';
+    console.log(status);
     
 
     
@@ -72,31 +73,6 @@ export default function Card({ currentPage }: { currentPage: number }) {
         });
     };
 
-    // Génère la liste des éléments de pagination (nombres + "…")
-function getPaginationItems(page: number, totalItems: number, eventsPerPage: number): (number | string)[] {
-  const totalPages = Math.ceil(totalItems / eventsPerPage);
-  const items: (number | string)[] = [];
-
-  if (totalPages <= 7) {
-    for (let i = 1; i <= totalPages; i++) items.push(i);
-  } else {
-    if (page <= 4) {
-      items.push(1, 2, 3, 4, "…", totalPages - 1, totalPages);
-    } else if (page >= totalPages - 3) {
-      items.push(1, 2, "…", totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
-    } else {
-      items.push(1, "…", page - 1, page, page + 1, "…", totalPages);
-    }
-  }
-
-  return items;
-}
-
-// Fonction pour changer de page
-function goTo(p: number) {
-  window.location.search = `?page=${p}`;
-}
-
 
     if (error) return "An error happening";
     if (isLoading) return "Loading...";
@@ -143,31 +119,33 @@ function goTo(p: number) {
                             </div>  
                         </div>  
                     </div>  
-                    <button className="delete" onClick={() => handleDelete(event.id)}><img src="/delete-bin-7-line.svg" alt="delete"/></button>  
+                                        <button className="delete" onClick={() => handleDelete(event.id)}>
+                                            <Image src="/delete-bin-7-line.svg" alt="delete" width={20} height={20} />
+                                        </button>  
                 </div>  
             </div>  
             )) : (<div className="no_events">No events planned</div>)}  
             <div className='pagination'>
                 {page > 1 ? (
-                    <button className='previous' style={{ width: 25 }} onClick={() => window.location.search = `?page=${page - 1}`}>
-                        <img style={{ width: 20, background: "#fff", border: "none", textDecoration: "none" }} src="/arrow-left-s-line.svg" alt="previous" />
-                    </button>
+                                        <button className='previous' style={{width: "25px"}} onClick={() => window.location.search = `?page=${page - 1}`}>
+                                            <Image style={{background: "#fff", border: "none", textDecoration: "none"}} src="/arrow-left-s-line.svg" alt="previous" width={20} height={20} />
+                                        </button>
                 ) : (
-                    <button className='previous' style={{ width: 25 }} disabled>
-                        <img style={{ width: 20 }} src="/arrow-left-s-line.svg" alt="previous" />
-                    </button>
+                                        <button className='previous' style={{width: "25px"}} disabled>
+                                            <Image src="/arrow-left-s-line.svg" alt="previous" width={20} height={20} />
+                                        </button>
                 )}
-                <p style={{ display: "inline-block", margin: "0 10px" }}>{page + " / " + totalPages}</p>
+                {<p>{page + " / " + totalPages}</p>}
                 {filteredEvents.length > startIndex + eventsPerPage ? (
-                    <button className='next' style={{ width: 25 }} onClick={() => window.location.search = `?page=${page + 1}`}>
-                        <img style={{ width: 20 }} src="/arrow-right-s-line.svg" alt="next" />
-                    </button>
+                                        <button className='next' style={{width: "25px"}} onClick={() => window.location.search = `?page=${page + 1}`}>
+                                            <Image src="/arrow-right-s-line.svg" alt="next" width={20} height={20} />
+                                        </button>
                 ) : (
-                    <button className='next' style={{ width: 25 }} disabled>
-                        <img style={{ width: 20 }} src="/arrow-right-s-line.svg" alt="next" />
-                    </button>
+                                        <button className='next' style={{width: "25px"}} disabled>
+                                            <Image src="/arrow-right-s-line.svg" alt="next" width={20} height={20} />
+                                        </button>
                 )}
-            </div>
+                </div>
         </>  
     );  
 }  

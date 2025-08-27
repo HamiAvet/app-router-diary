@@ -22,11 +22,11 @@ export default function Search({ placeholder }: { placeholder: string }) {
     }
     
     return (
-        <div>
+        <div className="search_container">
             <label htmlFor="search" >
-                Search
+                <img src="/search-line.svg" alt="Search" />
             </label>
-            <input
+            <input 
                 type="text"
                 placeholder={placeholder}
                 onChange={(e) => {

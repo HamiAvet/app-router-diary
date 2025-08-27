@@ -1,0 +1,40 @@
+.search_container {
+    display: flex;
+    align-items: center;
+    max-width: 600px;
+    min-width: 400px;
+    gap: 10px;
+    background: #fff;
+    padding: 8px 12px;
+    border-radius: 10px; 
+    border: 1px solid #ddd;
+    transition: 0.2s;
+}
+
+.search_container:focus-within {
+    box-shadow: 0 0 0 2px #427ffa;
+    border-color: #427ffa;
+}
+
+.search_container input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    background: transparent;
+}
+
+label img {
+    width: 20px;
+    height: 20px;
+    pointer-events: none;
+}
+
+
+@media screen and (max-width: 700px) {
+    
+   .search_container {
+        max-width: 100%;
+        min-width: 200px;
+    }
+}

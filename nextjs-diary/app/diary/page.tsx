@@ -1,6 +1,7 @@
 import getDomain from "@/app/lib/getDomain"
 import Card from "@/app/ui/card/card"
 import Search from "@/app/ui/search/search"
+import NavBar from "@/app/ui/navbar/navbar"
 import { timeNow } from "@/app/lib/data"
 import Link from "next/link"
 import "./page.css"
@@ -19,9 +20,9 @@ async function getData() {
 }
 
 export default async function Diary(props: { 
-  searchParams?: Promise<{ 
+  searchParams?: {
     query?: string, page?: string 
-  }>;
+  };
    }) {
   const data = await getData()
   const dbTime = await timeNow()
@@ -31,20 +32,25 @@ export default async function Diary(props: {
   console.log(process.env.NEXT_PUBLIC_VERCEL_URL);
 
   const searchParams = await props.searchParams;
-  const query = searchParams?.query || '';
   const currentPage = Number(searchParams?.page) || 1;
   
 
   return (
-        <div className="diary_container">
+    <>
+      <NavBar />
+      <div className="diary_container">
           <h1>It is your diary</h1>
-          <Link href="/diary/create">
-            <button className="add_event"><img src="/add-circle-line.svg" alt="add_event_button" />Add a event</button>
-          </Link>
-          <Search placeholder="Search event..." />
+          <div className="tools">
+            <Search placeholder="Search event..." />
+            <Link href="/diary/create">
+              <button className="add_event"><img src="/add-circle-line.svg" alt="add_event_button" />Add a event</button>
+            </Link>
+          </div>
           <div className="events_list">
-              <Card query={query} currentPage={currentPage}/>
+              <Card currentPage={currentPage}/>
           </div>
         </div>
+    </>
+        
   );
 }

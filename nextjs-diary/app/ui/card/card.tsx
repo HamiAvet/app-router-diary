@@ -2,21 +2,20 @@
 
 import './card.css'
 
-import { useState, useEffect } from "react"
-import { getEventByTopic } from '@/app/lib/data';
+import { useState, useEffect} from "react"
+import { useSearchParams } from 'next/navigation';
 import useSWR from "swr";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
-export default function Card({
-     query, currentPage 
-    }: { 
-        query?: string, 
-        currentPage?: number 
-    }) {
+export default function Card({ currentPage }: { currentPage: number }) {
     
     const [ status, setStatus ] = useState<{[key: number]: string}>({});    
     const { data, error, isLoading } = useSWR("/api/diary/", fetcher, {refreshInterval: 1000});
+    const searchParams = useSearchParams();
+    const query = searchParams.get('query') || '';
+    
+
     
     type Event = {
         id: number;
@@ -73,6 +72,32 @@ export default function Card({
         });
     };
 
+    // Génère la liste des éléments de pagination (nombres + "…")
+function getPaginationItems(page: number, totalItems: number, eventsPerPage: number): (number | string)[] {
+  const totalPages = Math.ceil(totalItems / eventsPerPage);
+  const items: (number | string)[] = [];
+
+  if (totalPages <= 7) {
+    for (let i = 1; i <= totalPages; i++) items.push(i);
+  } else {
+    if (page <= 4) {
+      items.push(1, 2, 3, 4, "…", totalPages - 1, totalPages);
+    } else if (page >= totalPages - 3) {
+      items.push(1, 2, "…", totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
+    } else {
+      items.push(1, "…", page - 1, page, page + 1, "…", totalPages);
+    }
+  }
+
+  return items;
+}
+
+// Fonction pour changer de page
+function goTo(p: number) {
+  window.location.search = `?page=${p}`;
+}
+
+
     if (error) return "An error happening";
     if (isLoading) return "Loading...";
 
@@ -80,37 +105,69 @@ export default function Card({
         return <div className="no_events">No events planned</div>;
     }
 
+    const filteredEvents = data.filter((event: Event) => event.topic.toLowerCase().includes(query.toLowerCase()));  
+    const eventsPerPage = 6;
+    const page = currentPage && currentPage > 0 ? currentPage : 1;
+    const startIndex = (page - 1) * eventsPerPage;
+    const paginatedEvents = filteredEvents.slice(startIndex, startIndex + eventsPerPage);
+    const totalPages = Math.ceil(filteredEvents.length / eventsPerPage);
+    console.log(paginatedEvents);
+    console.log("total", totalPages);
     
-
-    return (
-        <>
-            {data.map((event: Event, index: number) => {
-                return <div className="event" key={`event-item-${event.id}-${index}`}>
-                <h3 className="date">{event.date}</h3>
-                <div className="event_container">
-                    <div className="main_event">
-                        <div className="event_detail">
-                            <div className="hour_case">
-                                <p className="hour">{event.hour}</p>
-                            </div>
-                            <div className="category_case">
-                                <p className="category" style={{ background: Categories[event.category] }}>{event.category}</p>
-                            </div>
-                            <div className="topic_case">
-                                <p className="topic">{event.topic}</p>
-                            </div>
-                            <div className="state_case">
-                                <button 
-                                onClick={() => handlesStatus(event)}
-                                className="state"
-                                style={{background: event.status === "Active" ? "#427ffa" : "limegreen"}}>{event.status}</button>
-                            </div>
-                        </div>
-                    </div>
-                    <button className="delete" onClick={() => handleDelete(event.id)}><img src="/delete-bin-7-line.svg" alt="delete"/></button>
-                </div>
+    
+        
+    return (  
+        <>  
+            {paginatedEvents.length > 0 ? paginatedEvents.map((event: Event, index: number) => (  
+              <div className="event" key={`event-item-${event.id}-${index}`}>  
+                    <h3 className="date">{event.date}</h3>  
+                    <div className="event_container">  
+                        <div className="main_event">  
+                            <div className="event_detail">  
+                                <div className="hour_case">  
+                                    <p className="hour">{event.hour}</p>  
+                                </div>  
+                                <div className="category_case">  
+                                    <p className="category" style={{ background: Categories[event.category] }}>{event.category}</p>  
+                            </div>  
+                            <div className="topic_case">  
+                                <p className="topic">{event.topic}</p>  
+                            </div>  
+                            <div className="state_case">  
+                                <button
+                                    onClick={() => handlesStatus(event)}
+                                    className="state"
+                                    style={{ background: event.status === "Active" ? "#427ffa" : "limegreen" }}>
+                                    {event.status}
+                                </button>
+                            </div>  
+                        </div>  
+                    </div>  
+                    <button className="delete" onClick={() => handleDelete(event.id)}><img src="/delete-bin-7-line.svg" alt="delete"/></button>  
+                </div>  
+            </div>  
+            )) : (<div className="no_events">No events planned</div>)}  
+            <div className='pagination'>
+                {page > 1 ? (
+                    <button className='previous' style={{ width: 25 }} onClick={() => window.location.search = `?page=${page - 1}`}>
+                        <img style={{ width: 20, background: "#fff", border: "none", textDecoration: "none" }} src="/arrow-left-s-line.svg" alt="previous" />
+                    </button>
+                ) : (
+                    <button className='previous' style={{ width: 25 }} disabled>
+                        <img style={{ width: 20 }} src="/arrow-left-s-line.svg" alt="previous" />
+                    </button>
+                )}
+                <p style={{ display: "inline-block", margin: "0 10px" }}>{page + " / " + totalPages}</p>
+                {filteredEvents.length > startIndex + eventsPerPage ? (
+                    <button className='next' style={{ width: 25 }} onClick={() => window.location.search = `?page=${page + 1}`}>
+                        <img style={{ width: 20 }} src="/arrow-right-s-line.svg" alt="next" />
+                    </button>
+                ) : (
+                    <button className='next' style={{ width: 25 }} disabled>
+                        <img style={{ width: 20 }} src="/arrow-right-s-line.svg" alt="next" />
+                    </button>
+                )}
             </div>
-            })}
-        </>
-    )
-}
+        </>  
+    );  
+}  

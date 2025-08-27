@@ -2,10 +2,14 @@
 
 import { FormEvent } from "react";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link"
+import "./page.css"
 
 export default function CreateEventForm() {
     const [ results, setResults ] = useState(null);
+    const [ error, setError ] = useState<string | null>(null);
+    const router = useRouter();
     console.log(results);
 
 
@@ -17,6 +21,15 @@ export default function CreateEventForm() {
        console.log(data);  
        const JSONData = JSON.stringify(data);  
        console.log(JSONData);  
+
+       const now = new Date();
+       const eventDate = String(data.date);
+       const eventHour = String(data.hour);
+       const eventDateTime = new Date(`${eventDate}T${eventHour}`);
+       if (eventDateTime < now) {
+            setError("The chosen date or time has already passed");
+            return; 
+        }
 
        const options = {
             method: "POST",
@@ -30,49 +43,55 @@ export default function CreateEventForm() {
         const result = await response.json();
         
         setResults(result);
+
         if (response.ok) {
-            window.location.href = '/diary'; // better use useRouter 
+            router.push('/diary');
         }
         
 
    };
 
     return (
-        <form className="createEvent_container" onSubmit={handleForm}>
-            <div className="topic_input_div">
-                <label htmlFor="topic">Topic</label>
-                <input name="topic" id="topic" type="text" className="topic_input" maxLength={60} required/>
-            </div>
-            <div>
-                <label>Category</label>
-                <select name="category">
-                    <option value="hobbies">hobbies</option>
-                    <option value="work">work</option>
-                    <option value="health">health</option>
-                    <option value="shopping">shopping</option>
-                    <option value="sport">sport</option>
-                    <option value="administrative">administrative</option>
-                    <option value="household">household</option>
-                    <option value="festivities">festivities</option>
-                </select>
-            </div>
-            <div>
-                <div>
-                    <label htmlFor="date">Date</label>
-                    <input name="date" id="date" type="date" className="date_input" required/>
+        <div className="createEvent_container">
+            <h1>Create a new event</h1>
+            <form className="createEvent_form" onSubmit={handleForm}>
+                <div className="input_div">
+                    <label htmlFor="topic">Topic</label>
+                    <input name="topic" id="topic" type="text" maxLength={60} required/>
                 </div>
-                <div>
-                    <label htmlFor="hour">Hour</label>
-                    <input name="hour" id="hour" type="time" className="hour_input" required/>
+                <div className="input_div">
+                    <label>Category</label>
+                    <select name="category">
+                        <option value="hobbies">hobbies</option>
+                        <option value="work">work</option>
+                        <option value="health">health</option>
+                        <option value="shopping">shopping</option>
+                        <option value="sport">sport</option>
+                        <option value="administrative">administrative</option>
+                        <option value="household">household</option>
+                        <option value="festivities">festivities</option>
+                    </select>
                 </div>
-            </div>
-            <div>
-                <button type="submit">Confirm</button>
-                <Link href="/diary">
-                    <button type="button">Cancel</button>
-                </Link>
-            </div>
+                <div className="date_hour_container">
+                    <div className="input_div">
+                        <label htmlFor="date">Date</label>
+                        <input name="date" id="date" type="date" className="date_input" required/>
+                    </div>
+                    <div className="input_div">
+                        <label htmlFor="hour">Hour</label>
+                        <input name="hour" id="hour" type="time" className="hour_input" required/>
+                    </div>
+                </div>
+                <div className="buttons_container">
+                    <button className="confirm_btn" type="submit">Confirm</button>
+                    <Link href="/diary">
+                        <button className="cancel_btn" type="button">Cancel</button>
+                    </Link>
+                </div>
         </form>
+        {error && <div className="error_message" style={{marginTop: "10px", fontWeight: "bold"}}>{error}</div>}
+        </div>
         
     )
 }
+

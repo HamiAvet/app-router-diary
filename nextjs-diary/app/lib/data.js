@@ -33,6 +33,7 @@ export async function getLink() {
     `;
 }
 
+// Diary event functions
 export async function addEvent(event) {
     await sql`
         CREATE TABLE IF NOT EXISTS events (
@@ -60,8 +61,6 @@ export async function getEvent() {
     `;
 }
 
-
-
 export async function deleteEvent(event) {
     return await sql`
         DELETE FROM events 
@@ -76,3 +75,31 @@ export async function updateEventStatus(event) {
         WHERE id = ${event.id}
     `
 }
+
+// User functions
+export async function addUser(user) {
+    await sql`
+        CREATE TABLE IF NOT EXISTS users (
+            id SERIAL PRIMARY KEY NOT NULL,
+            username VARCHAR(50) UNIQUE,
+            email VARCHAR(100) UNIQUE,
+            password VARCHAR(255)
+        );
+    `
+    const inserted = await sql`
+        INSERT INTO users (username, email, password)
+        VALUES (${user.username}, ${user.email}, ${user.password})
+        RETURNING id, username, email password;
+    `
+
+    return inserted
+}
+
+/*export async function getUserById(id) {
+    const user = await sql`
+        SELECT id, username, email 
+        FROM users 
+        WHERE id = ${id}
+    `
+    return user[0];
+}*/

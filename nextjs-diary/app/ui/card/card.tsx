@@ -87,10 +87,6 @@ export default function Card({ currentPage }: { currentPage: number }) {
     const startIndex = (page - 1) * eventsPerPage;
     const paginatedEvents = filteredEvents.slice(startIndex, startIndex + eventsPerPage);
     const totalPages = Math.ceil(filteredEvents.length / eventsPerPage);
-    console.log(paginatedEvents);
-    console.log("total", totalPages);
-    
-    
         
     return (  
         <>  
@@ -119,31 +115,31 @@ export default function Card({ currentPage }: { currentPage: number }) {
                             </div>  
                         </div>  
                     </div>  
-                                        <button className="delete" onClick={() => handleDelete(event.id)}>
-                                            <Image src="/delete-bin-7-line.svg" alt="delete" width={20} height={20} />
-                                        </button>  
+                    <button className="delete" onClick={() => handleDelete(event.id)}>
+                        <Image src="/delete-bin-7-line.svg" alt="delete" width={20} height={20} />
+                    </button>  
                 </div>  
             </div>  
             )) : (<div className="no_events">No events planned</div>)}  
             <div className='pagination'>
                 {page > 1 ? (
-                                        <button className='previous' style={{width: "25px"}} onClick={() => window.location.search = `?page=${page - 1}`}>
-                                            <Image style={{background: "#fff", border: "none", textDecoration: "none"}} src="/arrow-left-s-line.svg" alt="previous" width={20} height={20} />
-                                        </button>
+                    <button className='previous' style={{width: "25px"}} onClick={() => window.location.search = `?page=${page - 1}`}>
+                        <Image style={{background: "#fff", border: "none", textDecoration: "none"}} src="/arrow-left-s-line.svg" alt="previous" width={20} height={20} />
+                    </button>
                 ) : (
-                                        <button className='previous' style={{width: "25px"}} disabled>
-                                            <Image src="/arrow-left-s-line.svg" alt="previous" width={20} height={20} />
-                                        </button>
+                    <button className='previous' style={{width: "25px"}} disabled>
+                        <Image src="/arrow-left-s-line.svg" alt="previous" width={20} height={20} />
+                    </button>
                 )}
                 {<p>{page + " / " + totalPages}</p>}
                 {filteredEvents.length > startIndex + eventsPerPage ? (
-                                        <button className='next' style={{width: "25px"}} onClick={() => window.location.search = `?page=${page + 1}`}>
-                                            <Image src="/arrow-right-s-line.svg" alt="next" width={20} height={20} />
-                                        </button>
+                    <button className='next' style={{width: "25px"}} onClick={() => window.location.search = `?page=${page + 1}`}>
+                        <Image src="/arrow-right-s-line.svg" alt="next" width={20} height={20} />
+                    </button>
                 ) : (
-                                        <button className='next' style={{width: "25px"}} disabled>
-                                            <Image src="/arrow-right-s-line.svg" alt="next" width={20} height={20} />
-                                        </button>
+                    <button className='next' style={{width: "25px"}} disabled>
+                        <Image src="/arrow-right-s-line.svg" alt="next" width={20} height={20} />
+                    </button>
                 )}
                 </div>
         </>  

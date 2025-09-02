@@ -4,9 +4,11 @@ import isValidURL from '@/app/lib/isValidURL';
 import { getLink } from "@/app/lib/data";
 import { addLink } from '@/app/lib/data'
 
+import { setSessionUser } from '@/app/lib/session';
+
 export async function GET() {
+    await setSessionUser(1234567890)
     const links = await getLink();
-    
     return NextResponse.json(links, {status: 200});
 }
 

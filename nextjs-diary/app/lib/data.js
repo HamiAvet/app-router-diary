@@ -1,4 +1,5 @@
 import postgres from 'postgres';
+import { hashPassword } from './passwordUtils';
 
 const sql = postgres(process.env.POSTGRES_URL);
 
@@ -42,13 +43,13 @@ export async function addEvent(event) {
             category VARCHAR(255),
             date VARCHAR(50),
             hour VARCHAR(10),
-            status VARCHAR(6)
+            status VARCHAR(6),
         );
     `
     const inserted = await sql`
-        INSERT INTO events (topic, category, date, hour, status)
+        INSERT INTO events (topic, category, date, hour, status, user_id)
         VALUES (${event.topic}, ${event.category}, ${event.date}, ${event.hour}, ${"Active"})
-        RETURNING id, topic, category, date, hour, status;
+        RETURNING id, topic, category, date, hour, status , user_id;
     `
 
     return inserted
@@ -88,18 +89,17 @@ export async function addUser(user) {
     `
     const inserted = await sql`
         INSERT INTO users (username, email, password)
-        VALUES (${user.username}, ${user.email}, ${user.password})
+        VALUES (${user.username}, ${user.email}, ${hashPassword(user.password)})
         RETURNING id, username, email password;
     `
 
     return inserted
 }
 
-/*export async function getUserById(id) {
-    const user = await sql`
-        SELECT id, username, email 
+export async function getUserByEmail(user) {    
+    return await sql`
+        SELECT id, username, email, password
         FROM users 
-        WHERE id = ${id}
+        WHERE email = ${user.email}
     `
-    return user[0];
-}*/
+}

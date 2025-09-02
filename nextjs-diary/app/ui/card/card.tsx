@@ -16,8 +16,6 @@ export default function Card({ currentPage }: { currentPage: number }) {
     const query = searchParams.get('query') || '';
     console.log(status);
     
-
-    
     type Event = {
         id: number;
         topic: string;

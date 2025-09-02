@@ -2,22 +2,40 @@
 
 import { FormEvent } from "react";
 import { useState } from "react";
+import Link from "next/link";
 import "./page.css";
+import { redirect } from "next/navigation";
 
 export default function registerPage() {
-    const [ results, setResults ] = useState(null);
+    const [ results, setResults ] = useState<String | null>(null);
+    const [ error, setError ] = useState<String | null>(null);
+    const [ showPassword, setShowPassword ] = useState<boolean>(false);
+    const [ showPasswordConfirm, setShowPasswordConfirm ] = useState<boolean>(false);
 
+    const handlePasswordVisibility = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
+        setShowPassword(!showPassword);
+    }
+
+    const handlePasswordConfirmVisibility = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
+        setShowPasswordConfirm(!showPasswordConfirm);
+    }
 
     const handleForm = async (user: FormEvent<HTMLFormElement>) => {  
-       user.preventDefault();  
-       const formData = new FormData(user.currentTarget);  
-       
-       const data = Object.fromEntries(formData);  
-       console.log(data);  
-       const JSONData = JSON.stringify(data);  
-       console.log(JSONData);  
-       
-       const options = {
+        user.preventDefault();  
+        const formData = new FormData(user.currentTarget);  
+        
+        const data = Object.fromEntries(formData);  
+        console.log(data);  
+        if (data.password !== data.passwordConfirm) {
+            setError("Passwords do not match");
+            return;
+        }
+        const JSONData = JSON.stringify(data);  
+        console.log(JSONData);  
+        
+        const options = {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -25,31 +43,56 @@ export default function registerPage() {
             body : JSONData
         }
 
-        const response = await fetch("/api/register/", options);
+        const response = await fetch("/api/auth/register/", options);
         const result = await response.json();
         setResults(result);
-        console.log(results);
-    
-   };
+        console.log(result);        
+        redirect('/login');
+    };
+
     return (
         <div className="register_container">
             <h1>Register</h1>
             <form className="register_form" onSubmit={handleForm}>
-                <div className="input_div">
+                <div className="input_container">
                     <label htmlFor="username">Username</label>
-                    <input name="username" id="username" type="text" maxLength={20} required/>
+                    <div className="input_div">
+                        <input name="username" id="username" type="text" maxLength={20} required/>
+                    </div>
                 </div>
-                <div className="input_div">
+                <div className="input_container">
                     <label htmlFor="email">Email</label>
-                    <input name="email" id="email" type="email" maxLength={20} required/>
-                </div>
-                <div className="input_div">
+                    <div className="input_div">
+                        <input name="email" id="email" type="email" maxLength={50} required/>
+                    </div>
+                </div>    
+                <div className="input_container">
                     <label htmlFor="password">Password</label>
-                    <input name="password" id="password" type="password" maxLength={20} required/>
+                    <div className="input_div">
+                        <input name="password" id="password" type={showPassword ? "text" : "password"} maxLength={50} required />
+                        <button className="showPassword_btn" type="button" onClick={handlePasswordVisibility}>
+                            <img src={showPassword ? "/eye-closed-bold.svg" : "/eye-bold.svg"} alt={showPassword ? "Hide" : "Show"}/>
+                        </button>
+                    </div>
                 </div>
-                <button type="submit">Register</button>
+                <div className="input_container">
+                    <label htmlFor="passwordConfirm">Password Confirmation</label>
+                    <div className="input_div">
+                        <input name="passwordConfirm" id="passwordConfirm" type={showPasswordConfirm ? "text" : "password"} maxLength={50} required />
+                        <button className="showPassword_btn" type="button" onClick={handlePasswordConfirmVisibility}>
+                            <img src={showPasswordConfirm ? "/eye-closed-bold.svg" : "/eye-bold.svg"} alt={showPasswordConfirm ? "Hide" : "Show"}/>
+                        </button>
+                    </div>
+                </div>
+                <div className="buttons_container">
+                    <button type="submit" className="confirm_btn">Sign Up</button>
+                    <Link href="/login">
+                        <button type="button" className="redirect_btn">Login</button>
+                    </Link>
+                </div>
+
+                {error && <p className="error_message">{error}</p>}
             </form>
-            
         </div>
     )
 }

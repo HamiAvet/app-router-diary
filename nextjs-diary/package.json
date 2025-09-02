@@ -6,10 +6,12 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
+    "generateKey" : "npx tsx app/cli/generateKey.js",
     "lint": "next lint"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.1",
+    "jose": "^6.1.0",
     "next": "15.3.4",
     "postgres": "^3.4.7",
     "react": "^19.0.0",

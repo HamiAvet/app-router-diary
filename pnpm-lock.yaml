@@ -11,6 +11,9 @@ importers:
       '@neondatabase/serverless':
         specifier: github:neondatabase/serverless
         version: https://codeload.github.com/neondatabase/serverless/tar.gz/20240e08e7babac5dca4ec02b9ca3fa541ce7f93
+      jose:
+        specifier: ^6.1.0
+        version: 6.1.0
 
 packages:
 
@@ -24,6 +27,9 @@ packages:
 
   '@types/pg@8.15.4':
     resolution: {integrity: sha512-I6UNVBAoYbvuWkkU3oosC8yxqH21f4/Jc4DK71JLG3dT2mdlGe1z+ep/LQGXaKaOgcvUrsQoPRqfgtMcvZiJhg==}
+
+  jose@6.1.0:
+    resolution: {integrity: sha512-TTQJyoEoKcC1lscpVDCSsVgYzUDg/0Bt3WE//WiTPK6uOCQC2KZS4MpugbMWt/zyjkopgZoXhZuCi00gLudfUA==}
 
   pg-int8@1.0.1:
     resolution: {integrity: sha512-WCtabS6t3c8SkpDBUlb1kjOs7l66xsGdKpIPZsg4wR+B3+u9UAum2odSsF9tnvxg80h4ZxLWMy4pRjOsFIqQpw==}
@@ -75,6 +81,8 @@ snapshots:
       '@types/node': 22.16.4
       pg-protocol: 1.10.3
       pg-types: 2.2.0
+
+  jose@6.1.0: {}
 
   pg-int8@1.0.1: {}
 

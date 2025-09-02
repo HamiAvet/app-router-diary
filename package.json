@@ -1,5 +1,0 @@
-{
-	"dependencies": {
-		"@neondatabase/serverless": "github:neondatabase/serverless"
-	}
-}

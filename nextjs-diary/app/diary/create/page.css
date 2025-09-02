@@ -9,6 +9,7 @@
 
 .createEvent_container h1 {
   margin-bottom: 20px;
+  text-align: center;
 }
 
 .createEvent_form {
@@ -19,6 +20,7 @@
   background: #fff;
   display: flex;
   flex-direction: column;
+  justify-content: space-evenly;
   gap: 20px;
 }
 
@@ -41,15 +43,10 @@
   transition: border 0.2s ease;
 }
 
-.date_hour_container {
-  display: flex;
-  gap: 15px;
-}
-
 .buttons_container {
   display: flex;
-  justify-content: flex-end;
-  gap: 12px;
+  justify-content: center;
+  gap: 20px;
 }
 
 .confirm_btn {
@@ -61,6 +58,7 @@
   font-weight: 600;
   cursor: pointer;
   transition: 0.2s;
+  width: 160px;
 }
 
 .confirm_btn:hover {
@@ -77,6 +75,7 @@
   font-weight: 600;
   cursor: pointer;
   transition: 0.2s;
+  width: 160px;
 }
 
 .cancel_btn:hover {
@@ -86,16 +85,16 @@
 
 .error_message {
   color: #dc2626;
-  margin-bottom: 15px;
   font-weight: 500;
+  text-align: center;
 }
 
-@media (max-width: 600px) {
-  .date_hour_container {
-    flex-direction: column;
-  }
+@media (max-width: 400px) {
   .buttons_container {
     flex-direction: column;
     align-items: stretch;
+  }
+  .confirm_btn, .cancel_btn {
+    width: 100%;
   }
 }

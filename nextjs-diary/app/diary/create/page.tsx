@@ -72,15 +72,13 @@ export default function CreateEventForm() {
                         <option value="festivities">festivities</option>
                     </select>
                 </div>
-                <div className="date_hour_container">
-                    <div className="input_div">
-                        <label htmlFor="date">Date</label>
-                        <input name="date" id="date" type="date" className="date_input" required/>
-                    </div>
-                    <div className="input_div">
-                        <label htmlFor="hour">Hour</label>
-                        <input name="hour" id="hour" type="time" className="hour_input" required/>
-                    </div>
+                <div className="input_div">
+                    <label htmlFor="date">Date</label>
+                    <input name="date" id="date" type="date" className="date_input" required/>
+                </div>
+                <div className="input_div">
+                    <label htmlFor="hour">Hour</label>
+                    <input name="hour" id="hour" type="time" className="hour_input" required/>
                 </div>
                 <div className="buttons_container">
                     <button className="confirm_btn" type="submit">Confirm</button>
@@ -88,8 +86,9 @@ export default function CreateEventForm() {
                         <button className="cancel_btn" type="button">Cancel</button>
                     </Link>
                 </div>
+                {error && <div className="error_message">{error}</div>}
         </form>
-        {error && <div className="error_message" style={{marginTop: "10px", fontWeight: "bold"}}>{error}</div>}
+            
         </div>
         
     )

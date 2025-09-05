@@ -57,13 +57,13 @@ export default function registerPage() {
                 <div className="input_container">
                     <label htmlFor="username">Username</label>
                     <div className="input_div">
-                        <input name="username" id="username" type="text" maxLength={20} required/>
+                        <input name="username" id="username" type="text" maxLength={20} required autoComplete="off"/>
                     </div>
                 </div>
                 <div className="input_container">
                     <label htmlFor="email">Email</label>
                     <div className="input_div">
-                        <input name="email" id="email" type="email" maxLength={50} required/>
+                        <input name="email" id="email" type="email" maxLength={50} required autoComplete="lo"/>
                     </div>
                 </div>    
                 <div className="input_container">

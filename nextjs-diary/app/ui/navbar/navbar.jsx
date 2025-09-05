@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import LogoutButton from "@/app/ui/logoutButton/logoutButton"
 import "./navbar.css";
 
 export default function NavBar() {
@@ -31,11 +32,7 @@ export default function NavBar() {
                 </button>
             </div>
             <div className="buttons-container">
-                {isLoggedIn ? (
-                    <button className="logout_button" onClick={handleLogin} >Logout</button>
-                ) : (
-                    <button className="login_button" onClick={handleLogin} >Login</button>
-                )}
+                <LogoutButton/>
             </div>
         </nav>
     )

@@ -35,25 +35,11 @@ export async function decodeUserSession(jwt) {
     return null
 }
 
-
-/*async function test() {
-    const userId = '1234567890'
-    const jwt = await encodeUserSession(userId)
-    console.log("JWT:", jwt);
-    
-    const payload = await decodeUserSession(jwt)        
-    console.log("Payload:", payload);
-    const user = payload.userId
-    console.log("user: ", user, "userId: ",userId, user === userId); 
-}
-    
-test().then(() => console.log("Test complete")).catch(console.error)*/
-
 export const setSessionUser = async (userId) => {
     try {
         const newSessionVale = await encodeUserSession(userId)
         const cookieStore = await cookies();
-        cookieStore.set('sessionId', newSessionVale, /*{ httpOnly: true, path: '/' }*/)
+        cookieStore.set('sessionId', newSessionVale)
     } catch (error) {
         return 
     }
@@ -73,4 +59,14 @@ export const getSessionUser = async () => {
         //console.error("Error decoding session:", error)
         return null
     }
+}
+
+export const endSessionUser = async () => {
+    try {
+        const cookieStore = await cookies()
+        cookieStore.delete('sessionId')
+    } catch (error) {
+        console.log(error);
+    }
+
 }

@@ -7,7 +7,7 @@ import Link from "next/link";
 import Image from "next/image";
 import "./page.css";
 
-export default function loginPage() {
+export default function LoginPage() {
     const [ showPassword, setShowPassword ] = useState<boolean>(false);
 
     const handlePasswordVisibility = (event: React.MouseEvent<HTMLButtonElement>) => {

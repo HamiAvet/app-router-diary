@@ -2,12 +2,12 @@
 
 import { FormEvent } from "react";
 import { useState } from "react";
-import Link from "next/link";
-import "./page.css";
 import { redirect } from "next/navigation";
+import Link from "next/link";
+import Image from "next/image";
+import "./page.css";
 
-export default function registerPage() {
-    const [ results, setResults ] = useState<String | null>(null);
+export default function RegisterPage() {
     const [ error, setError ] = useState<String | null>(null);
     const [ showPassword, setShowPassword ] = useState<boolean>(false);
     const [ showPasswordConfirm, setShowPasswordConfirm ] = useState<boolean>(false);
@@ -44,10 +44,9 @@ export default function registerPage() {
         }
 
         const response = await fetch("/api/auth/register/", options);
-        const result = await response.json();
-        setResults(result);
-        console.log(result);        
-        redirect('/login');
+        if (response.status === 201) {
+            redirect('/login');
+        }
     };
 
     return (
@@ -71,7 +70,7 @@ export default function registerPage() {
                     <div className="input_div">
                         <input name="password" id="password" type={showPassword ? "text" : "password"} maxLength={50} required />
                         <button className="showPassword_btn" type="button" onClick={handlePasswordVisibility}>
-                            <img src={showPassword ? "/eye-closed-bold.svg" : "/eye-bold.svg"} alt={showPassword ? "Hide" : "Show"}/>
+                            <Image src={showPassword ? "/eye-closed-bold.svg" : "/eye-bold.svg"} alt={showPassword ? "Hide" : "Show"}/>
                         </button>
                     </div>
                 </div>
@@ -80,7 +79,7 @@ export default function registerPage() {
                     <div className="input_div">
                         <input name="passwordConfirm" id="passwordConfirm" type={showPasswordConfirm ? "text" : "password"} maxLength={50} required />
                         <button className="showPassword_btn" type="button" onClick={handlePasswordConfirmVisibility}>
-                            <img src={showPasswordConfirm ? "/eye-closed-bold.svg" : "/eye-bold.svg"} alt={showPasswordConfirm ? "Hide" : "Show"}/>
+                            <Image src={showPasswordConfirm ? "/eye-closed-bold.svg" : "/eye-bold.svg"} alt={showPasswordConfirm ? "Hide" : "Show"}/>
                         </button>
                     </div>
                 </div>

@@ -8,7 +8,7 @@ import Image from "next/image";
 import "./page.css";
 
 export default function RegisterPage() {
-    const [ error, setError ] = useState<String | null>(null);
+    const [ error, setError ] = useState<string | null>(null);
     const [ showPassword, setShowPassword ] = useState<boolean>(false);
     const [ showPasswordConfirm, setShowPasswordConfirm ] = useState<boolean>(false);
 

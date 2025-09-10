@@ -4,11 +4,10 @@ import { FormEvent } from "react";
 import { useState } from "react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import "./page.css";
 
 export default function loginPage() {
-    const [ results, setResults ] = useState(null);
-    const [ error, setError ] = useState<String | null>(null);
     const [ showPassword, setShowPassword ] = useState<boolean>(false);
 
     const handlePasswordVisibility = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -34,12 +33,9 @@ export default function loginPage() {
         }
 
         const response = await fetch("/api/auth/login/", options);
-        console.log(response);
         if (response.status === 201) {
             redirect('/diary');
-        }
-        const result = await response.json();
-        setResults(result);    
+        }  
    };
 
     return (
@@ -57,7 +53,7 @@ export default function loginPage() {
                     <div className="input_div">
                         <input name="password" id="password" type={showPassword ? "text" : "password"} maxLength={50} required />
                         <button className="showPassword_btn" type="button" onClick={handlePasswordVisibility}>
-                            <img src={showPassword ? "/eye-closed-bold.svg" : "/eye-bold.svg"} alt={showPassword ? "Hide" : "Show"}/>
+                            <Image src={showPassword ? "/eye-closed-bold.svg" : "/eye-bold.svg"} alt={showPassword ? "Hide" : "Show"}/>
                         </button>
                     </div>
                 </div>
@@ -67,7 +63,6 @@ export default function loginPage() {
                         <button className="redirect_btn">Sing Up</button>
                     </Link>
                 </div>
-                {error && <p className="error_message">{error}</p>}
             </form>
         </div>
     )

@@ -30,9 +30,8 @@ export async function decodeUserSession(jwt) {
 
         return payload
     } catch (error) {
-        
+        return error
     }
-    return null
 }
 
 export const setSessionUser = async (userId) => {
@@ -41,7 +40,7 @@ export const setSessionUser = async (userId) => {
         const cookieStore = await cookies();
         cookieStore.set('sessionId', newSessionVale)
     } catch (error) {
-        return 
+        return error
     }
 
 }
@@ -56,8 +55,7 @@ export const getSessionUser = async () => {
         const extractedUserId = await decodeUserSession(sessionId)
         return extractedUserId.userId
     } catch (error) {
-        //console.error("Error decoding session:", error)
-        return null
+        return error
     }
 }
 
@@ -66,7 +64,7 @@ export const endSessionUser = async () => {
         const cookieStore = await cookies()
         cookieStore.delete('sessionId')
     } catch (error) {
-        console.log(error);
+        return error
     }
 
 }

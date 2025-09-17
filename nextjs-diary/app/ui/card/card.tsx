@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import Image from "next/image"
 import { useSearchParams } from 'next/navigation';
-import useSWR, { mutate } from "swr";
+import useSWR from "swr";
 import './card.css'
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());

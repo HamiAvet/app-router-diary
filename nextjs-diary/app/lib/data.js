@@ -3,12 +3,6 @@ import { hashPassword } from './passwordUtils';
 
 const sql = postgres(process.env.POSTGRES_URL);
 
-export async function timeNow() {
-    const [dbResponse] = await sql`SELECT NOW()`
-    const dbNow = dbResponse && dbResponse.now ? dbResponse.now : ""
-    return {dbNow: dbNow}
-}
-
 export async function addLink(url) {
     await sql`
         CREATE TABLE IF NOT EXISTS "links"(
@@ -103,3 +97,21 @@ export async function getUserByEmail(user) {
         WHERE email = ${user.email}
     `
 }
+
+/*
+export async function changeUserPassword(user) {    
+    return await sql`
+        UPDATE users
+        SET password = ${hashPassword(user.newPassword)}
+        WHERE email = ${user.email}
+    `
+}
+
+export async function changeUserName(user) {    
+    return await sql`
+        UPDATE users
+        SET username = ${user.newUsername}
+        WHERE email = ${user.email}
+    `
+}
+*/

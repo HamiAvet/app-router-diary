@@ -70,7 +70,7 @@ export default function RegisterPage() {
                     <div className="input_div">
                         <input name="password" id="password" type={showPassword ? "text" : "password"} maxLength={50} required />
                         <button className="showPassword_btn" type="button" onClick={handlePasswordVisibility}>
-                            <Image src={showPassword ? "/eye-closed-bold.svg" : "/eye-bold.svg"} alt={showPassword ? "Hide" : "Show"}/>
+                            <Image width={20} height={20} src={showPassword ? "/eye-closed-bold.svg" : "/eye-bold.svg"} alt={showPassword ? "Hide" : "Show"}/>
                         </button>
                     </div>
                 </div>
@@ -79,7 +79,7 @@ export default function RegisterPage() {
                     <div className="input_div">
                         <input name="passwordConfirm" id="passwordConfirm" type={showPasswordConfirm ? "text" : "password"} maxLength={50} required />
                         <button className="showPassword_btn" type="button" onClick={handlePasswordConfirmVisibility}>
-                            <Image src={showPasswordConfirm ? "/eye-closed-bold.svg" : "/eye-bold.svg"} alt={showPasswordConfirm ? "Hide" : "Show"}/>
+                            <Image width={20} height={20} src={showPasswordConfirm ? "/eye-closed-bold.svg" : "/eye-bold.svg"} alt={showPasswordConfirm ? "Hide" : "Show"}/>
                         </button>
                     </div>
                 </div>

@@ -1,22 +1,10 @@
 'use client'
 
-import { useState } from "react";
 import Link from "next/link";
 import LogoutButton from "@/app/ui/logoutButton/logoutButton"
 import "./navbar.css";
 
 export default function NavBar() {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-    const handleLogin = () => {
-        if (!isLoggedIn) {
-            setIsLoggedIn(true); 
-        } else {
-            setIsLoggedIn(false);
-        }
-        
-    }
-
     return (
         <nav className="navBar">
             <div className="logo" >

@@ -7,10 +7,8 @@ import Link from "next/link"
 import "./page.css"
 
 export default function CreateEventForm() {
-    const [ results, setResults ] = useState(null);
     const [ error, setError ] = useState<string | null>(null);
     const router = useRouter();
-    console.log(results);
 
 
     const handleForm = async (event: FormEvent<HTMLFormElement>) => {  
@@ -40,9 +38,6 @@ export default function CreateEventForm() {
         }
 
         const response = await fetch("/api/diary/", options);
-        const result = await response.json();
-        
-        setResults(result);
 
         if (response.ok) {
             router.push('/diary');

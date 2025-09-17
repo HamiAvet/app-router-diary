@@ -1,38 +1,17 @@
-import getDomain from "@/app/lib/getDomain"
 import Card from "@/app/ui/card/card"
 import Search from "@/app/ui/search/search"
 import NavBar from "@/app/ui/navbar/navbar"
-import { timeNow } from "@/app/lib/data"
 import Link from "next/link"
 import Image from "next/image"
 import "./page.css"
 
-async function getData() {
-  const domain = getDomain()
-  const res = await fetch(`${domain}/api/posts`, {cache: 'no-store'})
-  if (!res.ok) {
-    throw new Error("Falled to fetch data")
-  }
+type tParams = Promise<{ query?: string, page?: string }>;
 
-  if (res.headers.get("content-type") !== "application/json") {
-    return {items: []}
-  }
-  return res.json()
-}
-
-export default async function Diary(props: { 
-  searchParams?: {
-    query?: string, page?: string 
-  };
-   }) {
-  const data = await getData()
-  const dbTime = await timeNow()
-  console.log("Now is ", dbTime);
-  const items = data && data.items ? [...data.items] : []
-  console.log(items);
-  console.log(process.env.NEXT_PUBLIC_VERCEL_URL);
-
+export default async function Diary(props: { searchParams?: tParams }) {
+    
   const searchParams = await props.searchParams;
+  //const { searchParams } = props
+
   const currentPage = Number(searchParams?.page) || 1;
   
 

@@ -53,7 +53,7 @@ export default function LoginPage() {
                     <div className="input_div">
                         <input name="password" id="password" type={showPassword ? "text" : "password"} maxLength={50} required />
                         <button className="showPassword_btn" type="button" onClick={handlePasswordVisibility}>
-                            <Image src={showPassword ? "/eye-closed-bold.svg" : "/eye-bold.svg"} alt={showPassword ? "Hide" : "Show"}/>
+                            <Image width={20} height={20} src={showPassword ? "/eye-closed-bold.svg" : "/eye-bold.svg"} alt={showPassword ? "Hide" : "Show"}/>
                         </button>
                     </div>
                 </div>

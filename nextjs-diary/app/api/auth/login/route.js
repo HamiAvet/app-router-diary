@@ -14,6 +14,8 @@ export async function POST(request) {
     const dbResponse = await getUserByEmail(data)    
     const userRecord = dbResponse[0];
     const userRecordId = userRecord.id
+    console.log("userRecordId:", userRecordId);
+    
     const passwordMatch = userRecord && verifyPassword(data.password, userRecord.password);
     
     if (passwordMatch) {

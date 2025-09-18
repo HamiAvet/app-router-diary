@@ -2,9 +2,12 @@
 
 import Link from "next/link";
 import LogoutButton from "@/app/ui/logoutButton/logoutButton"
+
 import "./navbar.css";
 
 export default function NavBar() {
+    const username = localStorage.getItem("username");
+    
     return (
         <nav className="navBar">
             <div className="logo" >
@@ -14,7 +17,7 @@ export default function NavBar() {
             </div>
             <div className="user" >
                 <img src="/user.svg" alt="User" width={40} height={40} />
-                <p>User Name</p>
+                <p>{username}</p>
                 <button className="settings_button" >
                     <img src="/settings-3-line.svg" alt="Settings" width={20} height={20} />
                 </button>

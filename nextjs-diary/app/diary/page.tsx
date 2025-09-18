@@ -8,13 +8,9 @@ import "./page.css"
 type tParams = Promise<{ query?: string, page?: string }>;
 
 export default async function Diary(props: { searchParams?: tParams }) {
-    
   const searchParams = await props.searchParams;
-  //const { searchParams } = props
-
   const currentPage = Number(searchParams?.page) || 1;
   
-
   return (
     <>
       <NavBar />

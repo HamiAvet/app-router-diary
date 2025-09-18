@@ -5,6 +5,7 @@ import { useState } from "react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import generateKey from "@/app/cli/generateKey";
 import "./page.css";
 
 export default function RegisterPage() {
@@ -24,10 +25,11 @@ export default function RegisterPage() {
 
     const handleForm = async (user: FormEvent<HTMLFormElement>) => {  
         user.preventDefault();  
+        const userId = generateKey();
         const formData = new FormData(user.currentTarget);  
+        formData.append('id', userId); 
         
         const data = Object.fromEntries(formData);  
-        console.log(data);  
         if (data.password !== data.passwordConfirm) {
             setError("Passwords do not match");
             return;

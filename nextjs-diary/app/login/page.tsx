@@ -33,7 +33,10 @@ export default function LoginPage() {
         }
 
         const response = await fetch("/api/auth/login/", options);
+        const result = await response.json();
+        
         if (response.status === 201) {
+            localStorage.setItem('username', result[0].username);
             redirect('/diary');
         }  
    };

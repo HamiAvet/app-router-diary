@@ -75,16 +75,16 @@ export async function updateEventStatus(event) {
 export async function addUser(user) {
     await sql`
         CREATE TABLE IF NOT EXISTS users (
-            id SERIAL PRIMARY KEY NOT NULL,
+            id VARCHAR(100) PRIMARY KEY NOT NULL,
             username VARCHAR(50) UNIQUE,
             email VARCHAR(100) UNIQUE,
             password VARCHAR(255)
         );
     `
     const inserted = await sql`
-        INSERT INTO users (username, email, password)
-        VALUES (${user.username}, ${user.email}, ${hashPassword(user.password)})
-        RETURNING id, username, email password;
+        INSERT INTO users (id, username, email, password)
+        VALUES (${user.id}, ${user.username}, ${user.email}, ${hashPassword(user.password)})
+        RETURNING id, username, email, password;
     `
 
     return inserted

@@ -3,7 +3,7 @@ import Search from "@/app/ui/search/search"
 import NavBar from "@/app/ui/navbar/navbar"
 import Link from "next/link"
 import Image from "next/image"
-import "./page.css"
+import "@/app/diary/page.css"
 
 type tParams = Promise<{ query?: string, page?: string }>;
 

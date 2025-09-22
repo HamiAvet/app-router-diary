@@ -4,7 +4,7 @@ import { FormEvent } from "react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link"
-import "./page.css"
+import "@/app/diary/create/page.css"
 
 export default function CreateEventForm() {
     const [ error, setError ] = useState<string | null>(null);

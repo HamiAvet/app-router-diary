@@ -23,10 +23,6 @@
     height: 30px;
 }
 
-.settings_button:hover {
-    transform: rotate(180deg);
-}
-
 .logout_button {
     background: #fff;
     color: #000;

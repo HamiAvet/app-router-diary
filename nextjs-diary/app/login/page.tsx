@@ -37,6 +37,7 @@ export default function LoginPage() {
         
         if (response.status === 201) {
             localStorage.setItem('username', result[0].username);
+            localStorage.setItem('userId', result[0].id);
             redirect('/diary');
         }  
    };

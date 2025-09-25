@@ -90,11 +90,38 @@ export async function addUser(user) {
     return inserted
 }
 
+
 export async function getUserByEmail(user) {    
     return await sql`
         SELECT id, username, email, password
         FROM users 
         WHERE email = ${user.email}
+    `
+}
+
+export async function getUserById(id) {    
+    return await sql`
+        SELECT id, username, email, password
+        FROM users 
+        WHERE id = ${id}
+    `
+}
+
+//updateUserById
+
+export async function changeUserNameById(user) {    
+    return await sql`
+        UPDATE users
+        SET username = ${user.newUsername}
+        WHERE id = ${user.id}
+    `
+}
+
+export async function changeUserEmailById(user) {    
+    return await sql`
+        UPDATE users
+        SET email = ${user.newEmail}
+        WHERE id = ${user.id}
     `
 }
 
@@ -107,11 +134,5 @@ export async function changeUserPassword(user) {
     `
 }
 
-export async function changeUserName(user) {    
-    return await sql`
-        UPDATE users
-        SET username = ${user.newUsername}
-        WHERE email = ${user.email}
-    `
-}
+
 */

@@ -2,34 +2,89 @@
 
 import "./page.css";
 import NavBar from "../ui/navbar/navbar"; 
-import { FormEvent } from "react";
+import { FormEvent, useEffect } from "react";
 import { useState } from "react";
-//import { redirect } from "next/navigation";
+import { redirect } from "next/navigation";
+import { hashPassword } from "../lib/passwordUtils";
 import Link from "next/link";
 import Image from "next/image";
-
 
 export default function Settings() {
     const [ error, setError ] = useState<string | null>(null);
     const [ showPassword, setShowPassword ] = useState<boolean>(false);
     const [ showPasswordConfirm, setShowPasswordConfirm ] = useState<boolean>(false);
+    const [ userData, setUserData ] = useState<{ username: string; email: string; password: string } | null>(null);
+    const [ hasNoChanged , setHasChanged ] = useState<boolean>(true);
   
     const handlePasswordVisibility = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
         setShowPassword(!showPassword);
-     }
+    };
   
     const handlePasswordConfirmVisibility = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
         setShowPasswordConfirm(!showPasswordConfirm);
-     }
-  
+    };
+
+    useEffect(() => {
+        async function fetchUserData() {
+            const userId = localStorage.getItem('userId');
+
+            if (userId) {
+                const response = await fetch(`/api/settings/${userId}`, { 
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                 });
+                if (response.ok) {
+                    const result = await response.json();
+                    setUserData(result[0])
+                    
+                    
+                }
+            }
+        }
+        fetchUserData();
+    }, []);
+    
+
     const handleForm = async (user: FormEvent<HTMLFormElement>) => {  
         user.preventDefault();  
         const formData = new FormData(user.currentTarget);  
+        const userId = localStorage.getItem('userId') || '';
+        formData.append('id', userId); 
         const data = Object.fromEntries(formData);
-        const JSONData = JSON.stringify(data);  
-        console.log(JSONData);  
+        if (data.password !== data.passwordConfirm) {
+            setError("Passwords do not match");
+            return;
+        }
+        let nameWasChanged = false;
+        let updateData = {id : userId} as { id : string; newUsername?: string | null; newEmail?: string | null; newPassword?: string | null};
+        if (userData?.username !== data.newUsername && typeof data.newUsername === 'string' && data.newUsername.trim() !== '') {
+            updateData.newUsername = data.newUsername as string;
+        } 
+        if (userData?.email !== data.newEmail && typeof data.newEmail === 'string' && data.newEmail.trim() !== '') {
+            updateData.newEmail = data.newEmail as string;
+        }
+
+        if (Object.keys(updateData).length === 1 || userData?.username === data.newUsername && userData?.email === data.newEmail) { 
+            redirect('/diary');
+        }
+
+        const options = {
+            method : "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body : JSON.stringify(updateData)
+        }
+
+        const response = await fetch("/api/settings/", options);
+        if (response.status === 200) {
+            if (nameWasChanged) localStorage.setItem('username', data.newUsername as string);
+            redirect('/diary');
+        }
     };
 
     return (
@@ -41,20 +96,20 @@ export default function Settings() {
                     <div className="input_container">
                         <label htmlFor="username">Username</label>
                         <div className="input_div">
-                            <input name="username" id="username" type="text" maxLength={20} placeholder="ggg" required autoComplete="off" />
+                            <input name="newUsername" id="username" type="text" maxLength={20} placeholder={userData?.username} autoComplete="off" />
                         </div>
                     </div>
                     <div className="input_container">
                         <label htmlFor="email">Email</label>
                         <div className="input_div">
-                            <input name="email" id="email" type="email" maxLength={50} placeholder="" required autoComplete="off"/>
+                            <input name="newEmail" id="email" type="email" maxLength={50} placeholder={userData?.email} autoComplete="off"/>
                         </div>
                     </div>    
                     <h2>Change your Password</h2>
                     <div className="input_container">
                         <label htmlFor="password">Password</label>
                         <div className="input_div">
-                            <input name="password" id="password" type={showPassword ? "text" : "password"} maxLength={50} required autoComplete="off"/>
+                            <input name="newPassword" id="password" type={showPassword ? "text" : "password"} maxLength={50} autoComplete="off"/>
                             <button className="showPassword_btn" type="button" onClick={handlePasswordVisibility}>
                                 <Image width={20} height={20} src={showPassword ? "/eye-closed-bold.svg" : "/eye-bold.svg"} alt={showPassword ? "Hide" : "Show"}/>
                             </button>
@@ -63,14 +118,14 @@ export default function Settings() {
                     <div className="input_container">
                         <label htmlFor="passwordConfirm">Password Confirmation</label>
                         <div className="input_div">
-                            <input name="passwordConfirm" id="passwordConfirm" type={showPasswordConfirm ? "text" : "password"} maxLength={50} required autoComplete="off"/>
+                            <input name="newPasswordConfirm" id="passwordConfirm" type={showPasswordConfirm ? "text" : "password"} maxLength={50} autoComplete="off"/>
                             <button className="showPassword_btn" type="button" onClick={handlePasswordConfirmVisibility}>
                                 <Image width={20} height={20} src={showPasswordConfirm ? "/eye-closed-bold.svg" : "/eye-bold.svg"} alt={showPasswordConfirm ? "Hide" : "Show"}/>
                             </button>
                         </div>
                     </div>
                     <div className="buttons_container">
-                        <button type="submit" className="confirm_btn">Confirm</button>
+                        <button type="submit" className="confirm_btn" disabled={hasNoChanged}>Confirm</button>
                         <Link href="/login">
                             <button type="button" className="redirect_btn">Cancel</button>
                         </Link>

@@ -49,6 +49,7 @@ export const getSessionUser = async () => {
     try {
         const cookieStore = await cookies()
         const sessionId = cookieStore.get('sessionId').value
+        
         if (!sessionId) {
             return null
         }

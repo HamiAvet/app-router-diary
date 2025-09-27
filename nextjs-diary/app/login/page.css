@@ -122,7 +122,11 @@
     flex-direction: column;
     align-items: stretch;
   }
-.confirm_btn, .redirect_btn {
+  .confirm_btn {
+    width: 100%;
+  }
+
+  .redirect_btn {
     width: 100%;
   }
 }

@@ -89,12 +89,16 @@
   text-align: center;
 }
 
-@media (max-width: 400px) {
+@media (max-width: 600px) {
   .buttons_container {
     flex-direction: column;
     align-items: stretch;
   }
-  .confirm_btn, .cancel_btn {
+  .confirm_btn {
+    width: 100%;
+  }
+
+  .cancel_btn {
     width: 100%;
   }
 }

@@ -23,6 +23,8 @@ export default function LogoutButton() {
  
         const response = await fetch("/api/auth/logout/", options);
         if (response.status === 200) {
+            localStorage.removeItem('userId');
+            localStorage.removeItem('username');
             redirect('/login');
         } 
     };

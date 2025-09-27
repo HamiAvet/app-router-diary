@@ -18,11 +18,8 @@ export default function LoginPage() {
     const handleForm = async (user: FormEvent<HTMLFormElement>) => {  
        user.preventDefault();  
        const formData = new FormData(user.currentTarget);  
-       
        const data = Object.fromEntries(formData);  
-       console.log(data);  
        const JSONData = JSON.stringify(data);  
-       console.log(JSONData);  
        
        const options = {
             method: "POST",

@@ -14,7 +14,7 @@ export default function Settings() {
     const [ showPassword, setShowPassword ] = useState<boolean>(false);
     const [ showPasswordConfirm, setShowPasswordConfirm ] = useState<boolean>(false);
     const [ userData, setUserData ] = useState<{ username: string; email: string; password: string } | null>(null);
-    const [ hasNoChanged , setHasChanged ] = useState<boolean>(true);
+    const [ hasNoChanged , setHasChanged ] = useState<boolean>(false);
   
     const handlePasswordVisibility = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
@@ -63,6 +63,7 @@ export default function Settings() {
         let updateData = {id : userId} as { id : string; newUsername?: string | null; newEmail?: string | null; newPassword?: string | null};
         if (userData?.username !== data.newUsername && typeof data.newUsername === 'string' && data.newUsername.trim() !== '') {
             updateData.newUsername = data.newUsername as string;
+            nameWasChanged = true;
         } 
         if (userData?.email !== data.newEmail && typeof data.newEmail === 'string' && data.newEmail.trim() !== '') {
             updateData.newEmail = data.newEmail as string;

@@ -12,5 +12,9 @@ export function hashPassword(rawPasswordString) {
 
 export function verifyPassword(enteredRawPassword, storeHash) {
     const hash = pbkdf2Sync(enteredRawPassword, saltKey, hashIterations, keylen, digest).toString('hex');
+    console.log(enteredRawPassword);
+    console.log(storeHash);
+    
+    
     return storeHash === hash;
 }

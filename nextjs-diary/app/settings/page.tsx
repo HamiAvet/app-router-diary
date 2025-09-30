@@ -5,7 +5,7 @@ import NavBar from "../ui/navbar/navbar";
 import { FormEvent, useEffect } from "react";
 import { useState } from "react";
 import { redirect } from "next/navigation";
-import { hashPassword } from "../lib/passwordUtils";
+import { hashPassword,  } from "../lib/passwordUtils";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -55,12 +55,16 @@ export default function Settings() {
         const userId = localStorage.getItem('userId') || '';
         formData.append('id', userId); 
         const data = Object.fromEntries(formData);
-        if (data.password !== data.passwordConfirm) {
+        console.log(data);
+        
+        if (data.newPassword !== data.newPasswordConfirm) {
+            console.log(false);
+            
             setError("Passwords do not match");
             return;
         }
         let nameWasChanged = false;
-        let updateData = {id : userId} as { id : string; newUsername?: string | null; newEmail?: string | null; newPassword?: string | null};
+        let updateData = {id : userId} as { id : string; newUsername?: string | null; newEmail?: string | null; newPassword?: string | null; oldPassword?: string | null};
         if (userData?.username !== data.newUsername && typeof data.newUsername === 'string' && data.newUsername.trim() !== '') {
             updateData.newUsername = data.newUsername as string;
             nameWasChanged = true;
@@ -68,9 +72,13 @@ export default function Settings() {
         if (userData?.email !== data.newEmail && typeof data.newEmail === 'string' && data.newEmail.trim() !== '') {
             updateData.newEmail = data.newEmail as string;
         }
+        if (userData?.password !== data.newPassword && typeof data.newPassword === 'string' && data.newPassword.trim() !== '') {
+            updateData.newPassword = data.newPassword as string
+            updateData.oldPassword = userData?.password
+        }  
 
         if (Object.keys(updateData).length === 1 || userData?.username === data.newUsername && userData?.email === data.newEmail) { 
-            redirect('/diary');
+            //redirect('/diary');
         }
 
         const options = {
@@ -84,7 +92,7 @@ export default function Settings() {
         const response = await fetch("/api/settings/", options);
         if (response.status === 200) {
             if (nameWasChanged) localStorage.setItem('username', data.newUsername as string);
-            redirect('/diary');
+            //redirect('/diary');
         }
     };
 

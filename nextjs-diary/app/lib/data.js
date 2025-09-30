@@ -109,6 +109,8 @@ export async function getUserById(id) {
 
 //updateUserById
 
+// Change functions
+
 export async function changeUserNameById(user) {    
     return await sql`
         UPDATE users
@@ -125,14 +127,11 @@ export async function changeUserEmailById(user) {
     `
 }
 
-/*
-export async function changeUserPassword(user) {    
+
+export async function changeUserPasswordById(user) {    
     return await sql`
         UPDATE users
         SET password = ${hashPassword(user.newPassword)}
-        WHERE email = ${user.email}
+        WHERE id = ${user.id}
     `
 }
-
-
-*/

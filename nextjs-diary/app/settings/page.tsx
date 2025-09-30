@@ -78,7 +78,7 @@ export default function Settings() {
         }  
 
         if (Object.keys(updateData).length === 1 || userData?.username === data.newUsername && userData?.email === data.newEmail) { 
-            //redirect('/diary');
+            redirect('/diary');
         }
 
         const options = {
@@ -92,7 +92,7 @@ export default function Settings() {
         const response = await fetch("/api/settings/", options);
         if (response.status === 200) {
             if (nameWasChanged) localStorage.setItem('username', data.newUsername as string);
-            //redirect('/diary');
+            redirect('/diary');
         }
     };
 

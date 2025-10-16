@@ -5,6 +5,8 @@ import Image from "next/image"
 import { useSearchParams } from 'next/navigation';
 import useSWR from "swr";
 import './card.css'
+//import notificationapi from 'notificationapi-node-server-sdk'
+// If you can't use import => const notificationapi = require('notificationapi-node-server-sdk').default
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -42,7 +44,7 @@ export default function Card({ currentPage }: { currentPage: number }) {
         data.forEach((event: Event) => {
             const eventDateTime = new Date(`${event.date}T${event.hour}`);                    
             if (eventDateTime < now) {            
-                handleDelete(event.id);
+                handleDelete(event);
             } 
         });
 
@@ -50,9 +52,8 @@ export default function Card({ currentPage }: { currentPage: number }) {
 
   const handlesStatus = async (event: Event) => {
     setPending(p => ({ ...p, [event.id]: true }));
-
+  
     try {
-      // toggle optimiste côté client
       const nextStatus = (localStatus[event.id] ?? event.status) === "Active" ? "Done" : "Active";
 
       await fetch(`/api/diary/${(event.id, event.status)}`, { 
@@ -60,10 +61,40 @@ export default function Card({ currentPage }: { currentPage: number }) {
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({ event })
 
-        });            
+      });            
+      const response = await fetch('https://api.eu.notificationapi.com/vsbqnhxe5aqbfjzro9slzx3fvh/sender', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': 'Basic ' + Buffer.from('vsbqnhxe5aqbfjzro9slzx3fvh:ckx6x6up03oqztvn21lpb33bu4o5dv9f6p7ilh8fuw90dvyclznkiibsk5').toString('base64')
+          },
+          body: JSON.stringify({
+            "type": "welcome_notification",
+            "to": {
+              "id": "hamov2003@gmail.com",
+              "email": "hamov2003@gmail.com",
+            },
 
-      // maj UI locale
+            "inapp": {
+              "title": event.status === "Active" ? `Your event "${event.topic}" is Done !` : `Your event "${event.topic}" is Active !`,
+            },
+
+            "web_push": {
+              "title": "Hello",
+              "message": "Hello, world!",
+              "icon": "/diary-icon.svg",
+              "url": "/diary",
+            },
+
+          })
+      });
       setLocalStatus(prev => ({ ...prev, [event.id]: nextStatus }));
+
+
+
+        const result = await response.json();
+        console.log('Notification sent:', result);
 
     } catch (e) {
       console.error(e);
@@ -72,13 +103,44 @@ export default function Card({ currentPage }: { currentPage: number }) {
     }
   };
 
-  const handleDelete = async (id: number) => {
-    await fetch(`/api/diary/${id}`, {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id })
-    });
+  const handleDelete = async (event: Event) => {
+    try {
+      const response = await fetch('https://api.eu.notificationapi.com/vsbqnhxe5aqbfjzro9slzx3fvh/sender', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Basic ' + Buffer.from('vsbqnhxe5aqbfjzro9slzx3fvh:ckx6x6up03oqztvn21lpb33bu4o5dv9f6p7ilh8fuw90dvyclznkiibsk5').toString('base64')
+        },
+        body: JSON.stringify({
+          "type": "welcome_notification",
+          "to": {
+            "id": "hamov2003@gmail.com",
+            "email": "hamov2003@gmail.com",
+          },
+          "inapp": {
+            "title": `Your event "${event.topic}" has been deleted!`,
+          },
+          "web_push": {
+            "title": "Event deleted",
+            "message": `The event "${event.topic}" has been deleted!`,
+            "icon": "/diary-icon.svg",
+            "url": "/diary"
+          },
+        })
+      });
+      const notifResult = await response.json();
+      console.log('Notification sent:', notifResult);
 
+      // Supprime l'event
+      await fetch(`/api/diary/${event.id}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: event.id })
+      });
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   if (error) return <div className="error">An error happening</div>
@@ -136,7 +198,7 @@ export default function Card({ currentPage }: { currentPage: number }) {
                   </div>
                 </div>
               </div>
-              <button className="delete" onClick={() => handleDelete(event.id)}>
+              <button className="delete" onClick={() => handleDelete(event)}>
                 <Image src="/delete-bin-7-line.svg" alt="delete" width={20} height={20} />
               </button>
             </div>

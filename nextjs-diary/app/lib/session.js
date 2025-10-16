@@ -20,7 +20,6 @@ export default async function encodeUserSession(userId) {
     
 }
 
-
 export async function decodeUserSession(jwt) {
     try {
         const { payload } = await jose.jwtDecrypt(jwt, secret, {

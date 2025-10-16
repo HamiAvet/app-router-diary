@@ -6,13 +6,15 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "generateKey" : "npx tsx app/cli/generateKey.js",
+    "generateKey": "npx tsx app/cli/generateKey.js",
     "lint": "next lint"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.1",
+    "@notificationapi/react": "^1.4.1",
     "jose": "^6.1.0",
     "next": "15.3.4",
+    "notificationapi-node-server-sdk": "^2.5.1",
     "postgres": "^3.4.7",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

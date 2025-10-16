@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import NotificationProvider from "./NotificationProvider";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -22,10 +23,33 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+
+  if ('serviceWorker' in navigator) {
+
+// Регистрируем сервисный рабочий процесс
+
+navigator.serviceWorker.register('/notificationapi-service-worker.js')
+
+.then(function(registration) {
+
+console.log('Сервисный рабочий процесс зарегистрирован с областью:', registration.scope);
+
+})
+
+.catch(function(error) {
+
+console.error('Ошибка при регистрации сервисного рабочего процесса:', error);
+
+});
+
+}
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
+        <NotificationProvider>
         {children}
+        </NotificationProvider>
       </body>
     </html>
   );

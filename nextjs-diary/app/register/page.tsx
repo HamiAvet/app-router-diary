@@ -9,6 +9,10 @@ import generateKey from "@/app/cli/generateKey";
 import "./page.css";
 
 export default function RegisterPage() {
+    /*const user = await getSessionUser();
+    if (JSON.stringify(user) !== "{}") {
+        redirect('/diary');
+    }*/
     const [ error, setError ] = useState<string | null>(null);
     const [ showPassword, setShowPassword ] = useState<boolean>(false);
     const [ showPasswordConfirm, setShowPasswordConfirm ] = useState<boolean>(false);

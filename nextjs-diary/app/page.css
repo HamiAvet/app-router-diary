@@ -89,3 +89,32 @@ body {
   background: #d1d5db;
   transform: scale(1.02);
 }
+
+@media (max-width: 1500px) {
+  .home_main {
+    flex-direction: column;
+  }
+  .home_main img {
+    width: 300px;
+  }
+  .home_text_container {
+    height: 300px;
+  }
+}
+
+@media (max-width: 360px) {
+  .home_text_container h1 {
+    font-size: 2.2rem;
+  }
+  .buttons_container {
+    flex-direction: column;
+  }
+  .home_text_container {
+    max-width: 90%;
+    height: auto;
+    gap: 20px;
+  }
+  .home_main img {
+    width: 200px;
+  }
+}

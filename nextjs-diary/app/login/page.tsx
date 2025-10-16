@@ -6,8 +6,13 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import "./page.css";
+//import { getSessionUser } from "../lib/session";
 
 export default function LoginPage() {
+    /*const user = await getSessionUser();
+    if (JSON.stringify(user) !== "{}") {
+        redirect('/diary');
+    }*/
     const [ showPassword, setShowPassword ] = useState<boolean>(false);
 
     const handlePasswordVisibility = (event: React.MouseEvent<HTMLButtonElement>) => {

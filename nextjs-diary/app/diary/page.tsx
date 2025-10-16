@@ -5,6 +5,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { getSessionUser } from "@/app/lib/session"
 import { redirect } from "next/navigation"
+
 import "@/app/diary/page.css"
 
 type tParams = Promise<{ query?: string, page?: string }>;
@@ -12,10 +13,11 @@ type tParams = Promise<{ query?: string, page?: string }>;
 export default async function Diary(props: { searchParams?: tParams }) {
   const searchParams = await props.searchParams;
   const currentPage = Number(searchParams?.page) || 1;
-  const user = await getSessionUser();
+  /*const user = await getSessionUser();
   if (JSON.stringify(user) === "{}") {
     redirect('/');
-  }
+  }*/
+
   return (
     <>
       <NavBar />

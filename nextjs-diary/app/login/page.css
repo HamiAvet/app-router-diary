@@ -130,3 +130,9 @@
     width: 100%;
   }
 }
+
+@media (max-height: 500px) {
+  .login_container {
+    margin-top: 40px;
+  }
+}

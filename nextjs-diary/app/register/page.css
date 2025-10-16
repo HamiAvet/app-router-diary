@@ -128,3 +128,9 @@
     width: 100%;
   }
 }
+
+@media (max-height: 500px) {
+  .register_container {
+    margin-top: 40px;
+  }
+}

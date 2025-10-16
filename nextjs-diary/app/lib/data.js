@@ -107,8 +107,6 @@ export async function getUserById(id) {
     `
 }
 
-//updateUserById
-
 // Change functions
 
 export async function changeUserNameById(user) {    

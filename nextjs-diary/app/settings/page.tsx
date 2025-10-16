@@ -5,7 +5,7 @@ import NavBar from "../ui/navbar/navbar";
 import { FormEvent, useEffect } from "react";
 import { useState } from "react";
 import { redirect } from "next/navigation";
-import { hashPassword,  } from "../lib/passwordUtils";
+import WebPushPermissionButton from "../ui/WebPushPermissionButton/WebPushPermissionButton";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -40,11 +40,10 @@ export default function Settings() {
                 if (response.ok) {
                     const result = await response.json();
                     setUserData(result[0])
-                    
-                    
                 }
             }
         }
+        
         fetchUserData();
     }, []);
     
@@ -68,13 +67,16 @@ export default function Settings() {
         if (userData?.username !== data.newUsername && typeof data.newUsername === 'string' && data.newUsername.trim() !== '') {
             updateData.newUsername = data.newUsername as string;
             nameWasChanged = true;
+            setHasChanged(true);
         } 
         if (userData?.email !== data.newEmail && typeof data.newEmail === 'string' && data.newEmail.trim() !== '') {
             updateData.newEmail = data.newEmail as string;
+            setHasChanged(true);
         }
         if (userData?.password !== data.newPassword && typeof data.newPassword === 'string' && data.newPassword.trim() !== '') {
             updateData.newPassword = data.newPassword as string
             updateData.oldPassword = userData?.password
+            setHasChanged(true);
         }  
 
         if (Object.keys(updateData).length === 1 || userData?.username === data.newUsername && userData?.email === data.newEmail) { 
@@ -101,6 +103,7 @@ export default function Settings() {
             <NavBar />
             <div className="register_container">
                 <h1>Account Settings</h1>
+                <WebPushPermissionButton />
                 <form className="register_form" onSubmit={handleForm}>
                     <div className="input_container">
                         <label htmlFor="username">Username</label>

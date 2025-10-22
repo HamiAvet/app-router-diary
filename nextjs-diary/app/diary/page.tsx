@@ -3,9 +3,6 @@ import Search from "@/app/ui/search/search"
 import NavBar from "@/app/ui/navbar/navbar"
 import Link from "next/link"
 import Image from "next/image"
-import { getSessionUser } from "@/app/lib/session"
-import { redirect } from "next/navigation"
-
 import "@/app/diary/page.css"
 
 type tParams = Promise<{ query?: string, page?: string }>;

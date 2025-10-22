@@ -1,4 +1,4 @@
-import { pbkdf2Sync } from "node:crypto"
+import { pbkdf2Sync } from "crypto"
 
 const saltKey = process.env.SALT_KEY ? process.env.SALT_KEY : '3ed3ffd97c14fe72ddc2d2d3651881c6'
 const hashIterations = 100000
@@ -12,9 +12,6 @@ export function hashPassword(rawPasswordString) {
 
 export function verifyPassword(enteredRawPassword, storeHash) {
     const hash = pbkdf2Sync(enteredRawPassword, saltKey, hashIterations, keylen, digest).toString('hex');
-    console.log(enteredRawPassword);
-    console.log(storeHash);
-    
     
     return storeHash === hash;
 }

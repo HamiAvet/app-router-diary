@@ -1,6 +1,6 @@
 'use client';
 
-import { NotificationAPIProvider, NotificationPopup } from '@notificationapi/react'
+import { NotificationAPIProvider } from '@notificationapi/react';
 
 const WebPushPermissionButton: React.FC = () => {
   const notificationapi = NotificationAPIProvider.useNotificationAPIContext();

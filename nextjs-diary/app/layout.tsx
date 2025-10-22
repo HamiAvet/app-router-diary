@@ -24,8 +24,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
 
-
-  if ('serviceWorker' in navigator) {
+/*  if ('serviceWorker' in navigator) {
 
 // Регистрируем сервисный рабочий процесс
 
@@ -43,8 +42,9 @@ console.error('Ошибка при регистрации сервисного �
 
 });
 
-}
-  return (
+}*/
+  
+return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <NotificationProvider>

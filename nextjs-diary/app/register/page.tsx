@@ -34,10 +34,14 @@ export default function RegisterPage() {
         formData.append('id', userId); 
         
         const data = Object.fromEntries(formData);  
+        console.log(data.password);
+        
         if (data.password !== data.passwordConfirm) {
             setError("Passwords do not match");
             return;
         }
+
+        
         const JSONData = JSON.stringify(data);  
         console.log(JSONData);  
         

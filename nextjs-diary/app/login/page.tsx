@@ -14,6 +14,7 @@ export default function LoginPage() {
         redirect('/diary');
     }*/
     const [ showPassword, setShowPassword ] = useState<boolean>(false);
+    const [ error, setError ] = useState<string | null>(null);
 
     const handlePasswordVisibility = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
@@ -41,7 +42,9 @@ export default function LoginPage() {
             localStorage.setItem('username', result[0].username);
             localStorage.setItem('userId', result[0].id);
             redirect('/diary');
-        }  
+        } else {
+            setError(result.error);
+        }
    };
 
     return (
@@ -69,6 +72,7 @@ export default function LoginPage() {
                         <button className="redirect_btn">Sing Up</button>
                     </Link>
                 </div>
+                {error && <p className="error_message">{error}</p>}
             </form>
         </div>
     )

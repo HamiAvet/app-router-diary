@@ -12,7 +12,9 @@ export async function GET() {
 
 export async function POST(request) {
     const data = await request.json()
-    if (!data.topic || !data.category || !data.date || !data.hour) {
+    console.log(data);
+    
+    if (!data.topic || !data.category || !data.date) {
         return NextResponse.json({ error: 'All fields are required' }, { status: 400 });
     }
     const dbResponse = await addEvent(data)    

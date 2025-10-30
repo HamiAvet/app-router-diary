@@ -3,43 +3,20 @@ import { hashPassword } from './passwordUtils';
 
 const sql = postgres(process.env.POSTGRES_URL);
 
-export async function addLink(url) {
-    await sql`
-        CREATE TABLE IF NOT EXISTS "links"(
-            "id" serial PRIMARY KEY NOT NULL,
-            "url" text NOT NULL,
-            "create_at" timestamp DEFAULT now()
-        )
-    `;
-
-    const inserted = await sql`
-        INSERT INTO links (url)
-        VALUES (${url})
-        RETURNING id, url, create_at;
-    `;
-
-    return inserted; 
-}
-
-
-export async function getLink() {
-    return await sql`
-        SELECT * FROM links
-    `;
-}
-
 // Diary event functions
 export async function addEvent(event) {
-    await sql`
+    console.log(event);
+    
+    /*await sql`
         CREATE TABLE IF NOT EXISTS events (
             id SERIAL PRIMARY KEY NOT NULL,
             topic VARCHAR(255),
             category VARCHAR(255),
             date VARCHAR(50),
             hour VARCHAR(10),
-            status VARCHAR(6)
+            status VARCHAR(10)
         );
-    `
+    `*/
     const inserted = await sql`
         INSERT INTO events (topic, category, date, hour, status)
         VALUES (${event.topic}, ${event.category}, ${event.date}, ${event.hour}, ${"Active"})
@@ -52,7 +29,8 @@ export async function addEvent(event) {
 export async function getEvent() {
     return await sql`
         SELECT * FROM events 
-        ORDER BY date, hour;
+        ORDER BY date, hour
+        
     `;
 }
 
@@ -90,7 +68,6 @@ export async function addUser(user) {
     return inserted
 }
 
-
 export async function getUserByEmail(user) {    
     return await sql`
         SELECT id, username, email, password
@@ -108,7 +85,6 @@ export async function getUserById(id) {
 }
 
 // Change functions
-
 export async function changeUserNameById(user) {    
     return await sql`
         UPDATE users
@@ -125,11 +101,17 @@ export async function changeUserEmailById(user) {
     `
 }
 
-
 export async function changeUserPasswordById(user) {    
     return await sql`
         UPDATE users
         SET password = ${hashPassword(user.newPassword)}
         WHERE id = ${user.id}
+    `
+}
+
+export async function deleteUserById(id) {    
+    return await sql`
+        DELETE FROM users 
+        WHERE id = ${id}
     `
 }

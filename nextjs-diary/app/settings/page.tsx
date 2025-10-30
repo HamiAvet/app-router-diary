@@ -6,6 +6,7 @@ import { FormEvent, useEffect } from "react";
 import { useState } from "react";
 import { redirect } from "next/navigation";
 import WebPushPermissionButton from "../ui/WebPushPermissionButton/WebPushPermissionButton";
+import DeleteAccountButton from "../ui/deleteAccountButton/deleteAccountButton"
 import Link from "next/link";
 import Image from "next/image";
 
@@ -76,7 +77,6 @@ export default function Settings() {
             updateData.oldPassword = userData?.password
             setHasChanged(true);
         }  
-
         if (Object.keys(updateData).length === 1 || userData?.username === data.newUsername && userData?.email === data.newEmail) { 
             redirect('/diary');
         }
@@ -102,6 +102,7 @@ export default function Settings() {
             <div className="register_container">
                 <h1>Account Settings</h1>
                 <WebPushPermissionButton />
+                <DeleteAccountButton />
                 <form className="register_form" onSubmit={handleForm}>
                     <div className="input_container">
                         <label htmlFor="username">Username</label>

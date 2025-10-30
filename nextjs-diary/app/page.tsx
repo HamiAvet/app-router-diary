@@ -1,12 +1,15 @@
 'use client';
 
+
 import Link from "next/link";
 import Image from "next/image";
 
 import "./page.css";
 
 export default function Home() {
-  
+  // get actual url
+
+
     /*const userId = localStorage.getItem('userId');
     if (userId) {
       redirect('/diary');

@@ -132,7 +132,6 @@ export default function Card({ currentPage }: { currentPage: number }) {
       const notifResult = await response.json();
       console.log('Notification sent:', notifResult);
 
-      // Supprime l'event
       await fetch(`/api/diary/${event.id}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
@@ -173,9 +172,11 @@ export default function Card({ currentPage }: { currentPage: number }) {
             <div className="event_container">
               <div className="main_event">
                 <div className="event_detail">
+                  { event.hour ? (
                   <div className="hour_case">
                     <p className="hour">{event.hour}</p>
                   </div>
+                  ) : null}
                   <div className="category_case">
                     <p className="category" style={{ background: Categories[event.category] }}>{event.category}</p>
                   </div>

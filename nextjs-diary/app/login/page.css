@@ -27,7 +27,7 @@
 .input_container {
   display: flex;
   flex-direction: column;
-  margin-bottom: 10px;
+  height: 90px;
 }
 
 .input_container label {
@@ -39,6 +39,7 @@
   display: flex;
   flex-direction: row;
   position: relative;
+  z-index: 3;
 }
 
 .input_div input,
@@ -115,6 +116,22 @@
   color: #dc2626;
   font-weight: 500;
   text-align: center;
+  margin-top: 10px;
+  animation: errorPopup 0.6s ease forwards;
+  z-index: 1;
+}
+
+@keyframes errorPopup {
+  from {
+    opacity: 0;
+    height: 0;
+    transform: translateY(-40px);
+  }
+  to {
+    opacity: 1;
+    height: auto;
+    transform: translateY(0px);
+  }
 }
 
 @media (max-width: 600px) {

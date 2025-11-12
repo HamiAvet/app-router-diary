@@ -8,12 +8,24 @@ import Image from "next/image";
 import generateKey from "@/app/cli/generateKey";
 import "./page.css";
 
+export type Errors = {
+    usernameError: string,
+    emailError: string,
+    passwordError: string,
+    passwordConfirmError: string,
+}
+
 export default function RegisterPage() {
     /*const user = await getSessionUser();
     if (JSON.stringify(user) !== "{}") {
         redirect('/diary');
     }*/
-    const [ error, setError ] = useState<string | null>(null);
+    const [ errors, setErrors ] = useState<Errors | null>({
+        usernameError: "",
+        emailError: "",
+        passwordError: "",
+        passwordConfirmError: "",
+    });;
     const [ showPassword, setShowPassword ] = useState<boolean>(false);
     const [ showPasswordConfirm, setShowPasswordConfirm ] = useState<boolean>(false);
 
@@ -29,19 +41,16 @@ export default function RegisterPage() {
 
     const handleForm = async (user: FormEvent<HTMLFormElement>) => {  
         user.preventDefault();  
+        setErrors({
+            usernameError: "",
+            emailError: "",
+            passwordError: "",
+            passwordConfirmError: "",
+        })
         const userId = generateKey();
         const formData = new FormData(user.currentTarget);  
         formData.append('id', userId); 
-        
         const data = Object.fromEntries(formData);  
-        console.log(data.password);
-        
-        if (data.password !== data.passwordConfirm) {
-            setError("Passwords do not match");
-            return;
-        }
-
-        
         const JSONData = JSON.stringify(data);  
         console.log(JSONData);  
         
@@ -54,7 +63,18 @@ export default function RegisterPage() {
         }
 
         const response = await fetch("/api/auth/register/", options);
-        if (response.status === 201) {
+
+        if (response.status === 400) {
+            const result = await response.json();            
+            setErrors({
+                usernameError: result.usernameError || "",
+                emailError: result.emailError || "",
+                passwordError: result.passwordError || "",
+                passwordConfirmError: data.password !== data.passwordConfirm ? "Passwords do not match" : "",
+            });            
+            console.log(errors);
+        } else if (response.status === 201) {
+            console.log("ok")
             redirect('/login');
         }
     };
@@ -66,32 +86,36 @@ export default function RegisterPage() {
                 <div className="input_container">
                     <label htmlFor="username">Username</label>
                     <div className="input_div">
-                        <input name="username" id="username" type="text" maxLength={20} required autoComplete="off"/>
+                        <input name="username" id="username" type="text" maxLength={20} autoComplete="off"/>
                     </div>
+                    {errors?.usernameError && <p className="error_message">{ errors.usernameError }</p>}
                 </div>
                 <div className="input_container">
                     <label htmlFor="email">Email</label>
                     <div className="input_div">
-                        <input name="email" id="email" type="email" maxLength={50} required autoComplete="lo"/>
+                        <input name="email" id="email" type="email" maxLength={50} autoComplete="lo"/>
                     </div>
+                    {errors?.emailError && <p className="error_message">{ errors.emailError }</p>}
                 </div>    
                 <div className="input_container">
                     <label htmlFor="password">Password</label>
                     <div className="input_div">
-                        <input name="password" id="password" type={showPassword ? "text" : "password"} maxLength={50} required />
+                        <input name="password" id="password" type={showPassword ? "text" : "password"} maxLength={50} />
                         <button className="showPassword_btn" type="button" onClick={handlePasswordVisibility}>
                             <Image width={20} height={20} src={showPassword ? "/eye-closed-bold.svg" : "/eye-bold.svg"} alt={showPassword ? "Hide" : "Show"}/>
                         </button>
                     </div>
+                    {errors?.passwordError && <p className="error_message">{ errors.passwordError }</p>}
                 </div>
                 <div className="input_container">
                     <label htmlFor="passwordConfirm">Password Confirmation</label>
                     <div className="input_div">
-                        <input name="passwordConfirm" id="passwordConfirm" type={showPasswordConfirm ? "text" : "password"} maxLength={50} required />
+                        <input name="passwordConfirm" id="passwordConfirm" type={showPasswordConfirm ? "text" : "password"} maxLength={50} />
                         <button className="showPassword_btn" type="button" onClick={handlePasswordConfirmVisibility}>
                             <Image width={20} height={20} src={showPasswordConfirm ? "/eye-closed-bold.svg" : "/eye-bold.svg"} alt={showPasswordConfirm ? "Hide" : "Show"}/>
                         </button>
                     </div>
+                    {errors?.passwordConfirmError && <p className="error_message">{ errors.passwordConfirmError }</p>}
                 </div>
                 <div className="buttons_container">
                     <button type="submit" className="confirm_btn">Sign Up</button>
@@ -99,8 +123,6 @@ export default function RegisterPage() {
                         <button type="button" className="redirect_btn">Login</button>
                     </Link>
                 </div>
-
-                {error && <p className="error_message">{error}</p>}
             </form>
         </div>
     )

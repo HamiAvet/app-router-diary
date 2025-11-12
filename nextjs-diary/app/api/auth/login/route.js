@@ -5,16 +5,22 @@ import { setSessionUser } from '@/app/lib/session'
 
 
 export async function POST(request) {
-    const data = await request.json()
-    
-    if (!data.email || !data.password) {
-        return NextResponse.json({ error: 'All fields are required' }, { status: 400 });
+    const data = await request.json();
+
+    const errors = {
+        emailError: data.email === "" ? 'Email is required' : null,
+        passwordError: data.password === "" ? 'Password is required' : null,
+    };    
+
+    if (errors.emailError != null || errors.passwordError != null) {
+        return NextResponse.json(errors, { status: 400});       
     }
 
     const dbResponse = await getUserByEmail(data)        
     const userRecord = dbResponse[0];
     if (!userRecord) {
-        return NextResponse.json({ error: 'User not found' }, { status: 401 });
+        errors.emailError = 'User is not found';
+        return NextResponse.json(errors, { status: 400});
     }
     const userRecordId = userRecord.id
     

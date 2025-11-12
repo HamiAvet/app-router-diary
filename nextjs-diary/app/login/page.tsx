@@ -8,13 +8,21 @@ import Image from "next/image";
 import "./page.css";
 //import { getSessionUser } from "../lib/session";
 
+export type Errors = {
+    emailError: string,
+    passwordError: string,
+}
+
 export default function LoginPage() {
     /*const user = await getSessionUser();
     if (JSON.stringify(user) !== "{}") {
         redirect('/diary');
     }*/
+    const [ errors, setErrors ] = useState<Errors | null>({
+        emailError: "",
+        passwordError: "",
+    });;
     const [ showPassword, setShowPassword ] = useState<boolean>(false);
-    const [ error, setError ] = useState<string | null>(null);
 
     const handlePasswordVisibility = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
@@ -23,6 +31,10 @@ export default function LoginPage() {
 
     const handleForm = async (user: FormEvent<HTMLFormElement>) => {  
        user.preventDefault();  
+        setErrors({
+            emailError: "",
+            passwordError: "",
+        })
        const formData = new FormData(user.currentTarget);  
        const data = Object.fromEntries(formData);  
        const JSONData = JSON.stringify(data);  
@@ -37,14 +49,17 @@ export default function LoginPage() {
 
         const response = await fetch("/api/auth/login/", options);
         const result = await response.json();
-        
-        if (response.status === 201) {
+        if (response.status === 400) {
+            setErrors({
+                emailError: result.emailError || "",
+                passwordError: result.passwordError || "",
+            });
+        }
+        else if (response.status === 201) {
             localStorage.setItem('username', result[0].username);
             localStorage.setItem('userId', result[0].id);
             redirect('/diary');
-        } else {
-            setError(result.error);
-        }
+        }  
    };
 
     return (
@@ -54,17 +69,20 @@ export default function LoginPage() {
                 <div className="input_container">
                     <label htmlFor="email">Email</label>
                     <div className="input_div">
-                        <input name="email" id="email" type="email" maxLength={80} required/>
+                        <input name="email" id="email" type="email" maxLength={80} />
                     </div>
+                    {errors?.emailError && <p className="error_message">{ errors.emailError }</p>}
                 </div>    
                 <div className="input_container">
                     <label htmlFor="password">Password</label>
                     <div className="input_div">
-                        <input name="password" id="password" type={showPassword ? "text" : "password"} maxLength={50} required />
+                        <input name="password" id="password" type={showPassword ? "text" : "password"} maxLength={50} />
                         <button className="showPassword_btn" type="button" onClick={handlePasswordVisibility}>
                             <Image width={20} height={20} src={showPassword ? "/eye-closed-bold.svg" : "/eye-bold.svg"} alt={showPassword ? "Hide" : "Show"}/>
                         </button>
-                    </div>
+                    </div>                    
+                    {errors?.passwordError && <p className="error_message">{ errors.passwordError }</p>}
+
                 </div>
                 <div className="buttons_container">
                     <button type="submit" className="confirm_btn">Login</button>
@@ -72,7 +90,6 @@ export default function LoginPage() {
                         <button className="redirect_btn">Sing Up</button>
                     </Link>
                 </div>
-                {error && <p className="error_message">{error}</p>}
             </form>
         </div>
     )

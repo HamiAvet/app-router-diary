@@ -2,13 +2,24 @@ import { NextResponse } from 'next/server';
 import { addUser } from '@/app/lib/data'
 
 export async function POST(request) {
-    const data = await request.json()
+    const data = await request.json();
     
-    if (!data.username || !data.email || !data.password) {
-        return NextResponse.json({ error: 'All fields are required' }, { status: 400 });
+    const errors = {
+        usernameError: data.username === "" ? 'Username is required' : null,
+        emailError: data.email === "" ? 'Email is required' : null,
+        passwordError: data.password === "" ? 'Password is required' : null,
+    };    
+    
+    if (errors.usernameError != null || errors.emailError != null || errors.passwordError != null) {
+        return NextResponse.json(errors, { status: 400});       
+    }    
+    const dbResponse = await addUser(data)
+    
+    if (dbResponse.message && dbResponse.message === 'duplicate key value violates unique constraint "users_email_key"') {
+        errors.emailError = 'Email already in use';
+        return NextResponse.json(errors, { status: 400});
     }
 
-    const dbResponse = await addUser(data)    
-    return NextResponse.json(dbResponse, {status: 201});
+    return NextResponse.json(dbResponse, { status: 201 });
 }
 

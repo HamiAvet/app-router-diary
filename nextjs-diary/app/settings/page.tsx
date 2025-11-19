@@ -1,6 +1,5 @@
 "use client";
 
-import "./page.css";
 import NavBar from "../ui/navbar/navbar"; 
 import { FormEvent, useEffect } from "react";
 import { useState } from "react";
@@ -9,9 +8,16 @@ import WebPushPermissionButton from "../ui/WebPushPermissionButton/WebPushPermis
 import DeleteAccountButton from "../ui/deleteAccountButton/deleteAccountButton"
 import Link from "next/link";
 import Image from "next/image";
+import "./page.css";
+
+export type Errors = {
+    passwordError: string,
+}
 
 export default function Settings() {
-    const [ error, setError ] = useState<string | null>(null);
+    const [ error, setError ] = useState<Errors | null>({
+        passwordError: "",
+    });
     const [ showPassword, setShowPassword ] = useState<boolean>(false);
     const [ showPasswordConfirm, setShowPasswordConfirm ] = useState<boolean>(false);
     const [ userData, setUserData ] = useState<{ username: string; email: string; password: string } | null>(null);
@@ -51,14 +57,18 @@ export default function Settings() {
 
     const handleForm = async (user: FormEvent<HTMLFormElement>) => {  
         user.preventDefault();  
+        setError({
+            passwordError: "", 
+        });
         const formData = new FormData(user.currentTarget);  
         const userId = localStorage.getItem('userId') || '';
         formData.append('id', userId); 
         const data = Object.fromEntries(formData);
-        console.log(data);
         
         if (data.newPassword !== data.newPasswordConfirm) {            
-            setError("Passwords do not match");
+            setError({
+                passwordError: "Passwords do not match",
+            });
             return;
         }
         let nameWasChanged = false;
@@ -98,7 +108,6 @@ export default function Settings() {
 
     return (
         <>
-            <NavBar />
             <div className="register_container">
                 <h1>Account Settings</h1>
                 <WebPushPermissionButton />
@@ -134,15 +143,14 @@ export default function Settings() {
                                 <Image width={20} height={20} src={showPasswordConfirm ? "/eye-closed-bold.svg" : "/eye-bold.svg"} alt={showPasswordConfirm ? "Hide" : "Show"}/>
                             </button>
                         </div>
+                        {error?.passwordError && <p className="error_message">{ error.passwordError }</p>}
                     </div>
                     <div className="buttons_container">
                         <button type="submit" className="confirm_btn" disabled={hasNoChanged}>Confirm</button>
-                        <Link href="/login">
+                        <Link href="/diary">
                             <button type="button" className="redirect_btn">Cancel</button>
                         </Link>
                     </div>
-
-                    {error && <p className="error_message">{error}</p>}
                 </form>
             </div>
         </>

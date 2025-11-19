@@ -72,7 +72,6 @@ export default function RegisterPage() {
                 passwordError: result.passwordError || "",
                 passwordConfirmError: data.password !== data.passwordConfirm ? "Passwords do not match" : "",
             });            
-            console.log(errors);
         } else if (response.status === 201) {
             console.log("ok")
             redirect('/login');
@@ -86,21 +85,45 @@ export default function RegisterPage() {
                 <div className="input_container">
                     <label htmlFor="username">Username</label>
                     <div className="input_div">
-                        <input name="username" id="username" type="text" maxLength={20} autoComplete="off"/>
+                        <input name="username" id="username" type="text" maxLength={20} autoComplete="off" onChange={() => {
+                            setErrors(prev => ({
+                                ...(prev ?? {usernameError: ""}),
+                                    usernameError: "",
+                                    emailError: errors?.emailError || "",
+                                    passwordError: errors?.passwordError || "",
+                                    passwordConfirmError: errors?.passwordConfirmError || "",
+                            }))
+                        }}/>
                     </div>
                     {errors?.usernameError && <p className="error_message">{ errors.usernameError }</p>}
                 </div>
                 <div className="input_container">
                     <label htmlFor="email">Email</label>
                     <div className="input_div">
-                        <input name="email" id="email" type="email" maxLength={50} autoComplete="lo"/>
+                        <input name="email" id="email" type="email" maxLength={50} autoComplete="off" onChange={() => {
+                            setErrors(prev => ({
+                                ...(prev ?? {emailError: ""}),
+                                    usernameError: errors?.usernameError || "",
+                                    emailError: "",
+                                    passwordError: errors?.passwordError || "",
+                                    passwordConfirmError: errors?.passwordConfirmError || "",
+                            }))
+                        }}/>
                     </div>
                     {errors?.emailError && <p className="error_message">{ errors.emailError }</p>}
                 </div>    
                 <div className="input_container">
                     <label htmlFor="password">Password</label>
                     <div className="input_div">
-                        <input name="password" id="password" type={showPassword ? "text" : "password"} maxLength={50} />
+                        <input name="password" id="password" type={showPassword ? "text" : "password"} maxLength={50} onChange={() => {
+                            setErrors(prev => ({
+                                ...(prev ?? {passwordError: ""}),
+                                    usernameError: errors?.usernameError || "",
+                                    emailError: errors?.emailError || "",
+                                    passwordError: "",
+                                    passwordConfirmError: errors?.passwordConfirmError || "",
+                            }))
+                        }}/>
                         <button className="showPassword_btn" type="button" onClick={handlePasswordVisibility}>
                             <Image width={20} height={20} src={showPassword ? "/eye-closed-bold.svg" : "/eye-bold.svg"} alt={showPassword ? "Hide" : "Show"}/>
                         </button>
@@ -110,7 +133,15 @@ export default function RegisterPage() {
                 <div className="input_container">
                     <label htmlFor="passwordConfirm">Password Confirmation</label>
                     <div className="input_div">
-                        <input name="passwordConfirm" id="passwordConfirm" type={showPasswordConfirm ? "text" : "password"} maxLength={50} />
+                        <input name="passwordConfirm" id="passwordConfirm" type={showPasswordConfirm ? "text" : "password"} maxLength={50} onChange={() => {
+                            setErrors(prev => ({
+                                ...(prev ?? {passwordConfirmError: ""}),
+                                    usernameError: errors?.usernameError || "",
+                                    emailError: errors?.emailError || "",
+                                    passwordError: errors?.passwordError || "",
+                                    passwordConfirmError: "",
+                            }))
+                        }}/>
                         <button className="showPassword_btn" type="button" onClick={handlePasswordConfirmVisibility}>
                             <Image width={20} height={20} src={showPasswordConfirm ? "/eye-closed-bold.svg" : "/eye-bold.svg"} alt={showPasswordConfirm ? "Hide" : "Show"}/>
                         </button>

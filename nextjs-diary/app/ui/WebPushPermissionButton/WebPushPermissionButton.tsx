@@ -11,17 +11,18 @@ const WebPushPermissionButton: React.FC = () => {
         notificationapi.setWebPushOptIn(true);
       }}
       style={{
-        padding: '10px 20px',
-        fontSize: '16px',
-        backgroundColor: '#0070f3',
-        color: 'white',
-        border: 'none',
-        borderRadius: '5px',
-        cursor: 'pointer',
-        margin: '10px'
+        color: "rgb(255, 255, 255)",
+        cursor: "pointer",
+        background: "rgb(66, 127, 250)",
+        border: "none",
+        borderRadius: "8px",
+        width: "165px",
+        padding: "10px 18px",
+        fontWeight: "600",
+        transition: "0.2s",
       }}
     >
-      Enable Web Push Notifications
+      Enable Notifications
     </button>
   );
 };

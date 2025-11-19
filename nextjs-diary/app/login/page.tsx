@@ -69,14 +69,26 @@ export default function LoginPage() {
                 <div className="input_container">
                     <label htmlFor="email">Email</label>
                     <div className="input_div">
-                        <input name="email" id="email" type="email" maxLength={80} />
+                        <input name="email" id="email" type="email" maxLength={80} onChange={() => {
+                            setErrors(prev => ({
+                                ...(prev ?? {emailError: ""}),
+                                    emailError: "",
+                                    passwordError: errors?.passwordError || "",
+                            }))
+                        }}/>
                     </div>
                     {errors?.emailError && <p className="error_message">{ errors.emailError }</p>}
                 </div>    
                 <div className="input_container">
                     <label htmlFor="password">Password</label>
                     <div className="input_div">
-                        <input name="password" id="password" type={showPassword ? "text" : "password"} maxLength={50} />
+                        <input name="password" id="password" type={showPassword ? "text" : "password"} maxLength={50} onChange={() => {
+                            setErrors(prev => ({
+                                ...(prev ?? {passwordConfirmError: ""}),
+                                    emailError: errors?.emailError || "",
+                                    passwordError: "",
+                            }))
+                        }}/>
                         <button className="showPassword_btn" type="button" onClick={handlePasswordVisibility}>
                             <Image width={20} height={20} src={showPassword ? "/eye-closed-bold.svg" : "/eye-bold.svg"} alt={showPassword ? "Hide" : "Show"}/>
                         </button>

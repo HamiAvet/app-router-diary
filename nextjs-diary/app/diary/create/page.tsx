@@ -4,22 +4,53 @@ import { FormEvent } from "react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link"
-import NavBar from "@/app/ui/navbar/navbar";
 import "@/app/diary/create/page.css"
 
+type Errors = {
+    dateTimePassedError: string;
+    dateError: string;
+    topicError: string;
+}
+
 export default function CreateEventForm() {
-    const [ error, setError ] = useState<string | null>(null);
+    const [ errors, setErrors ] = useState<Errors | null>({ 
+        dateTimePassedError: "", 
+        dateError: "",
+        topicError: "" 
+    });
+    
     const router = useRouter();
 
     const handleForm = async (event: FormEvent<HTMLFormElement>) => {  
         event.preventDefault();  
+        setErrors({ 
+            dateTimePassedError: "", 
+            dateError: "",
+            topicError: "" 
+        });
+
         const formData = new FormData(event.currentTarget);  
-        const data = Object.fromEntries(formData);  
-        console.log(data);  
+        const data = Object.fromEntries(formData); 
+        
+        const newErrors = {
+            dateTimePassedError: "",
+            dateError: "",
+            topicError: ""
+        };
+
+        if (!data.topic) {
+            newErrors.topicError = "Topic cannot be empty"
+        }
+
+        if (!data.date) {
+            newErrors.dateError = "Date is required"
+        }
+
         const now = new Date();
         let eventDateTime;
         const eventDate = String(data.date);
         const eventHour = String(data.hour);
+
         if (!eventHour) {
             eventDateTime = new Date(`${eventDate}T00:00`);
         } else {
@@ -27,8 +58,16 @@ export default function CreateEventForm() {
         } 
 
         if (eventDateTime < now) {
-            setError("The chosen date or time has already passed");
-            return; 
+            newErrors.dateTimePassedError = "The selected date and time has already passed"
+        }
+
+        if (newErrors.dateTimePassedError || newErrors.dateError || newErrors.topicError) {
+            setErrors({
+                dateTimePassedError: newErrors.dateTimePassedError,
+                dateError: newErrors.dateError,
+                topicError: newErrors.topicError
+            });
+            return;
         }
 
         const JSONData = JSON.stringify(data);  
@@ -51,13 +90,20 @@ export default function CreateEventForm() {
 
     return (
         <>
-            <NavBar />
             <div className="createEvent_container">
                 <h1>Create a new event</h1>
                 <form className="createEvent_form" onSubmit={handleForm}>
                     <div className="input_div">
                         <label htmlFor="topic">Topic</label>
-                        <input name="topic" id="topic" type="text" maxLength={60} required/>
+                        <input name="topic" id="topic" type="text" maxLength={60} onSubmit={() =>
+                                setErrors(prev => ({
+                                    ...(prev ?? { dateTimePassedError: "", dateError: "", topicError: "" }),
+                                    dateTimePassedError: "",
+                                    dateError: "",
+                                    topicError: ""
+                                }))
+                            }/>
+                        { errors?.topicError && <p className="error_message">{errors.topicError}</p> }
                     </div>
                     <div className="input_div">
                         <label>Category</label>
@@ -74,19 +120,27 @@ export default function CreateEventForm() {
                     </div>
                     <div className="input_div">
                         <label htmlFor="date">Date</label>
-                        <input name="date" id="date" type="date" className="date_input" required/>
+                        <input name="date" id="date" type="date" className="date_input" onChange={() =>
+                                setErrors(prev => ({
+                                    ...(prev ?? { dateTimePassedError: "", dateError: "", topicError: "" }),
+                                    dateTimePassedError: "",
+                                    dateError: "",
+                                    topicError: ""
+                                }))
+                            }/>
+                        { errors?.dateError && <p className="error_message">{errors.dateError}</p> }
                     </div>
                     <div className="input_div">
                         <label htmlFor="hour">Hour</label>
                         <input name="hour" id="hour" type="time" className="hour_input" />
                     </div>
+                    { errors?.dateTimePassedError && <p className="error_message">{errors.dateTimePassedError}</p> }
                     <div className="buttons_container">
                         <button className="confirm_btn" type="submit">Confirm</button>
                         <Link href="/diary">
                             <button className="cancel_btn" type="button">Cancel</button>
                         </Link>
                     </div>
-                    {error && <div className="error_message">{error}</div>}
                 </form>
             </div>
         </>

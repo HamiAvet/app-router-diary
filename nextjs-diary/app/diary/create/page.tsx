@@ -32,7 +32,7 @@ export default function CreateEventForm() {
         const formData = new FormData(event.currentTarget);  
         const data = Object.fromEntries(formData); 
         
-        const newErrors = {
+        /*const newErrors = {
             dateTimePassedError: "",
             dateError: "",
             topicError: ""
@@ -68,7 +68,7 @@ export default function CreateEventForm() {
                 topicError: newErrors.topicError
             });
             return;
-        }
+        }*/
 
         const JSONData = JSON.stringify(data);  
         console.log(JSONData);  
@@ -82,9 +82,17 @@ export default function CreateEventForm() {
         }
 
         const response = await fetch("/api/diary/", options);
-
-        if (response.ok) {
-            router.push('/diary');
+        if (response.status === 400) {
+            const result = await response.json();            
+            setErrors({
+                dateTimePassedError: result.dateTimePassedError || "",
+                dateError: result.dateError || "",
+                topicError: result.topicError || ""
+                
+            });            
+        } else if (response.status === 201) {
+            console.log("ok")
+            //router.push('/diary');
         }
    };
 

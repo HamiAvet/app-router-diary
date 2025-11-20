@@ -1,6 +1,6 @@
 "use client";
 
-import NavBar from "../ui/navbar/navbar"; 
+//import NavBar from "../ui/navbar/navbar"; 
 import { FormEvent, useEffect } from "react";
 import { useState } from "react";
 import { redirect } from "next/navigation";
@@ -11,13 +11,17 @@ import Image from "next/image";
 import "./page.css";
 
 export type Errors = {
+    emailError: string,
     passwordError: string,
+    passwordConfirmError: string,
 }
 
 export default function Settings() {
-    const [ error, setError ] = useState<Errors | null>({
+    const [ errors, setErrors ] = useState<Errors | null>({
+        emailError: "",
         passwordError: "",
-    });
+        passwordConfirmError: "",
+    });;
     const [ showPassword, setShowPassword ] = useState<boolean>(false);
     const [ showPasswordConfirm, setShowPasswordConfirm ] = useState<boolean>(false);
     const [ userData, setUserData ] = useState<{ username: string; email: string; password: string } | null>(null);
@@ -57,20 +61,17 @@ export default function Settings() {
 
     const handleForm = async (user: FormEvent<HTMLFormElement>) => {  
         user.preventDefault();  
-        setError({
-            passwordError: "", 
+        setErrors({
+            emailError: "",
+            passwordError: "",
+            passwordConfirmError: "",
         });
         const formData = new FormData(user.currentTarget);  
         const userId = localStorage.getItem('userId') || '';
         formData.append('id', userId); 
         const data = Object.fromEntries(formData);
+        console.log(data);
         
-        if (data.newPassword !== data.newPasswordConfirm) {            
-            setError({
-                passwordError: "Passwords do not match",
-            });
-            return;
-        }
         let nameWasChanged = false;
         const updateData = {id : userId} as { id : string; newUsername?: string | null; newEmail?: string | null; newPassword?: string | null; oldPassword?: string | null};
         if (userData?.username !== data.newUsername && typeof data.newUsername === 'string' && data.newUsername.trim() !== '') {
@@ -96,11 +97,19 @@ export default function Settings() {
             headers: {
                 "Content-Type": "application/json"
             },
-            body : JSON.stringify(updateData)
+            body : JSON.stringify(data)
         }
 
         const response = await fetch("/api/settings/", options);
-        if (response.status === 200) {
+        if (response.status === 400) {
+            const result = await response.json();            
+            setErrors({
+                emailError: result.newEmailError || "",
+                passwordError: result.newPasswordError || "",
+                passwordConfirmError: result.newPasswordConfirmError || "",
+            });
+            return;
+        } else if (response.status === 200) {
             if (nameWasChanged) localStorage.setItem('username', data.newUsername as string);
             redirect('/diary');
         }
@@ -108,11 +117,11 @@ export default function Settings() {
 
     return (
         <>
-            <div className="register_container">
+            <div className="settings_container">
                 <h1>Account Settings</h1>
                 <WebPushPermissionButton />
                 <DeleteAccountButton />
-                <form className="register_form" onSubmit={handleForm}>
+                <form className="settings_form" onSubmit={handleForm}>
                     <div className="input_container">
                         <label htmlFor="username">Username</label>
                         <div className="input_div">
@@ -124,6 +133,7 @@ export default function Settings() {
                         <div className="input_div">
                             <input name="newEmail" id="email" type="email" maxLength={50} placeholder={userData?.email} autoComplete="off"/>
                         </div>
+                        {errors?.emailError && <p className="error_message">{ errors.emailError }</p>}
                     </div>    
                     <h2>Change your Password</h2>
                     <div className="input_container">
@@ -134,6 +144,7 @@ export default function Settings() {
                                 <Image width={20} height={20} src={showPassword ? "/eye-closed-bold.svg" : "/eye-bold.svg"} alt={showPassword ? "Hide" : "Show"}/>
                             </button>
                         </div>
+                        {errors?.passwordError && <p className="error_message">{ errors.passwordError }</p>}
                     </div>
                     <div className="input_container">
                         <label htmlFor="passwordConfirm">Password Confirmation</label>
@@ -143,7 +154,7 @@ export default function Settings() {
                                 <Image width={20} height={20} src={showPasswordConfirm ? "/eye-closed-bold.svg" : "/eye-bold.svg"} alt={showPasswordConfirm ? "Hide" : "Show"}/>
                             </button>
                         </div>
-                        {error?.passwordError && <p className="error_message">{ error.passwordError }</p>}
+                        {errors?.passwordConfirmError && <p className="error_message">{ errors.passwordConfirmError }</p>}
                     </div>
                     <div className="buttons_container">
                         <button type="submit" className="confirm_btn" disabled={hasNoChanged}>Confirm</button>

@@ -8,9 +8,10 @@ export async function POST(request) {
         usernameError: data.username === "" ? 'Username is required' : null,
         emailError: data.email === "" ? 'Email is required' : null,
         passwordError: data.password === "" ? 'Password is required' : null,
+        passwordConfirmError: data.password !== data.passwordConfirm ? "Passwords do not match" : ""
     };    
     
-    if (errors.usernameError != null || errors.emailError != null || errors.passwordError != null) {
+    if (errors.usernameError != null || errors.emailError != null || errors.passwordError != null || errors.passwordConfirmError != null) {
         return NextResponse.json(errors, { status: 400});       
     }    
     const dbResponse = await addUser(data)

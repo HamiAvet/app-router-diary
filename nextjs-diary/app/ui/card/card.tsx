@@ -38,15 +38,18 @@ export default function Card({ currentPage }: { currentPage: number }) {
   };
 
     useEffect(() => {
-        if (!data?.length) return;
-        const now = new Date();
-
-        data.forEach((event: Event) => {
-            const eventDateTime = new Date(`${event.date}T${event.hour}`);                    
-            if (eventDateTime < now) {            
-                handleDelete(event);
-            } 
-        });
+      if (!data?.length) return;
+      const now = new Date();
+      console.log(data);
+      
+      data.forEach((event: Event) => {
+        const eventDateTime = new Date(`${event.date}T${event.hour}`);  
+        
+        // si la journée de l'événement est passée, on le supprime
+        if (eventDateTime < now) {            
+            handleDelete(event);
+        } 
+    });
 
     }, [data])
 

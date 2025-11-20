@@ -83,7 +83,9 @@ export default function CreateEventForm() {
 
         const response = await fetch("/api/diary/", options);
         if (response.status === 400) {
-            const result = await response.json();            
+            const result = await response.json();    
+            console.log(result);
+                    
             setErrors({
                 dateTimePassedError: result.dateTimePassedError || "",
                 dateError: result.dateError || "",
@@ -92,7 +94,7 @@ export default function CreateEventForm() {
             });            
         } else if (response.status === 201) {
             console.log("ok")
-            //router.push('/diary');
+            router.push('/diary');
         }
    };
 
@@ -139,7 +141,7 @@ export default function CreateEventForm() {
                         { errors?.dateError && <p className="error_message">{errors.dateError}</p> }
                     </div>
                     <div className="input_div">
-                        <label htmlFor="hour">Hour</label>
+                        <label htmlFor="hour">Hour *</label>
                         <input name="hour" id="hour" type="time" className="hour_input" />
                     </div>
                     { errors?.dateTimePassedError && <p className="error_message">{errors.dateTimePassedError}</p> }

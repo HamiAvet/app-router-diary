@@ -27,8 +27,6 @@ export async function addEvent(event) {
         console.log("Error adding event:", error);
         return error
     }
-
-   
 }
 
 export async function getEvent() {

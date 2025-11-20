@@ -43,9 +43,16 @@ export default function Card({ currentPage }: { currentPage: number }) {
       console.log(data);
       
       data.forEach((event: Event) => {
-        const eventDateTime = new Date(`${event.date}T${event.hour}`);  
+        let eventDateTime;
+        if (!event.hour) {
+          eventDateTime = new Date(`${event.date}T23:59`);  
+
+        } else {
+          eventDateTime = new Date(`${event.date}T${event.hour}`);  
+        }
         
         // si la journée de l'événement est passée, on le supprime
+
         if (eventDateTime < now) {            
             handleDelete(event);
         } 

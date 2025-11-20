@@ -13,11 +13,13 @@ export async function GET() {
 export async function POST(request) {
     const data = await request.json()
     const now = new Date();
-    if (!data.hour || data.hour === "") {
-        data.hour = "00:00";
-    }
     let eventDateTime;
-    eventDateTime = new Date(`${data.date}T${data.hour}`);    
+
+    if (!data.hour || data.hour === "") {
+        eventDateTime = new Date(`${data.date}T00:00`);    
+    } else {
+        eventDateTime = new Date(`${data.date}T${data.hour}`);        
+    }
     const errors = {
         topicError: data.topic === "" ? 'Topic is required' : null,
         dateError: data.date === "" ? 'Date is required' : null,

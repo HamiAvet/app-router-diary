@@ -18,7 +18,7 @@ export async function addEvent(event) {
         `*/
         const inserted = await sql`
             INSERT INTO events (topic, category, date, hour, status)
-            VALUES (${event.topic}, ${event.category}, ${event.date}, ${event.hour}, ${"Active"})
+            VALUES (${event.topic}, ${event.category}, ${event.date}, ${event.hour ? event.hour : null}, ${"Active"})
             RETURNING id, topic, category, date, hour, status;
         `
 

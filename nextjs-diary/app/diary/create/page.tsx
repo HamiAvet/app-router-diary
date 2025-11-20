@@ -32,44 +32,6 @@ export default function CreateEventForm() {
         const formData = new FormData(event.currentTarget);  
         const data = Object.fromEntries(formData); 
         
-        /*const newErrors = {
-            dateTimePassedError: "",
-            dateError: "",
-            topicError: ""
-        };
-
-        if (!data.topic) {
-            newErrors.topicError = "Topic cannot be empty"
-        }
-
-        if (!data.date) {
-            newErrors.dateError = "Date is required"
-        }
-
-        const now = new Date();
-        let eventDateTime;
-        const eventDate = String(data.date);
-        const eventHour = String(data.hour);
-
-        if (!eventHour) {
-            eventDateTime = new Date(`${eventDate}T00:00`);
-        } else {
-            eventDateTime = new Date(`${eventDate}T${eventHour}`);       
-        } 
-
-        if (eventDateTime < now) {
-            newErrors.dateTimePassedError = "The selected date and time has already passed"
-        }
-
-        if (newErrors.dateTimePassedError || newErrors.dateError || newErrors.topicError) {
-            setErrors({
-                dateTimePassedError: newErrors.dateTimePassedError,
-                dateError: newErrors.dateError,
-                topicError: newErrors.topicError
-            });
-            return;
-        }*/
-
         const JSONData = JSON.stringify(data);  
         console.log(JSONData);  
 

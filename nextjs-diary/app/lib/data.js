@@ -29,13 +29,35 @@ export async function addEvent(event) {
     }
 }
 
-export async function getEvent() {
+export async function getAllEvents() {
     try {
         return await sql`
             SELECT * FROM events 
             ORDER BY date, hour
             
         `;        
+    } catch (error) {
+        console.log("Error retrieving events:", error);
+        return error;
+    }
+}
+
+export async function getEvent(event) {
+    try {
+        console.log(event.topic, event.category, event.date, event.hour);
+        if (event.hour === "") {
+            return await sql`
+                SELECT * FROM events 
+                WHERE topic = ${event.topic} AND category = ${event.category} AND date = ${event.date} AND hour IS NULL
+                ORDER BY date, hour
+            `;      
+        } else {
+            return await sql`
+                SELECT * FROM events 
+                WHERE topic = ${event.topic} AND category = ${event.category} AND date = ${event.date} AND hour = ${event.hour}
+                ORDER BY date, hour
+            `;        
+        }
     } catch (error) {
         console.log("Error retrieving events:", error);
         return error;

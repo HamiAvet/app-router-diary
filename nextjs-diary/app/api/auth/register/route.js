@@ -12,13 +12,13 @@ export async function POST(request) {
     };    
     
     if (errors.usernameError != null || errors.emailError != null || errors.passwordError != null || errors.passwordConfirmError != null) {
-        return NextResponse.json(errors, { status: 400});       
+        return NextResponse.json(errors, { status: 400 });       
     }    
     const dbResponse = await addUser(data)
     
     if (dbResponse.message && dbResponse.message === 'duplicate key value violates unique constraint "users_email_key"') {
         errors.emailError = 'Email already in use';
-        return NextResponse.json(errors, { status: 400});
+        return NextResponse.json(errors, { status: 400 });
     }
 
     return NextResponse.json(dbResponse, { status: 201 });

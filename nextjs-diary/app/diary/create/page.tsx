@@ -10,13 +10,15 @@ type Errors = {
     dateTimePassedError: string;
     dateError: string;
     topicError: string;
+    alreadyExists: string;
 }
 
 export default function CreateEventForm() {
     const [ errors, setErrors ] = useState<Errors | null>({ 
         dateTimePassedError: "", 
         dateError: "",
-        topicError: "" 
+        topicError: "",
+        alreadyExists: ""
     });
     
     const router = useRouter();
@@ -26,7 +28,8 @@ export default function CreateEventForm() {
         setErrors({ 
             dateTimePassedError: "", 
             dateError: "",
-            topicError: "" 
+            topicError: "",
+            alreadyExists: ""
         });
 
         const formData = new FormData(event.currentTarget);  
@@ -45,17 +48,14 @@ export default function CreateEventForm() {
 
         const response = await fetch("/api/diary/", options);
         if (response.status === 400) {
-            const result = await response.json();    
-            console.log(result);
-                    
+            const result = await response.json();                                                
             setErrors({
-                dateTimePassedError: result.dateTimePassedError || "",
-                dateError: result.dateError || "",
-                topicError: result.topicError || ""
-                
+                dateTimePassedError: result?.dateTimePassedError || "",
+                dateError: result?.dateError || "",
+                topicError: result?.topicError || "",
+                alreadyExists: result?.alreadyExists || ""
             });            
         } else if (response.status === 201) {
-            console.log("ok")
             router.push('/diary');
         }
    };
@@ -69,10 +69,11 @@ export default function CreateEventForm() {
                         <label htmlFor="topic">Topic</label>
                         <input name="topic" id="topic" type="text" maxLength={60} onSubmit={() =>
                                 setErrors(prev => ({
-                                    ...(prev ?? { dateTimePassedError: "", dateError: "", topicError: "" }),
+                                    ...(prev ?? { dateTimePassedError: "", dateError: "", topicError: "", alreadyExists: "" }),
                                     dateTimePassedError: "",
                                     dateError: "",
-                                    topicError: ""
+                                    topicError: "",
+                                    alreadyExists: ""
                                 }))
                             }/>
                         { errors?.topicError && <p className="error_message">{errors.topicError}</p> }
@@ -94,10 +95,11 @@ export default function CreateEventForm() {
                         <label htmlFor="date">Date</label>
                         <input name="date" id="date" type="date" className="date_input" onChange={() =>
                                 setErrors(prev => ({
-                                    ...(prev ?? { dateTimePassedError: "", dateError: "", topicError: "" }),
+                                    ...(prev ?? { dateTimePassedError: "", dateError: "", topicError: "", alreadyExists: "" }),
                                     dateTimePassedError: "",
                                     dateError: "",
-                                    topicError: ""
+                                    topicError: "",
+                                    alreadyExists: ""
                                 }))
                             }/>
                         { errors?.dateError && <p className="error_message">{errors.dateError}</p> }
@@ -105,14 +107,17 @@ export default function CreateEventForm() {
                     <div className="input_div">
                         <label htmlFor="hour">Hour *</label>
                         <input name="hour" id="hour" type="time" className="hour_input" />
+                        { errors?.dateTimePassedError && <p className="error_message">{errors.dateTimePassedError}</p> }
+                        { errors?.alreadyExists && <p className="error_message">{errors.alreadyExists}</p> }                        
                     </div>
-                    { errors?.dateTimePassedError && <p className="error_message">{errors.dateTimePassedError}</p> }
+
                     <div className="buttons_container">
                         <button className="confirm_btn" type="submit">Confirm</button>
                         <Link href="/diary">
                             <button className="cancel_btn" type="button">Cancel</button>
                         </Link>
                     </div>
+                    <p style={{fontSize: "12px"}}>* = Optional</p>
                 </form>
             </div>
         </>

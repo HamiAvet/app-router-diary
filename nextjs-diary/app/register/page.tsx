@@ -52,7 +52,6 @@ export default function RegisterPage() {
         formData.append('id', userId); 
         const data = Object.fromEntries(formData);  
         const JSONData = JSON.stringify(data);  
-        console.log(JSONData);  
         
         const options = {
             method: "POST",
@@ -73,7 +72,6 @@ export default function RegisterPage() {
                 passwordConfirmError: data.password !== data.passwordConfirm ? "Passwords do not match" : "",
             });            
         } else if (response.status === 201) {
-            console.log("ok")
             redirect('/login');
         }
     };

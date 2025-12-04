@@ -51,8 +51,6 @@ export default function Card({ currentPage }: { currentPage: number }) {
           eventDateTime = new Date(`${event.date}T${event.hour}`);  
         }
         
-        // si la journée de l'événement est passée, on le supprime
-
         if (eventDateTime < now) {            
             handleDelete(event);
         } 

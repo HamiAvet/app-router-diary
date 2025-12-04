@@ -3,6 +3,8 @@ import Search from "@/app/ui/search/search"
 import NavBar from "@/app/ui/navbar/navbar"
 import Link from "next/link"
 import Image from "next/image"
+import { redirect } from "next/navigation"
+import { getSessionUser } from "../lib/session"
 import "@/app/diary/page.css"
 
 type tParams = Promise<{ query?: string, page?: string }>;
@@ -10,8 +12,10 @@ type tParams = Promise<{ query?: string, page?: string }>;
 export default async function Diary(props: { searchParams?: tParams }) {
   const searchParams = await props.searchParams;
   const currentPage = Number(searchParams?.page) || 1;
-  /*const user = await getSessionUser();
-  if (JSON.stringify(user) === "{}") {
+  const user = await getSessionUser();
+  console.log(user);
+  
+  /*if (JSON.stringify(user) === "{}") {
     redirect('/');
   }*/
 

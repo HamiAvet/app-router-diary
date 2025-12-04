@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import generateKey from "@/app/cli/generateKey";
+//import { getSessionUser } from "../lib/session";
 import "./page.css";
 
 export type Errors = {

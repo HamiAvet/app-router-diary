@@ -53,7 +53,7 @@ export const getSessionUser = async () => {
             return null
         }
         const extractedUserId = await decodeUserSession(sessionId)
-        return extractedUserId.userId
+     return extractedUserId ? extractedUserId.userId : null;
     } catch (error) {
         return error
     }

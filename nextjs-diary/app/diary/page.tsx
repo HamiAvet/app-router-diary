@@ -1,3 +1,5 @@
+// maybe needed to add "use client" because is a client component 
+
 import Card from "@/app/ui/card/card"
 import Search from "@/app/ui/search/search"
 import NavBar from "@/app/ui/navbar/navbar"
@@ -7,10 +9,12 @@ import { redirect } from "next/navigation"
 import { getSessionUser } from "../lib/session"
 import "@/app/diary/page.css"
 
-type tParams = Promise<{ query?: string, page?: string }>;
+// is better to use the function use() from 'next/navigation' for this client components
 
-export default async function Diary(props: { searchParams?: tParams }) {
-  const searchParams = await props.searchParams;
+type tParams = Promise<{ query?: string, page?: string }>;
+              
+export default async function Diary(props: { searchParams?: tParams }) { /*maybe remove async*/
+  const searchParams = await props.searchParams; /*and change this into use(props.searchParams) */
   const currentPage = Number(searchParams?.page) || 1;
   const user = await getSessionUser();
   console.log(user);

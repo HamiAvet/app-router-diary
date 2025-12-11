@@ -10,7 +10,7 @@ export default function Error({ error, reset } : { error: Error, reset: () => vo
     return (
         <div>
             <h1>Something went wrong!</h1>
-            <button onClick={reset}></button>
+            <button onClick={reset}>Refresh</button>
         </div>
     )
     

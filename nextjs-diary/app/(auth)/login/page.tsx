@@ -1,7 +1,6 @@
 'use client'
 
-import { FormEvent } from "react";
-import { useState } from "react";
+import { useState, useEffect, FormEvent } from "react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -18,6 +17,12 @@ export default function LoginPage() {
     if (JSON.stringify(user) !== "{}") {
         redirect('/diary');
     }*/
+     useEffect(() => {
+        const user = localStorage.getItem('userId');
+        if (user) {
+          redirect('/diary');
+        }
+      }, []);  
     const [ errors, setErrors ] = useState<Errors | null>({
         emailError: "",
         passwordError: "",

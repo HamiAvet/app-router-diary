@@ -3,16 +3,19 @@
 import Link from "next/link";
 import Image from "next/image";
 import { redirect } from "next/navigation";
+import { useEffect } from "react";
 import "./page.css";
 
 export default function Home() {
   // get actual url
 
-    const userId = localStorage.getItem('userId');
-    if (userId) {
+ useEffect(() => {
+    const user = localStorage.getItem('userId');
+    console.log(user);
+    if (user) {
       redirect('/diary');
     }
-
+  }, []);
  
   return (
     <div className="home_container">

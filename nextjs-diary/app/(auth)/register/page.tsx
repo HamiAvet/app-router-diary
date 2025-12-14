@@ -5,10 +5,10 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import generateKey from "@/app/cli/generateKey";
-//import { getSessionUser } from "../lib/session";
 import "./page.css";
 
-export type Errors = {
+// Define the types of error messages
+type Errors = {
     usernameError: string,
     emailError: string,
     passwordError: string,
@@ -16,72 +16,95 @@ export type Errors = {
 }
 
 export default function RegisterPage() {
-    /*const user = await getSessionUser();
-    if (JSON.stringify(user) !== "{}") {
-        redirect('/diary');
-    }*/
-    useEffect(() => {
-       const user = localStorage.getItem('userId');
-       if (user) {
-         redirect('/diary');
-       }
-     }, []);  
+    // State to hold error messages
     const [ errors, setErrors ] = useState<Errors | null>({
         usernameError: "",
         emailError: "",
         passwordError: "",
         passwordConfirmError: "",
-    });;
+    });;    
+
+    // state to toggle password visibility
     const [ showPassword, setShowPassword ] = useState<boolean>(false);
     const [ showPasswordConfirm, setShowPasswordConfirm ] = useState<boolean>(false);
 
-    const handlePasswordVisibility = (event: React.MouseEvent<HTMLButtonElement>) => {
-        event.preventDefault();
-        setShowPassword(!showPassword);
+    // Authentication check
+    const [checked, setChecked] = useState(false);
+    const [isNotAuthed, setIsNotAuthed] = useState(false);
+
+    // On component mount, check for user authentication
+    useEffect(() => {
+        const user = localStorage.getItem("userId") || null;
+        if (user) {
+        redirect('/diary'); // Redirect to diary if authenticated
+        } else {
+        setIsNotAuthed(true); // User is not authenticated
+        }
+        setChecked(true); // Mark that the check is done
+    }, []);
+
+    // If authentication check is not done yet, return null
+    if (!checked || !isNotAuthed) {
+        return null; 
     }
 
+    // Handle password visibility toggle
+    const handlePasswordVisibility = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault(); // For not reloading the page on button click
+        setShowPassword(!showPassword);
+    }
     const handlePasswordConfirmVisibility = (event: React.MouseEvent<HTMLButtonElement>) => {
-        event.preventDefault();
+        event.preventDefault(); // For not reloading the page on button click
         setShowPasswordConfirm(!showPasswordConfirm);
     }
 
+    // Handle form submission
     const handleForm = async (user: FormEvent<HTMLFormElement>) => {  
-        user.preventDefault();  
+        user.preventDefault(); // For not reloading the page on form submit
+
+        // Clear previous errors
         setErrors({
             usernameError: "",
             emailError: "",
             passwordError: "",
             passwordConfirmError: "",
         })
+        // Generate a unique user ID
         const userId = generateKey();
+
+        // Get form data
         const formData = new FormData(user.currentTarget);  
-        formData.append('id', userId); 
+        formData.append('id', userId);  // Append the generated user ID to the form data
         const data = Object.fromEntries(formData);  
         const JSONData = JSON.stringify(data);  
         
+        // Define request options
         const options = {
-            method: "POST",
+            method: "POST", // Because we are posting data to the server
             headers: {
                 "Content-Type": "application/json"
             },
-            body : JSONData
+            body : JSONData // The JSON data that we want to send
         }
 
+        // Send the registration request
         const response = await fetch("/api/auth/register/", options);
 
-        if (response.status === 400) {
-            const result = await response.json();            
+        if (response.status === 400) { // If there are validation errors
+            const result = await response.json();  // Get errors         
+            // Update state with error messages        
             setErrors({
                 usernameError: result.usernameError || "",
                 emailError: result.emailError || "",
                 passwordError: result.passwordError || "",
                 passwordConfirmError: data.password !== data.passwordConfirm ? "Passwords do not match" : "",
             });            
-        } else if (response.status === 201) {
-            redirect('/login');
+        } else if (response.status === 201) { // Else if there are no errors
+            redirect('/login'); // Redirect to login page
         }
     };
 
+    // Return the registration form JSX
     return (
         <div className="register_container">
             <h1>Register</h1>

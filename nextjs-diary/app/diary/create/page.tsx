@@ -1,11 +1,12 @@
 'use client'
 
 import { FormEvent } from "react";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { redirect } from "next/navigation";
 import Link from "next/link"
 import "@/app/diary/create/page.css"
 
+// Define the types of error messages
 type Errors = {
     dateTimePassedError: string;
     dateError: string;
@@ -14,17 +15,39 @@ type Errors = {
 }
 
 export default function CreateEventForm() {
+    // State to hold error messages
     const [ errors, setErrors ] = useState<Errors | null>({ 
         dateTimePassedError: "", 
         dateError: "",
         topicError: "",
         alreadyExists: ""
     });
-    
-    const router = useRouter();
 
+    // Authentication check
+    const [checked, setChecked] = useState(false);
+    const [isAuthed, setIsAuthed] = useState(false);
+
+    // On component mount, check for user authentication
+    useEffect(() => {
+      const user = localStorage.getItem("userId") || null;
+      if (!user) {
+        redirect('/'); // Redirect to home if not authenticated
+      } else {
+        setIsAuthed(true); // User is authenticated
+      }
+        setChecked(true); // Mark that the check is done
+    }, []);
+    
+    // If authentication check is not done yet, return null
+    if (!checked || !isAuthed) {
+      return null; 
+    }
+
+    // Handle form submission
     const handleForm = async (event: FormEvent<HTMLFormElement>) => {  
-        event.preventDefault();  
+        event.preventDefault(); // For not reloading the page on form submit
+
+        // Clear previous errors
         setErrors({ 
             dateTimePassedError: "", 
             dateError: "",
@@ -32,34 +55,38 @@ export default function CreateEventForm() {
             alreadyExists: ""
         });
 
+        // Get form data
         const formData = new FormData(event.currentTarget);  
         const data = Object.fromEntries(formData); 
-        
         const JSONData = JSON.stringify(data);  
-        console.log(JSONData);  
 
+        // Define request options
         const options = {
-            method: "POST",
+            method: "POST", // Because we are posting data to the server
             headers: {
                 "Content-Type": "application/json"
             },
-            body : JSONData
+            body : JSONData // The JSON data that we want to send
         }
 
+        // Send POST request to create a new diary event
         const response = await fetch("/api/diary/", options);
-        if (response.status === 400) {
-            const result = await response.json();                                                
+        
+        if (response.status === 400) { // If there are validation errors
+            const result = await response.json(); // Get errors          
+            // Update state with error messages                
             setErrors({
                 dateTimePassedError: result?.dateTimePassedError || "",
                 dateError: result?.dateError || "",
                 topicError: result?.topicError || "",
                 alreadyExists: result?.alreadyExists || ""
             });            
-        } else if (response.status === 201) {
-            router.push('/diary');
+        } else if (response.status === 201) { // Else if there are no errors
+            redirect('/diary'); // Redirect to diary page
         }
-   };
+    };
 
+    // Return the create event form JSX
     return (
         <>
             <div className="createEvent_container">

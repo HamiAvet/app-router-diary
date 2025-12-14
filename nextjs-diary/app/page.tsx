@@ -3,20 +3,31 @@
 import Link from "next/link";
 import Image from "next/image";
 import { redirect } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import "./page.css";
 
 export default function Home() {
-  // get actual url
+  // Authentication check
+  const [checked, setChecked] = useState(false);
+  const [isAuthed, setIsAuthed] = useState(false);
 
- useEffect(() => {
-    const user = localStorage.getItem('userId');
-    console.log(user);
+  // On component mount, check for user authentication
+  useEffect(() => {
+    const user = localStorage.getItem("userId") || null;
     if (user) {
-      redirect('/diary');
+      redirect('/diary'); // Redirect to diary if authenticated
+    } else {
+      setIsAuthed(true); // User is not authenticated
     }
+      setChecked(true); // Mark that the check is done
   }, []);
- 
+
+  // If authentication check is not done yet, return null
+  if (!checked || !isAuthed) {
+    return null; 
+  }
+  
+  // Return the home page JSX
   return (
     <div className="home_container">
       <main className="home_main">

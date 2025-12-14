@@ -5,31 +5,36 @@ import Search from "@/app/ui/search/search"
 import NavBar from "@/app/ui/navbar/navbar"
 import Link from "next/link"
 import Image from "next/image"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { redirect } from "next/navigation"
-import { getSessionUser } from "../lib/session"
 import { useSearchParams } from "next/navigation"
 import "@/app/diary/page.css"
-
-// is better to use the function use() from 'next/navigation' for this client components
-
-//type tParams = Promise<{ query?: string, page?: string }>;
               
-export default function Diary() { /*maybe remove async*/
- useEffect(() => {
-    const user = localStorage.getItem('userId');
-    if (!user) {
-      redirect('/');
-    }
-  }, []);  
-  const searchParams = useSearchParams() ; /*and change this into use(props.searchParams) */
-  const currentPage = Number(searchParams?.get("page")) || 1;
-  //const user = await getSessionUser();
-  /*if (JSON.stringify(user) === "{}") {
-    redirect('/');
-  }*/
+export default function Diary() { 
+  const searchParams = useSearchParams() ; // get search params
+  const currentPage = Number(searchParams?.get("page")) || 1; // get current page from search params, default to 1
 
-  
+  // Authentication check
+  const [checked, setChecked] = useState(false);
+  const [isAuthed, setIsAuthed] = useState(false);
+
+  // On component mount, check for user authentication
+  useEffect(() => {
+    const user = localStorage.getItem("userId") || null;
+    if (!user) {
+      redirect('/'); // Redirect to home if not authenticated
+    } else {
+      setIsAuthed(true); // User is authenticated
+    }
+      setChecked(true); // Mark that the check is done
+  }, []);
+
+  // If authentication check is not done yet, return null
+  if (!checked || !isAuthed) {
+    return null; 
+  }
+
+  // Return the diary page JSX
   return (
     <>
       <NavBar />

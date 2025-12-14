@@ -45,24 +45,7 @@ export default function Settings() {
         }
         setChecked(true); // Mark that the check is done
     }, []);
-
-    // If authentication check is not done yet, return null
-    if (!checked || !isAuthed) {
-        return null; 
-    }
-  
-    // Handle password visibility toggle
-    const handlePasswordVisibility = (event: React.MouseEvent<HTMLButtonElement>) => {
-        event.preventDefault(); // For not reloading the page on button click
-        setShowPassword(!showPassword);
-    };
-  
-    // Handle password confirmation visibility toggle
-    const handlePasswordConfirmVisibility = (event: React.MouseEvent<HTMLButtonElement>) => {
-        event.preventDefault(); // For not reloading the page on button click
-        setShowPasswordConfirm(!showPasswordConfirm);
-    };
-
+    
     // Fetch user data on component mount
     useEffect(() => {
         async function fetchUserData() {
@@ -86,6 +69,25 @@ export default function Settings() {
         
         fetchUserData(); // Call the async function to fetch user data
     }, []);
+
+    // If authentication check is not done yet, return null
+    if (!checked || !isAuthed) {
+        return null; 
+    }
+  
+    // Handle password visibility toggle
+    const handlePasswordVisibility = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault(); // For not reloading the page on button click
+        setShowPassword(!showPassword);
+    };
+  
+    // Handle password confirmation visibility toggle
+    const handlePasswordConfirmVisibility = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault(); // For not reloading the page on button click
+        setShowPasswordConfirm(!showPasswordConfirm);
+    };
+
+    
     
 
     // Handle form submission

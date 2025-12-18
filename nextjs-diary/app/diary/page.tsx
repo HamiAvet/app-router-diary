@@ -8,9 +8,10 @@ import Image from "next/image"
 import { useEffect, useState } from "react"
 import { redirect } from "next/navigation"
 import { useSearchParams } from "next/navigation"
+import { Suspense } from "react"
 import "@/app/diary/page.css"
               
-export default function Diary() { 
+function DiaryContent() { 
   const searchParams = useSearchParams() ; // get search params
   const currentPage = Number(searchParams?.get("page")) || 1; // get current page from search params, default to 1
 
@@ -55,5 +56,13 @@ export default function Diary() {
         </div>
     </>
         
+  );
+}
+
+export default function Diary() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <DiaryContent />
+    </Suspense>
   );
 }

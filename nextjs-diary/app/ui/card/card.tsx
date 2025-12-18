@@ -22,7 +22,9 @@ type Event = {
 export default function Card({ currentPage }: { currentPage: number }) {
   const [pending, setPending] = useState<Record<number, boolean>>({});
   const [localStatus, setLocalStatus] = useState<Record<number, string>>({});
-  const { data, error, isLoading } = useSWR("/api/diary/", fetcher, { refreshInterval: 1000 });
+  const id = localStorage.getItem("userId") || "";
+  // Fetch events data with SWR (SWR is always usuing GET method)
+  const { data, error, isLoading } = useSWR(`/api/diary/${id}`, fetcher, { refreshInterval: 1000 });
   const searchParams = useSearchParams();
   const query = searchParams.get('query') || '';
 
@@ -40,7 +42,6 @@ export default function Card({ currentPage }: { currentPage: number }) {
     useEffect(() => {
       if (!data?.length) return;
       const now = new Date();
-      console.log(data);
       
       data.forEach((event: Event) => {
         let eventDateTime;

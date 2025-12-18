@@ -87,9 +87,6 @@ export default function Settings() {
         setShowPasswordConfirm(!showPasswordConfirm);
     };
 
-    
-    
-
     // Handle form submission
     const handleForm = async (user: FormEvent<HTMLFormElement>) => {  
         user.preventDefault(); // For not reloading the page on form submit

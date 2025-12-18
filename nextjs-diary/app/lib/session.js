@@ -1,70 +1,95 @@
-import * as jose from 'jose'
-import { cookies } from 'next/headers'
+import * as jose from 'jose';
+import { cookies } from 'next/headers';
 
-//const secret = jose.base64url.decode(process.env.JOSE_SECRET_KEY)
-const secret = new TextEncoder().encode(process.env.JOSE_SECRET_KEY)
+// Secret key for JWT encryption/decryption
+const secret = new TextEncoder().encode(process.env.JOSE_SECRET_KEY);
 
-const issuer = 'urn:example:issuer'
-const audience = 'urn:example:audience'
-const expirationTime = '10s'
+// JWT configuration
+const issuer = 'urn:example:issuer'; // Issuer identifier
+const audience = 'urn:example:audience'; // Audience identifier
+const expirationTime = '10s'; // Token expiration time
+
+// Session management functions
 
 export default async function encodeUserSession(userId) {
-    const jwt = await new jose.EncryptJWT({ 'userId': userId })
-        .setProtectedHeader({ alg: 'dir', enc: 'A128CBC-HS256' })
-        .setIssuedAt()
-        .setIssuer(issuer)
-        .setAudience(audience)
-        .setExpirationTime(expirationTime)
-        .encrypt(secret)
-    return jwt
-    
+    // Encode user session into a JWT function
+    try {
+        // Encode user session into a JWT
+        const jwt = await new jose.EncryptJWT({ 'userId': userId })
+            .setProtectedHeader({ alg: 'dir', enc: 'A128CBC-HS256' })
+            .setIssuedAt()
+            .setIssuer(issuer)
+            .setAudience(audience)
+            .setExpirationTime(expirationTime)
+            .encrypt(secret)
+
+        // Return the generated JWT
+        return jwt;
+    } catch (error) {
+        return error;
+    }
 }
 
 export async function decodeUserSession(jwt) {
+    // Decode user session from a JWT function
     try {
+        // Decode user session from the JWT
         const { payload } = await jose.jwtDecrypt(jwt, secret, {
-            issuer: issuer,
-            audience: audience,
+            issuer: issuer, // Verify issuer
+            audience: audience, // Verify audience
         })
 
-        return payload
+        // Return the decoded payload
+        return payload;
     } catch (error) {
-        return error
+        return error;
     }
 }
 
 export const setSessionUser = async (userId) => {
+    // Set the session user by storing the JWT in cookies function
     try {
-        const newSessionVale = await encodeUserSession(userId)
-        const cookieStore = await cookies();
-        cookieStore.set('sessionId', newSessionVale)
+        // Generate new session JWT
+        const newSessionVale = await encodeUserSession(userId);
+        // Get the cookie store
+        const cookieStore = await cookies(); 
+        // Set the sessionId cookie
+        cookieStore.set('sessionId', newSessionVale);
     } catch (error) {
-        return error
+        return error;
     }
-
 }
 
 export const getSessionUser = async () => {
+    // Get the session user by retrieving and decoding the JWT from cookies function
     try {
-        const cookieStore = await cookies()
-        const sessionId = cookieStore.get('sessionId').value
+        // Get the cookie store
+        const cookieStore = await cookies();
+        // Get the sessionId cookie value
+        const sessionId = cookieStore.get('sessionId').value;
         
+        // If sessionId cookie does not exist, return null
         if (!sessionId) {
-            return null
+            return null;
         }
-        const extractedUserId = await decodeUserSession(sessionId)
-     return extractedUserId ? extractedUserId.userId : null;
+        // Decode the user session from the JWT
+        const extractedUserId = await decodeUserSession(sessionId);
+
+        // Return the extracted userId
+        return extractedUserId ? extractedUserId.userId : null;
     } catch (error) {
-        return error
+        return error;
     }
 }
 
 export const endSessionUser = async () => {
+    // End the session user by deleting the JWT cookie function
     try {
-        const cookieStore = await cookies()
-        cookieStore.delete('sessionId')
+        // Get the cookie store
+        const cookieStore = await cookies();
+        // Delete the sessionId cookie
+        cookieStore.delete('sessionId');
     } catch (error) {
-        return error
+        return error;
     }
-
 }

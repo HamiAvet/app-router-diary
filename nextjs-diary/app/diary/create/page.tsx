@@ -1,6 +1,6 @@
 'use client'
 
-import { FormEvent } from "react";
+import { FormEvent, use } from "react";
 import { useState, useEffect } from "react";
 import { redirect } from "next/navigation";
 import Link from "next/link"
@@ -54,10 +54,14 @@ export default function CreateEventForm() {
             topicError: "",
             alreadyExists: ""
         });
-
+        const userId = localStorage.getItem("userId") || "";
         // Get form data
         const formData = new FormData(event.currentTarget);  
+        // Add userId to form data
+        formData.append("userId", userId);
+        // Convert form data to object
         const data = Object.fromEntries(formData); 
+        // Convert data to JSON
         const JSONData = JSON.stringify(data);  
 
         // Define request options

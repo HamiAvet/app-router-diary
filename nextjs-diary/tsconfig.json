@@ -22,6 +22,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/lib/isValidURL.js", "app/lib/data.js", "app/links/table.js", "app/lib/getDomain.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/lib/isValidURL.js", "app/lib/eventsDataUtils.js", "app/links/table.js", "app/lib/getDomain.js"],
   "exclude": ["node_modules"]
 }

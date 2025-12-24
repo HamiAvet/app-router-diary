@@ -1,0 +1,125 @@
+"use client"
+
+import Footer from "@/app/ui/footer/footer";
+import { useState, FormEvent } from "react";
+import { redirect } from "next/navigation";
+import Link from "next/link";
+import Image from "next/image";
+import "./page.css";
+
+// Define the types of error messages
+type Errors = {
+    passwordError: string,
+    passwordConfirmError: string,
+}
+
+export default function ChangePassword() {
+    // State to hold error messages
+    const [ errors, setErrors ] = useState<Errors | null>({
+        passwordError: "",
+        passwordConfirmError: "",
+    });
+    
+    // state to toggle password visibility
+    const [ showPassword, setShowPassword ] = useState<boolean>(false);
+    const [ showPasswordConfirm, setShowPasswordConfirm ] = useState<boolean>(false);
+
+    // Handle password visibility toggle
+    const handlePasswordVisibility = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault(); // For not reloading the page on button click
+        setShowPassword(!showPassword);
+    };
+  
+    // Handle password confirmation visibility toggle
+    const handlePasswordConfirmVisibility = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault(); // For not reloading the page on button click
+        setShowPasswordConfirm(!showPasswordConfirm);
+    };
+
+    // Handle form submission
+    const handleForm = async (user: FormEvent<HTMLFormElement>) => {  
+        user.preventDefault(); // For not reloading the page on form submit
+
+        // Clear previous errors
+        setErrors({
+            passwordError: "",
+            passwordConfirmError: "",
+        });
+
+        // Get form data
+        const formData = new FormData(user.currentTarget);  
+        const userId = localStorage.getItem('userId') || ''; // Get userId from localStorage
+        formData.append('id', userId); // Append the user ID to the form data
+        const data = Object.fromEntries(formData);
+
+        // Check which fields were changed
+        let nameWasChanged = false;
+        const updateData = {id : userId} as { id : string; newUsername?: string | null; newEmail?: string | null; newPassword?: string | null; oldPassword?: string | null};
+
+
+        // If no fields were changed, redirect back to diary
+        /*if (Object.keys(updateData).length === 1 || userData?.username === data.newUsername && userData?.email === data.newEmail) { 
+            redirect('/diary');
+        }*/
+
+        // Define request options
+        const options = {
+            method : "POST", // Because we are posting data to the server
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body : JSON.stringify(data) // The JSON data that we want to send
+        }
+
+        // Send POST request to update user settings
+        const response = await fetch("/api/settings", options);
+
+        if (response.status === 400) { // If there are validation errors
+            const result = await response.json(); // Get errors          
+            // Update state with error messages
+            setErrors({
+                passwordError: result.newPasswordError || "",
+                passwordConfirmError: result.newPasswordConfirmError || "",
+            });
+            return; // Exit the function if there are errors
+        } else if (response.status === 200) { // Else if there are no errors
+            redirect('/diary'); // Redirect to diary page
+        }
+    };
+    return (
+        <>
+            <div className="changePassword_container">
+                <h2>Change your Password</h2>
+                <form className="changePassword_form" onSubmit={handleForm}>
+                    <div className="input_container">
+                        <label htmlFor="password">New Password</label>
+                        <div className="input_div">
+                            <input name="newPassword" id="password" type={showPassword ? "text" : "password"} maxLength={50} autoComplete="off"/>
+                            <button className="showPassword_btn" type="button" onClick={handlePasswordVisibility}>
+                                <Image width={20} height={20} src={showPassword ? "/eye-closed-bold.svg" : "/eye-bold.svg"} alt={showPassword ? "Hide" : "Show"}/>
+                            </button>
+                        </div>
+                        {errors?.passwordError && <p className="error_message">{ errors.passwordError }</p>}
+                    </div>
+                    <div className="input_container">
+                        <label htmlFor="passwordConfirm">Password Confirmation</label>
+                        <div className="input_div">
+                            <input name="newPasswordConfirm" id="passwordConfirm" type={showPasswordConfirm ? "text" : "password"} maxLength={50} autoComplete="off"/>
+                            <button className="showPassword_btn" type="button" onClick={handlePasswordConfirmVisibility}>
+                                <Image width={20} height={20} src={showPasswordConfirm ? "/eye-closed-bold.svg" : "/eye-bold.svg"} alt={showPasswordConfirm ? "Hide" : "Show"}/>
+                            </button>
+                        </div>
+                        {errors?.passwordConfirmError && <p className="error_message">{ errors.passwordConfirmError }</p>}
+                    </div>
+                    <div className="buttons_container">
+                        <button type="submit" className="confirm_btn">Confirm</button>
+                        <Link href="/login">
+                            <button className="redirect_btn">Cancel</button>
+                        </Link>
+                    </div>
+                </form>
+            </div>
+            <Footer />
+        </>
+    )
+}

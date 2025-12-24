@@ -1,5 +1,6 @@
 'use client'
 
+import Footer from "@/app/ui/footer/footer";
 import { FormEvent } from "react";
 import { useState, useEffect } from "react";
 import { redirect } from "next/navigation";
@@ -151,6 +152,7 @@ export default function CreateEventForm() {
                     <p style={{fontSize: "12px"}}>* = Optional</p>
                 </form>
             </div>
+            <Footer />
         </>
     )
 }

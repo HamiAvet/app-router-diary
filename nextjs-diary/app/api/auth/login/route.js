@@ -39,7 +39,8 @@ export async function POST(request) {
 
     // If password does not match, return error
     if (!passwordMatch) {    
-        return NextResponse.json({ error: 'Incorrect Password' }, { status: 402 });
+        errors.passwordError = 'Incorrect Password';
+        return NextResponse.json(errors, { status: 400 });
     } 
 
     // Set session user

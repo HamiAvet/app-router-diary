@@ -1,5 +1,6 @@
 'use client';
 
+import Footer from "@/app/ui/footer/footer";
 import Link from "next/link";
 import Image from "next/image";
 import { redirect } from "next/navigation";
@@ -29,22 +30,25 @@ export default function Home() {
   
   // Return the home page JSX
   return (
-    <div className="home_container">
-      <main className="home_main">
-        <Image src="/fb36ca3d.png" alt="Welcome !" width={600} height={600}/>
-        <div className="home_text_container">
-          <h1>Diary</h1>
-          <p>Welcome to your personal diary. Organize your events and tasks efficiently.</p>
-          <div className="buttons_container">
-            <Link href="/register">
-              <button type="submit" className="singup_btn">Sign Up</button>
-            </Link>
-            <Link href="/login">
-              <button type="button" className="login_btn">Login</button>
-            </Link>
+    <>
+      <div className="home_container">
+        <main className="home_main">
+          <Image src="/fb36ca3d.png" alt="Welcome !" width={600} height={600}/>
+          <div className="home_text_container">
+            <h1>My-Diary</h1>
+            <p>Welcome to your personal diary. Organize your events and tasks efficiently.</p>
+            <div className="buttons_container">
+              <Link href="/register">
+                <button type="submit" className="singup_btn">Sign Up</button>
+              </Link>
+              <Link href="/login">
+                <button type="button" className="login_btn">Login</button>
+              </Link>
+            </div>
           </div>
-        </div>
-      </main>
-    </div>
+        </main>
+      </div>
+      <Footer />
+    </>
   );
 }

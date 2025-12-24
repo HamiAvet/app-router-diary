@@ -1,37 +1,43 @@
-.settings_container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 50px;
-  padding: 20px;
-  
+.forgotPassword_container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 80px;
+    padding: 20px;
 }
 
-.settings_container h1 {
-  margin-bottom: 20px;
-  text-align: center;
+.forgotPassword_container h1 {
+    margin-bottom: 20px;
+    text-align: center;
 }
 
-h2 {
-  text-align: center;
+.forgotPassword_container p {
+    text-align: center;
+    font-size: 18px;
+    margin-bottom: 20px;
 }
 
-.settings_form {
-  width: 100%;
-  max-width: 500px;
-  padding: 25px;
-  border-radius: 12px;
-  background: #fff;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-evenly;
-  gap: 20px;
+.forgotPassword_form {
+    width: 100%;
+    max-width: 500px;
+    height: 250px;
+    padding: 25px;
+    border-radius: 12px;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    gap: 20px;
 }
 
 .input_container {
   display: flex;
   flex-direction: column;
-  margin-bottom: 10px;
+  height: 90px;
+}
+
+.input_container p {
+  font-size: 16px;
 }
 
 .input_container label {
@@ -43,6 +49,7 @@ h2 {
   display: flex;
   flex-direction: row;
   position: relative;
+  z-index: 3;
 }
 
 .input_div input,
@@ -56,40 +63,11 @@ h2 {
   padding-right: 36px;
 }
 
-.showPassword_btn {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 5px;
-  z-index: 2;
-}
-
-.showPassword_btn img {
-  width: 20px;
-  height: 20px;
-}
 
 .buttons_container {
   display: flex;
   justify-content: center;
   gap: 20px;
-}
-
-.change_password_link {
-  font-weight: 600;
-  text-decoration: none;
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-.change_password_link:hover {
-  text-decoration: underline;
-  color: #427ffa;
-  transition: 0.2s;
 }
 
 .confirm_btn {
@@ -135,13 +113,24 @@ h2 {
   z-index: 1;
 }
 
+.success_message {
+  color: #16a34a;
+  font-weight: 500;
+  text-align: center;
+  margin-top: 10px;
+  animation: errorPopup 0.6s ease forwards;
+  z-index: 1;
+}
+
 @keyframes errorPopup {
   from {
     opacity: 0;
+    height: 0;
     transform: translateY(-40px);
   }
   to {
     opacity: 1;
+    height: auto;
     transform: translateY(0px);
   }
 }
@@ -157,5 +146,11 @@ h2 {
 
   .redirect_btn {
     width: 100%;
+  }
+}
+
+@media (max-height: 500px) {
+  .login_container {
+    margin-top: 40px;
   }
 }

@@ -1,5 +1,6 @@
 'use client'
 
+import Footer from "@/app/ui/footer/footer";
 import { useState, useEffect, FormEvent } from "react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
@@ -93,46 +94,49 @@ export default function LoginPage() {
 
     // Return the login form JSX
     return (
-        <div className="login_container">
-            <h1>Login</h1>
-            <form className="login_form" onSubmit={handleForm}>
-                <div className="input_container">
-                    <label htmlFor="email">Email</label>
-                    <div className="input_div">
-                        <input name="email" id="email" type="email" maxLength={80} onChange={() => {
-                            setErrors(prev => ({
-                                ...(prev ?? {emailError: ""}),
-                                    emailError: "",
-                                    passwordError: errors?.passwordError || "",
-                            }))
-                        }}/>
-                    </div>
-                    {errors?.emailError && <p className="error_message">{ errors.emailError }</p>}
-                </div>    
-                <div className="input_container">
-                    <label htmlFor="password">Password</label>
-                    <div className="input_div">
-                        <input name="password" id="password" type={showPassword ? "text" : "password"} maxLength={50} onChange={() => {
-                            setErrors(prev => ({
-                                ...(prev ?? {passwordConfirmError: ""}),
-                                    emailError: errors?.emailError || "",
-                                    passwordError: "",
-                            }))
-                        }}/>
-                        <button className="showPassword_btn" type="button" onClick={handlePasswordVisibility}>
-                            <Image width={20} height={20} src={showPassword ? "/eye-closed-bold.svg" : "/eye-bold.svg"} alt={showPassword ? "Hide" : "Show"}/>
-                        </button>
-                    </div>                    
-                    {errors?.passwordError && <p className="error_message">{ errors.passwordError }</p>}
+        <>
+            <div className="login_container">
+                <h1>Login</h1>
+                <form className="login_form" onSubmit={handleForm}>
+                    <div className="input_container">
+                        <label htmlFor="email">Email</label>
+                        <div className="input_div">
+                            <input name="email" id="email" type="email" maxLength={80} onChange={() => {
+                                setErrors(prev => ({
+                                    ...(prev ?? {emailError: ""}),
+                                        emailError: "",
+                                        passwordError: errors?.passwordError || "",
+                                }))
+                            }}/>
+                        </div>
+                        {errors?.emailError && <p className="error_message">{ errors.emailError }</p>}
+                    </div>    
+                    <div className="input_container">
+                        <label htmlFor="password">Password</label>
+                        <div className="input_div">
+                            <input name="password" id="password" type={showPassword ? "text" : "password"} maxLength={50} onChange={() => {
+                                setErrors(prev => ({
+                                    ...(prev ?? {passwordConfirmError: ""}),
+                                        emailError: errors?.emailError || "",
+                                        passwordError: "",
+                                }))
+                            }}/>
+                            <button className="showPassword_btn" type="button" onClick={handlePasswordVisibility}>
+                                <Image width={20} height={20} src={showPassword ? "/eye-closed-bold.svg" : "/eye-bold.svg"} alt={showPassword ? "Hide" : "Show"}/>
+                            </button>
+                        </div>                    
+                        {errors?.passwordError && <p className="error_message">{ errors.passwordError }</p>}
 
-                </div>
-                <div className="buttons_container">
-                    <button type="submit" className="confirm_btn">Login</button>
-                    <Link href="/register">
-                        <button className="redirect_btn">Sing Up</button>
-                    </Link>
-                </div>
-            </form>
-        </div>
+                    </div>
+                    <div className="buttons_container">
+                        <button type="submit" className="confirm_btn">Login</button>
+                        <Link href="/register">
+                            <button className="redirect_btn">Sing Up</button>
+                        </Link>
+                    </div>
+                </form>
+            </div>
+            <Footer />
+        </>
     )
 }

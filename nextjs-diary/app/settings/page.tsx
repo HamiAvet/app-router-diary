@@ -1,34 +1,26 @@
 "use client";
 
+import Footer from "@/app/ui/footer/footer";
 import { FormEvent, useEffect } from "react";
 import { useState } from "react";
 import { redirect } from "next/navigation";
-import WebPushPermissionButton from "../ui/WebPushPermissionButton/WebPushPermissionButton";
-import DeleteAccountButton from "../ui/deleteAccountButton/deleteAccountButton"
+import WebPushPermissionButton from "@/app/ui/WebPushPermissionButton/WebPushPermissionButton";
+import DeleteAccountButton from "@/app/ui/deleteAccountButton/deleteAccountButton"
 import Link from "next/link";
-import Image from "next/image";
 import "./page.css";
 
 // Define the types of error messages
 type Errors = {
     emailError: string,
-    passwordError: string,
-    passwordConfirmError: string,
 }
 
 export default function Settings() {
     // State to hold error messages
     const [ errors, setErrors ] = useState<Errors | null>({
         emailError: "",
-        passwordError: "",
-        passwordConfirmError: "",
     });
 
-    // state to toggle password visibility
-    const [ showPassword, setShowPassword ] = useState<boolean>(false);
-    const [ showPasswordConfirm, setShowPasswordConfirm ] = useState<boolean>(false);
-
-    const [ userData, setUserData ] = useState<{ username: string; email: string; password: string } | null>(null); // State to hold user data
+    const [ userData, setUserData ] = useState<{ username: string; email: string; } | null>(null); // State to hold user data
     const [ hasNoChanged , setHasChanged ] = useState<boolean>(false); // State to track if any changes were made
 
     // Authentication check
@@ -74,18 +66,7 @@ export default function Settings() {
     if (!checked || !isAuthed) {
         return null; 
     }
-  
-    // Handle password visibility toggle
-    const handlePasswordVisibility = (event: React.MouseEvent<HTMLButtonElement>) => {
-        event.preventDefault(); // For not reloading the page on button click
-        setShowPassword(!showPassword);
-    };
-  
-    // Handle password confirmation visibility toggle
-    const handlePasswordConfirmVisibility = (event: React.MouseEvent<HTMLButtonElement>) => {
-        event.preventDefault(); // For not reloading the page on button click
-        setShowPasswordConfirm(!showPasswordConfirm);
-    };
+
 
     // Handle form submission
     const handleForm = async (user: FormEvent<HTMLFormElement>) => {  
@@ -94,8 +75,6 @@ export default function Settings() {
         // Clear previous errors
         setErrors({
             emailError: "",
-            passwordError: "",
-            passwordConfirmError: "",
         });
 
         // Get form data
@@ -121,13 +100,6 @@ export default function Settings() {
             setHasChanged(true);
         }
 
-        // Compare in each field the initial password with the new password
-        if (userData?.password !== data.newPassword && typeof data.newPassword === 'string' && data.newPassword.trim() !== '') {
-            updateData.newPassword = data.newPassword as string
-            updateData.oldPassword = userData?.password
-            setHasChanged(true);
-        }  
-
         // If no fields were changed, redirect back to diary
         if (Object.keys(updateData).length === 1 || userData?.username === data.newUsername && userData?.email === data.newEmail) { 
             redirect('/diary');
@@ -150,9 +122,8 @@ export default function Settings() {
             // Update state with error messages
             setErrors({
                 emailError: result.newEmailError || "",
-                passwordError: result.newPasswordError || "",
-                passwordConfirmError: result.newPasswordConfirmError || "",
             });
+
             return; // Exit the function if there are errors
         } else if (response.status === 200) { // Else if there are no errors
             if (nameWasChanged) localStorage.setItem('username', data.newUsername as string); // Update username in localStorage if it was changed
@@ -181,27 +152,7 @@ export default function Settings() {
                         </div>
                         {errors?.emailError && <p className="error_message">{ errors.emailError }</p>}
                     </div>    
-                    <h2>Change your Password</h2>
-                    <div className="input_container">
-                        <label htmlFor="password">Password</label>
-                        <div className="input_div">
-                            <input name="newPassword" id="password" type={showPassword ? "text" : "password"} maxLength={50} autoComplete="off"/>
-                            <button className="showPassword_btn" type="button" onClick={handlePasswordVisibility}>
-                                <Image width={20} height={20} src={showPassword ? "/eye-closed-bold.svg" : "/eye-bold.svg"} alt={showPassword ? "Hide" : "Show"}/>
-                            </button>
-                        </div>
-                        {errors?.passwordError && <p className="error_message">{ errors.passwordError }</p>}
-                    </div>
-                    <div className="input_container">
-                        <label htmlFor="passwordConfirm">Password Confirmation</label>
-                        <div className="input_div">
-                            <input name="newPasswordConfirm" id="passwordConfirm" type={showPasswordConfirm ? "text" : "password"} maxLength={50} autoComplete="off"/>
-                            <button className="showPassword_btn" type="button" onClick={handlePasswordConfirmVisibility}>
-                                <Image width={20} height={20} src={showPasswordConfirm ? "/eye-closed-bold.svg" : "/eye-bold.svg"} alt={showPasswordConfirm ? "Hide" : "Show"}/>
-                            </button>
-                        </div>
-                        {errors?.passwordConfirmError && <p className="error_message">{ errors.passwordConfirmError }</p>}
-                    </div>
+                    <Link href="/settings/changePassword" className="change_password_link">Change Password</Link>
                     <div className="buttons_container">
                         <button type="submit" className="confirm_btn" disabled={hasNoChanged}>Confirm</button>
                         <Link href="/diary">
@@ -210,6 +161,7 @@ export default function Settings() {
                     </div>
                 </form>
             </div>
+            <Footer />
         </>
 
     );

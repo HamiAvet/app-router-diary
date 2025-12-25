@@ -24,6 +24,12 @@ export default function ChangePassword() {
     const [ showPassword, setShowPassword ] = useState<boolean>(false);
     const [ showPasswordConfirm, setShowPasswordConfirm ] = useState<boolean>(false);
 
+    /*You can access to this page only if you are logged in or if you have the right token*/
+    
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////
+
     // Handle password visibility toggle
     const handlePasswordVisibility = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault(); // For not reloading the page on button click

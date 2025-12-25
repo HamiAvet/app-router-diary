@@ -4,7 +4,6 @@ import Footer from "@/app/ui/footer/footer";
 import { FormEvent, useEffect } from "react";
 import { useState } from "react";
 import { redirect } from "next/navigation";
-import WebPushPermissionButton from "@/app/ui/WebPushPermissionButton/WebPushPermissionButton";
 import DeleteAccountButton from "@/app/ui/deleteAccountButton/deleteAccountButton"
 import Link from "next/link";
 import "./page.css";
@@ -136,7 +135,6 @@ export default function Settings() {
         <>
             <div className="settings_container">
                 <h1>Account Settings</h1>
-                <WebPushPermissionButton />
                 <DeleteAccountButton />
                 <form className="settings_form" onSubmit={handleForm}>
                     <div className="input_container">

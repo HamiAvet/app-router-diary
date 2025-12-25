@@ -71,39 +71,8 @@ export default function Card({ currentPage }: { currentPage: number }) {
             body: JSON.stringify({ event })
 
       });            
-      const response = await fetch('https://api.eu.notificationapi.com/vsbqnhxe5aqbfjzro9slzx3fvh/sender', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Authorization': 'Basic ' + Buffer.from('vsbqnhxe5aqbfjzro9slzx3fvh:ckx6x6up03oqztvn21lpb33bu4o5dv9f6p7ilh8fuw90dvyclznkiibsk5').toString('base64')
-          },
-          body: JSON.stringify({
-            "type": "welcome_notification",
-            "to": {
-              "id": "hamov2003@gmail.com",
-              "email": "hamov2003@gmail.com",
-            },
 
-            "inapp": {
-              "title": event.status === "Active" ? `Your event "${event.topic}" is Done !` : `Your event "${event.topic}" is Active !`,
-            },
-
-            "web_push": {
-              "title": "Hello",
-              "message": "Hello, world!",
-              "icon": "/diary-icon.svg",
-              "url": "/diary",
-            },
-
-          })
-      });
       setLocalStatus(prev => ({ ...prev, [event.id]: nextStatus }));
-
-
-
-        const result = await response.json();
-        console.log('Notification sent:', result);
 
     } catch (e) {
       console.error(e);
@@ -114,33 +83,6 @@ export default function Card({ currentPage }: { currentPage: number }) {
 
   const handleDelete = async (event: Event) => {
     try {
-      const response = await fetch('https://api.eu.notificationapi.com/vsbqnhxe5aqbfjzro9slzx3fvh/sender', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Authorization': 'Basic ' + Buffer.from('vsbqnhxe5aqbfjzro9slzx3fvh:ckx6x6up03oqztvn21lpb33bu4o5dv9f6p7ilh8fuw90dvyclznkiibsk5').toString('base64')
-        },
-        body: JSON.stringify({
-          "type": "welcome_notification",
-          "to": {
-            "id": "hamov2003@gmail.com",
-            "email": "hamov2003@gmail.com",
-          },
-          "inapp": {
-            "title": `Your event "${event.topic}" has been deleted!`,
-          },
-          "web_push": {
-            "title": "Event deleted",
-            "message": `The event "${event.topic}" has been deleted!`,
-            "icon": "/diary-icon.svg",
-            "url": "/diary"
-          },
-        })
-      });
-      const notifResult = await response.json();
-      console.log('Notification sent:', notifResult);
-
       await fetch(`/api/diary/${event.id}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },

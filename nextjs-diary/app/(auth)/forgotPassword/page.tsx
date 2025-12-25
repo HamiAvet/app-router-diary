@@ -1,21 +1,35 @@
 "use client"
 
 import Footer from "@/app/ui/footer/footer";
-import { /*useTransition,*/ useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import "./page.css";
 
 // Handle the send change password request page
 export default function ForgotPassword() {
-    //const [isPending, startTransition] = useTransition();
     const [error, setError] = useState<string | null>(null);
 
-    const handleForm = (event: React.FormEvent<HTMLFormElement>) => {
+    const handleForm = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
         const formData = new FormData(event.currentTarget);
         const email = formData.get("email") as string;
-        //startTransition(() => {})
+
+        const response = await fetch('/api/forgotPassword', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ email })
+        })
+        const result = await response.json();
+
+        if (!response.ok) {
+            setError(result.message);
+        } else {
+            setError("ok");
+        }
+
     }
     return (
         <>
@@ -28,7 +42,15 @@ export default function ForgotPassword() {
                         <div className="input_div">
                             <input type="email" id="email" name="email" required />
                         </div>
-                        {error && error !== "ok"? <p className="error_message">{error}</p> : <p className="success_message">An email has been sent with a link to reset your password</p>}
+                        {error ? (
+                            error !== "ok" ? (
+                                <p className="error_message">{error}</p>
+                            ) : (
+                                <p className="success_message">
+                                An email has been sent with a link to reset your password
+                                </p>
+                            )
+                        ) : null}
                     </div>
                     <div className="buttons_container">
                         <button type="submit" className="confirm_btn">Send</button>

@@ -1,5 +1,6 @@
 {
 	"dependencies": {
-		"@notificationapi/react": "^1.4.1"
+		"@notificationapi/react": "^1.4.1",
+		"nodemailer": "^7.0.12"
 	}
 }

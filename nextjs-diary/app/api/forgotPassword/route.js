@@ -1,12 +1,22 @@
 import { NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
-
+import generateKey from '@/app/cli/generateKey';
+import { getUserByEmail } from '@/app/lib/userDataUtils';
+import { addNewToken } from '@/app/lib/tokenDataUtils';
 
 // Handle POST request to initiate password reset
 export async function POST(request) {
     // Get email data from request
     const data = await request.json();
     const email = data.email;
+    const user = await getUserByEmail({ email });
+
+    if (!user || user.length === 0) {
+        return NextResponse.json({ message: `No user found with email ${email}` }, { status: 404 });
+    }
+    const userId = user[0].id;
+    const token = generateKey();
+    await addNewToken({ token, userId });
 
     // Create a transporter using Ethereal test credentials.
     // For production, replace with your actual SMTP server details.
@@ -27,7 +37,7 @@ export async function POST(request) {
         to: process.env.EMAIL_USER, // List of receivers
         subject: "Hello ✔",
         text: "Hello world?", // Plain-text version of the message
-        html: "<b>Hello world?</b>", // HTML version of the message
+        html: `<a href='http://localhost:3000/settings/changePassword/${token}'>Reset your password</a>`, // HTML version of the message
     });
 
     console.log("Message sent:", info.messageId);

@@ -1,8 +1,8 @@
 "use client"
 
 import Footer from "@/app/ui/footer/footer";
-import { useState, FormEvent } from "react";
-import { redirect } from "next/navigation";
+import { useState, useEffect, FormEvent } from "react";
+import { redirect, useParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import "./page.css";
@@ -14,6 +14,7 @@ type Errors = {
 }
 
 export default function ChangePassword() {
+    const params = useParams(); // Get route parameters in dynamic routes [token]
     // State to hold error messages
     const [ errors, setErrors ] = useState<Errors | null>({
         passwordError: "",
@@ -26,10 +27,53 @@ export default function ChangePassword() {
 
     /*You can access to this page only if you are logged in or if you have the right token*/
     
+    // Authentication check
+    const [checked, setChecked] = useState(false);
+    const [isAuthed, setIsAuthed] = useState(false);
+
+
+    const token = params.token as string; // Get token from route parameters
 
 
     ////////////////////////////////////////////////////////////////////////////////////////
-
+    useEffect(() => {
+        if (token === "null") {   
+            // On component mount, check for user authentication
+            const user = localStorage.getItem("userId") || null;
+            if (!user) {
+                redirect('/'); // Redirect to home if authenticated
+            } else {
+                setIsAuthed(true); // User is not authenticated
+            }
+                setChecked(true); // Mark that the check is done
+        } else {
+            // Verify token on component mount
+            async function fetchData() {
+                const response = await fetch(`/api/settings/changePassword/${token}`, { 
+                    method: "GET", // Because we are getting data from the server
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    // No body needed for GET request
+                });
+                const result = await response.json();
+                if (response.status === 400) { 
+                    redirect('/'); // Redirect to home if token is invalid
+                } else {
+                    setIsAuthed(true); // User is not authenticated
+                }
+                setChecked(true); // Mark that the check is done
+                
+            }
+            fetchData();
+        }
+    }, [token]);
+    // If authentication check is not done yet, return null
+    if (!checked || !isAuthed) {
+        return null; 
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////
+    
     // Handle password visibility toggle
     const handlePasswordVisibility = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault(); // For not reloading the page on button click

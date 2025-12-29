@@ -13,6 +13,7 @@ type Errors = {
     passwordConfirmError: string,
 }
 
+// Define the type for valid token data
 type TokenValid = {
     userId: string,
     token: string,
@@ -113,7 +114,7 @@ export default function ChangePassword() {
             }
             fetchData();
         } 
-    }, []); // Temporarily allow access to the page
+    }, [token]); // Temporarily allow access to the page
 
     // If authentication check is not done yet, return null
     if (!checked || !isAuthed) {

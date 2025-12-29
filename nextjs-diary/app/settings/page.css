@@ -80,15 +80,17 @@ h2 {
 }
 
 .change_password_link {
-  font-weight: 600;
-  text-decoration: none;
-  margin-bottom: 20px;
+  display: block;
   text-align: center;
+  color: #427ffa;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s;
 }
 
 .change_password_link:hover {
   text-decoration: underline;
-  color: #427ffa;
+  color: #3464c4;
   transition: 0.2s;
 }
 

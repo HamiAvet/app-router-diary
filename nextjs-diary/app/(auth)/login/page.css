@@ -27,7 +27,7 @@
 .input_container {
   display: flex;
   flex-direction: column;
-  height: 90px;
+  height: 100px;
 }
 
 .input_container label {
@@ -93,6 +93,20 @@
   transform: scale(1.05);
 }
 
+.forgotPasswordLink {
+  display: block;
+  text-align: center;
+  color: #427ffa;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.forgotPasswordLink:hover {
+  text-decoration: underline;
+  color: #3464c4;
+  transition: 0.2s;
+}
 .redirect_btn {
   background: #e5e7eb;
   color: #111;

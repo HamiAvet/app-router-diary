@@ -134,6 +134,7 @@ export default function LoginPage() {
                             <button className="redirect_btn">Sing Up</button>
                         </Link>
                     </div>
+                    <Link href="/forgotPassword" className="forgotPasswordLink">Forgot Password ?</Link>
                 </form>
             </div>
             <Footer />

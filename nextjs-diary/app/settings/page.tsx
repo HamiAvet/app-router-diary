@@ -150,13 +150,13 @@ export default function Settings() {
                         </div>
                         {errors?.emailError && <p className="error_message">{ errors.emailError }</p>}
                     </div>    
-                    <Link href="/settings/changePassword/null" className="change_password_link">Change Password</Link>
                     <div className="buttons_container">
                         <button type="submit" className="confirm_btn" disabled={hasNoChanged}>Confirm</button>
                         <Link href="/diary">
                             <button type="button" className="redirect_btn">Cancel</button>
                         </Link>
                     </div>
+                        <Link href="/settings/changePassword/null" className="change_password_link">Change Password</Link>
                 </form>
             </div>
             <Footer />

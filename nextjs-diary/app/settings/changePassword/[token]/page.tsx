@@ -41,81 +41,57 @@ export default function ChangePassword() {
     // Get token from route parameters
     const token = params.token as string; 
 
-
-
-  /*useEffect(() => {
-        if (token === "null") {   
-            // On component mount, check for user authentication
-            const user = localStorage.getItem("userId") || null;
-            if (!user) {
-                redirect('/'); // Redirect to home if authenticated
-            } else {
-                setIsAuthed(true); // User is not authenticated
-            }
-                setChecked(true); // Mark that the check is done
-        } else {
-            // Verify token on component mount
-            async function fetchData() {
-                const response = await fetch(`/api/settings/changePassword/${token}`, { 
-                    method: "GET", // Because we are getting data from the server
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    // No body needed for GET request
-                });
-                const result = await response.json();
-                if (response.status === 400) { 
-                    redirect('/'); // Redirect to home if token is invalid
-                } else {
-                    setIsAuthed(true); // User is not authenticated
-                }
-                setChecked(true); // Mark that the check is done
-                
-            }
-            fetchData();
-        }
-    }, [token]);*/
-
-
     useEffect(() => {
-        const user = localStorage.getItem("userId") || null;
-        if (user) {
-            if (token === "null") {   
-                setIsAuthed(true); // User is authenticated
-                setChecked(true); // Mark that the check is done
-                
-            } else {
-                redirect('/diary'); // Redirect to diary if logged in
-            } 
-            
-        } else {
-            // Verify token on component mount
-            async function fetchData() {
-                const response = await fetch(`/api/settings/changePassword/${token}`, { 
-                    method: "GET", // Because we are getting data from the server
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    // No body needed for GET request
-                });
-                // Get response data
-                const result = await response.json();
-                // Set token data in state
-                setTokenValid({
-                    userId: result.tokenData[0].userid,
-                    token: result.tokenData[0].token
-                });
-                if (response.status === 400) {
-                    redirect('/diary'); // Redirect to diary if token is invalid
+        // Function to verify authentication
+        async function verifyAuth() {
+            try {
+                // Check if user is already logged in
+                const userId = localStorage.getItem("userId") || null;
+                // If user is logged in
+                if (userId) {
+                    // If token is "null", allow access to change password page
+                    if (token === "null") {   
+                        setIsAuthed(true); // User is authenticated                
+                    } else {
+                        redirect('/login'); // Redirect to login if logged in
+                    } 
                 } else {
-                    setIsAuthed(true); // User is authenticated
+                     // Verify token on component mount
+                    if (token === "null" || !token) {
+                        redirect('/login'); // No token provided
+                    } else {
+                        // Verify token on component mount
+                        const response = await fetch(`/api/settings/changePassword/${token}`, { 
+                            method: "GET", // Because we are getting data from the server
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            // No body needed for GET request
+                        });
+                        // Get response data
+                        const result = await response.json();
+                        // Set token data in state
+                        setTokenValid({
+                            userId: result.tokenData[0].userid,
+                            token: result.tokenData[0].token
+                        });
+                        if (response.status === 400) {
+                            redirect('/login'); // Redirect to login if token is invalid
+                        } else {
+                            setIsAuthed(true); // User is authenticated
+                        }
+                    }
                 }
+            } catch (error) { 
+                console.error("Error verifying authentication:", error);
+                redirect('/login'); // Redirect to login on error
+            } finally {
                 setChecked(true); // Mark that the check is done
             }
-            fetchData();
-        } 
-    }, [token]); // Temporarily allow access to the page
-
+        }
+        verifyAuth();
+    }, [token]);
+    
     // If authentication check is not done yet, return null
     if (!checked || !isAuthed) {
         return null; 
@@ -171,7 +147,7 @@ export default function ChangePassword() {
             });
             return; // Exit the function if there are errors
         } else if (response.status === 200) { // Else if there are no errors
-            redirect('/diary'); // Redirect to diary page
+            redirect('/login'); // Redirect to login page
         }
     };
     return (

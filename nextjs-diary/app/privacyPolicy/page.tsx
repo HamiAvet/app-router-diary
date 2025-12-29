@@ -24,17 +24,17 @@ export default function PrivacyPolicy() {
                 <div className="privacyPolicy_section">
                     <h2 className="privacyPolicy_sectionTitle">Data Storage and Security</h2>
                     <p className="privacyPolicy_paragraph">User data is hosted by NeonDB, a trusted provider based in London, United Kingdom. 
-                        My-Diary never shares its users' data with third parties or other companies. 
+                        My-Diary never shares its users&apos; data with third parties or other companies. 
                         Although the hosting provider claims to ensure data integrity and security, 
                         My-Diary declines all responsibility in the event of data loss or possible sharing by the host, 
                         including with other companies or government authorities. However, the amount of data stored remains limited: 
-                        only the user's email address, name, and planned activities are retained.
+                        only the user&apos;s email address, name, and planned activities are retained.
                     </p>
                 </div>
                 <div className="privacyPolicy_section">
                     <h2 className="privacyPolicy_sectionTitle">No Advertising and Non-profit Purpose</h2>
                     <p className="privacyPolicy_paragraph">My-Diary contains no advertising, reflecting its non-profit nature. 
-                        The sole aim of the site is to simplify users' lives, with no hidden commercial interest. 
+                        The sole aim of the site is to simplify users&apos; lives, with no hidden commercial interest. 
                         This site does not belong to any company; it is an amateur project, developed to be shared 
                         with others who wish to use a simple online diary that respects privacy.
                     </p>

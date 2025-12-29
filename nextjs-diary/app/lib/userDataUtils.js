@@ -45,6 +45,21 @@ export async function getUserByEmail(user) {
     }
 }
 
+export async function getUserIdByToken(token) {    
+    // Get a user ID by token from the database function
+    try {
+        // Get user ID by token
+        return await sql`
+            SELECT userid
+            FROM tokens 
+            WHERE token = ${token}
+        `;
+    } catch (error) {
+        console.log("Error getting user ID by token:", error);
+        return error;
+    }
+}
+
 export async function getUserById(id) {    
     // Get a user by ID from the database function
     try {

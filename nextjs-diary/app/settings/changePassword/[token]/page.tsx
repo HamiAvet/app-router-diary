@@ -13,8 +13,14 @@ type Errors = {
     passwordConfirmError: string,
 }
 
+type TokenValid = {
+    userId: string,
+    token: string,
+}
+
 export default function ChangePassword() {
-    const params = useParams(); // Get route parameters in dynamic routes [token]
+    // Get route parameters in dynamic routes [token]
+    const params = useParams(); 
     // State to hold error messages
     const [ errors, setErrors ] = useState<Errors | null>({
         passwordError: "",
@@ -24,19 +30,19 @@ export default function ChangePassword() {
     // state to toggle password visibility
     const [ showPassword, setShowPassword ] = useState<boolean>(false);
     const [ showPasswordConfirm, setShowPasswordConfirm ] = useState<boolean>(false);
-
-    /*You can access to this page only if you are logged in or if you have the right token*/
     
     // Authentication check
     const [checked, setChecked] = useState(false);
     const [isAuthed, setIsAuthed] = useState(false);
 
+    const [tokenValid, setTokenValid] = useState<TokenValid | null>({ userId: "", token: ""});
 
-    const token = params.token as string; // Get token from route parameters
+    // Get token from route parameters
+    const token = params.token as string; 
 
 
-    ////////////////////////////////////////////////////////////////////////////////////////
-    useEffect(() => {
+
+  /*useEffect(() => {
         if (token === "null") {   
             // On component mount, check for user authentication
             const user = localStorage.getItem("userId") || null;
@@ -67,12 +73,52 @@ export default function ChangePassword() {
             }
             fetchData();
         }
-    }, [token]);
+    }, [token]);*/
+
+
+    useEffect(() => {
+        const user = localStorage.getItem("userId") || null;
+        if (user) {
+            if (token === "null") {   
+                setIsAuthed(true); // User is authenticated
+                setChecked(true); // Mark that the check is done
+                
+            } else {
+                redirect('/diary'); // Redirect to diary if logged in
+            } 
+            
+        } else {
+            // Verify token on component mount
+            async function fetchData() {
+                const response = await fetch(`/api/settings/changePassword/${token}`, { 
+                    method: "GET", // Because we are getting data from the server
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    // No body needed for GET request
+                });
+                // Get response data
+                const result = await response.json();
+                // Set token data in state
+                setTokenValid({
+                    userId: result.tokenData[0].userid,
+                    token: result.tokenData[0].token
+                });
+                if (response.status === 400) {
+                    redirect('/diary'); // Redirect to diary if token is invalid
+                } else {
+                    setIsAuthed(true); // User is authenticated
+                }
+                setChecked(true); // Mark that the check is done
+            }
+            fetchData();
+        } 
+    }, []); // Temporarily allow access to the page
+
     // If authentication check is not done yet, return null
     if (!checked || !isAuthed) {
         return null; 
     }
-    ////////////////////////////////////////////////////////////////////////////////////////
     
     // Handle password visibility toggle
     const handlePasswordVisibility = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -98,19 +144,10 @@ export default function ChangePassword() {
 
         // Get form data
         const formData = new FormData(user.currentTarget);  
-        const userId = localStorage.getItem('userId') || ''; // Get userId from localStorage
+        const userId = localStorage.getItem('userId') ? localStorage.getItem('userId') || "" : tokenValid?.userId || ""; // Get userId from localStorage        
         formData.append('id', userId); // Append the user ID to the form data
         const data = Object.fromEntries(formData);
 
-        // Check which fields were changed
-        let nameWasChanged = false;
-        const updateData = {id : userId} as { id : string; newUsername?: string | null; newEmail?: string | null; newPassword?: string | null; oldPassword?: string | null};
-
-
-        // If no fields were changed, redirect back to diary
-        /*if (Object.keys(updateData).length === 1 || userData?.username === data.newUsername && userData?.email === data.newEmail) { 
-            redirect('/diary');
-        }*/
 
         // Define request options
         const options = {

@@ -1,5 +1,6 @@
 'use client'
 
+import NavBar from "@/app/ui/navbar/navbar";
 import Footer from "@/app/ui/footer/footer";
 import { FormEvent } from "react";
 import { useState, useEffect } from "react";
@@ -94,6 +95,7 @@ export default function CreateEventForm() {
     // Return the create event form JSX
     return (
         <>
+            <NavBar />
             <div className="createEvent_container">
                 <h1>Create a new event</h1>
                 <form className="createEvent_form" onSubmit={handleForm}>

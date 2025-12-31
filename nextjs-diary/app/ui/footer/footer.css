@@ -29,3 +29,23 @@
   grid-column: 3;
   justify-self: end;
 }
+
+@media (max-width: 700px) {
+  .footer_container {
+    display: block;
+    text-align: center;
+    align-items: center;
+  }
+
+  .privacy_policy_link {
+    grid-column: unset;
+    justify-self: center;
+    margin: 0;
+  }
+  
+  .copyrights {
+    margin: 10px 0 0 0;
+    grid-column: unset;
+    justify-self: center;
+  }
+}

@@ -1,5 +1,6 @@
 "use client"
 
+import NavBar from "@/app/ui/navbar/navbar";
 import Footer from "@/app/ui/footer/footer";
 import { useState } from "react";
 import Link from "next/link";
@@ -33,6 +34,7 @@ export default function ForgotPassword() {
     }
     return (
         <>
+            <NavBar />
             <div className="forgotPassword_container">
                 <h1>ForgotPassword</h1>
                 <p>Please enter your email address to receive a password reset link</p>

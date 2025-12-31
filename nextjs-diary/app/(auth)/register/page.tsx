@@ -1,5 +1,6 @@
 'use client'
 
+import NavBar from "@/app/ui/navbar/navbar";
 import Footer from "@/app/ui/footer/footer";
 import { useState, useEffect, FormEvent } from "react";
 import { redirect } from "next/navigation";
@@ -108,6 +109,7 @@ export default function RegisterPage() {
     // Return the registration form JSX
     return (
         <>
+            <NavBar />
             <div className="register_container">
                 <h1>Register</h1>
                 <form className="register_form" onSubmit={handleForm}>

@@ -1,12 +1,14 @@
 "use client"
 
-import Link from "next/dist/client/link";
+import NavBar from "@/app/ui/navbar/navbar";
+import Link from "next/link";
 import "./page.css";
 
 // Handle the privacy policy page
 export default function PrivacyPolicy() {
     return (
         <>
+            <NavBar />
             <div className="privacyPolicy_container">
                 <h1 className="privacyPolicy_title">Privacy Policy</h1>
                 <p className="privacyPolicy_paragraph">This is the privacy policy of the Diary Application. 
@@ -62,7 +64,6 @@ export default function PrivacyPolicy() {
                     <p className="privacyPolicy_paragraph">For any questions, please contact us at : </p>
                     <Link href="mailto:hamov2003@gmail.com" className="email_link">hamov2003@gmail.com</Link>
                 </div>
-                
             </div>
         </>
     )

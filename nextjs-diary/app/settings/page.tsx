@@ -1,5 +1,6 @@
 "use client";
 
+import NavBar from "@/app/ui/navbar/navbar";
 import Footer from "@/app/ui/footer/footer";
 import { FormEvent, useEffect } from "react";
 import { useState } from "react";
@@ -133,6 +134,7 @@ export default function Settings() {
     // Return the settings page JSX
     return (
         <>
+            <NavBar />
             <div className="settings_container">
                 <h1>Account Settings</h1>
                 <DeleteAccountButton />

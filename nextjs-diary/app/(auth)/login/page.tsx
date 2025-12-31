@@ -1,5 +1,6 @@
 'use client'
 
+import NavBar from "@/app/ui/navbar/navbar";
 import Footer from "@/app/ui/footer/footer";
 import { useState, useEffect, FormEvent } from "react";
 import { redirect } from "next/navigation";
@@ -95,6 +96,7 @@ export default function LoginPage() {
     // Return the login form JSX
     return (
         <>
+            <NavBar />
             <div className="login_container">
                 <h1>Login</h1>
                 <form className="login_form" onSubmit={handleForm}>

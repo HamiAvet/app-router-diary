@@ -1,7 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { redirect, usePathname } from "next/navigation";
+import { useEffect } from "react"
 
 export default function SessionProvider({ children }: { children: React.ReactNode }) {
   // On component mount, clear local storage if there is no active session

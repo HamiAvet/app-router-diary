@@ -30,8 +30,8 @@ export default function ForgotPassword() {
         } else {
             setError("ok");
         }
-
     }
+    
     return (
         <>
             <NavBar />

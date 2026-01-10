@@ -41,14 +41,20 @@ export default function ChangePassword() {
     // Get token from route parameters
     const token = params.token as string; 
 
+    // On component mount, check for user authentication
     useEffect(() => {
         // Function to verify authentication
-        async function verifyAuth() {
+        async function verifySession() {
             try {
                 // Check if user is already logged in
-                const userId = localStorage.getItem("userId") || null;
+                const response = await fetch('/api/sessionProviders', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
                 // If user is logged in
-                if (userId) {
+                if (response.status === 201) {
                     // If token is "null", allow access to change password page
                     if (token === "null") {   
                         setIsAuthed(true); // User is authenticated                
@@ -89,7 +95,7 @@ export default function ChangePassword() {
                 setChecked(true); // Mark that the check is done
             }
         }
-        verifyAuth();
+        verifySession();
     }, [token]);
     
     // If authentication check is not done yet, return null

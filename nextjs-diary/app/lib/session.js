@@ -60,23 +60,21 @@ export const setSessionUser = async (userId) => {
     }
 }
 
-export const getSessionUser = async () => {
+export const verifySessionUser = async () => {
     // Get the session user by retrieving and decoding the JWT from cookies function
     try {
         // Get the cookie store
         const cookieStore = await cookies();
         // Get the sessionId cookie value
-        const sessionId = cookieStore.get('sessionId').value;
+        const sessionId = cookieStore.get('sessionId')?.value;
         
-        // If sessionId cookie does not exist, return null
+        // If sessionId cookie does not exist, return false
         if (!sessionId) {
-            return null;
+            return false;
         }
-        // Decode the user session from the JWT
-        const extractedUserId = await decodeUserSession(sessionId);
-
-        // Return the extracted userId
-        return extractedUserId ? extractedUserId.userId : null;
+        
+        // If sessionId exists, return true
+        return true;
     } catch (error) {
         return error;
     }

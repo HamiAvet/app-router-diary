@@ -32,21 +32,29 @@ export default function RegisterPage() {
 
     // Authentication check
     const [checked, setChecked] = useState(false);
-    const [isNotAuthed, setIsNotAuthed] = useState(false);
+    const [isAuthed, setIsAuthed] = useState(false);
 
     // On component mount, check for user authentication
     useEffect(() => {
-        const user = localStorage.getItem("userId") || null;
-        if (user) {
-        redirect('/diary'); // Redirect to diary if authenticated
-        } else {
-        setIsNotAuthed(true); // User is not authenticated
-        }
-        setChecked(true); // Mark that the check is done
+        const verifySession = async () => {
+            const response = await fetch('/api/sessionProviders', {
+                method: 'GET',
+                headers: {
+                'Content-Type': 'application/json',
+                },
+            });
+            if (response.status === 201) {
+                redirect('/diary'); // Redirect to diary if authenticated
+            } else {
+                setIsAuthed(false); // Mark that user is not authenticated
+            }
+            setChecked(true); // Mark that the check is done
+        };
+        verifySession();
     }, []);
 
     // If authentication check is not done yet, return null
-    if (!checked || !isNotAuthed) {
+    if (!checked || isAuthed) {
         return null; 
     }
 

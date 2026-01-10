@@ -29,13 +29,21 @@ export default function Settings() {
 
     // On component mount, check for user authentication
     useEffect(() => {
-        const user = localStorage.getItem("userId") || null;
-        if (!user) {
-        redirect('/'); // Redirect to home if not authenticated
-        } else {
-        setIsAuthed(true); // User is authenticated
-        }
-        setChecked(true); // Mark that the check is done
+        const verifySession = async () => {
+            const response = await fetch('/api/sessionProviders', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            });
+            if (response.status === 200) {
+            redirect('/login'); // Redirect to home page if user is not authenticated
+            } else {
+            setIsAuthed(true); // Mark that user is authenticated
+            }
+            setChecked(true); // Mark that the check is done
+        };
+        verifySession();
     }, []);
     
     // Fetch user data on component mount
@@ -58,7 +66,6 @@ export default function Settings() {
                 }
             }
         }
-        
         fetchUserData(); // Call the async function to fetch user data
     }, []);
 

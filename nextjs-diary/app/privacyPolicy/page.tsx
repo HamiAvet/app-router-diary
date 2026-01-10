@@ -1,6 +1,7 @@
 "use client"
 
 import NavBar from "@/app/ui/navbar/navbar";
+import Footer from "@/app/ui/footer/footer";
 import Link from "next/link";
 import "./page.css";
 
@@ -65,6 +66,7 @@ export default function PrivacyPolicy() {
                     <Link href="mailto:hamov2003@gmail.com" className="email_link">hamov2003@gmail.com</Link>
                 </div>
             </div>
+            <Footer />
         </>
     )
 }

@@ -14,6 +14,25 @@ export default function Home() {
 
   // On component mount, check for user authentication
   useEffect(() => {
+    const verifySession = async () => {
+      const response = await fetch('/api/sessionProviders', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      if (response.status === 201) {
+        redirect('/diary'); // Redirect to diary if authenticated
+      } else {
+        setIsAuthed(false); // Mark that user is not authenticated
+      }
+      setChecked(true); // Mark that the check is done
+    };
+    verifySession();
+  }, []);
+
+  /*
+  useEffect(() => {
     const user = localStorage.getItem("userId") || null;
     if (user) {
       redirect('/diary'); // Redirect to diary if authenticated
@@ -22,9 +41,9 @@ export default function Home() {
     }
       setChecked(true); // Mark that the check is done
   }, []);
-
+  */
   // If authentication check is not done yet, return null
-  if (!checked || !isAuthed) {
+  if (!checked || isAuthed) {
     return null; 
   }
   

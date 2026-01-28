@@ -23,6 +23,7 @@ export default function LoginPage() {
     // state to toggle password visibility
     const [ showPassword, setShowPassword ] = useState<boolean>(false);    
 
+    /*
     // Authentication check
     const [checked, setChecked] = useState(false);
     const [isAuthed, setIsAuthed] = useState(false);
@@ -50,6 +51,7 @@ export default function LoginPage() {
     if (!checked || isAuthed) {
         return null; 
     }
+    */
 
     // Handle password visibility toggle
     const handlePasswordVisibility = (event: React.MouseEvent<HTMLButtonElement>) => {

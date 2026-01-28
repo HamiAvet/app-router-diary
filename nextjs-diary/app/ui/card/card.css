@@ -91,6 +91,7 @@ h4.title {
 
 .delete img {
     width: 35px;
+    height: auto;
 }
 
 .pagination {

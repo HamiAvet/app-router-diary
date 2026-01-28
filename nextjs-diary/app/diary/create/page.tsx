@@ -25,6 +25,7 @@ export default function CreateEventForm() {
         alreadyExists: ""
     });
 
+    /*
     // Authentication check
     const [checked, setChecked] = useState(false);
     const [isAuthed, setIsAuthed] = useState(false);
@@ -52,7 +53,7 @@ export default function CreateEventForm() {
     if (!checked || !isAuthed) {
       return null; 
     }
-
+    */
     // Handle form submission
     const handleForm = async (event: FormEvent<HTMLFormElement>) => {  
         event.preventDefault(); // For not reloading the page on form submit

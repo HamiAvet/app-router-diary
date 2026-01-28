@@ -23,6 +23,7 @@ export default function Settings() {
     const [ userData, setUserData ] = useState<{ username: string; email: string; } | null>(null); // State to hold user data
     const [ hasNoChanged , setHasChanged ] = useState<boolean>(false); // State to track if any changes were made
 
+    /*
     // Authentication check
     const [checked, setChecked] = useState(false);
     const [isAuthed, setIsAuthed] = useState(false);
@@ -73,7 +74,7 @@ export default function Settings() {
     if (!checked || !isAuthed) {
         return null; 
     }
-
+    */
 
     // Handle form submission
     const handleForm = async (user: FormEvent<HTMLFormElement>) => {  

@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import "./page.css";
 
 export default function Home() {
+  /*
   // Authentication check
   const [checked, setChecked] = useState(false);
   const [isAuthed, setIsAuthed] = useState(false);
@@ -41,11 +42,12 @@ export default function Home() {
     }
       setChecked(true); // Mark that the check is done
   }, []);
-  */
+  
   // If authentication check is not done yet, return null
   if (!checked || isAuthed) {
     return null; 
   }
+  */
   
   // Return the home page JSX
   return (

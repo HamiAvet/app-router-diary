@@ -16,6 +16,7 @@ function DiaryContent() {
   const searchParams = useSearchParams() ; // get search params
   const currentPage = Number(searchParams?.get("page")) || 1; // get current page from search params, default to 1
 
+  /*
   // Authentication check
   const [checked, setChecked] = useState(false);
   const [isAuthed, setIsAuthed] = useState(false);
@@ -48,12 +49,13 @@ function DiaryContent() {
     }
       setChecked(true); // Mark that the check is done
   }, []);
-  */
+  
 
   // If authentication check is not done yet, return null
   if (!checked || !isAuthed) {
     return null; 
   }
+  */
 
   // Return the diary page JSX
   return (

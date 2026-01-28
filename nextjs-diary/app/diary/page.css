@@ -39,6 +39,7 @@
 
 .add_event img {
     width: 20px;
+    height: auto;
 }
 
 .events_list {

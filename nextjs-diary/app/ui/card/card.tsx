@@ -95,7 +95,7 @@ export default function Card({ currentPage }: { currentPage: number }) {
 
   if (error) return <div className="error">An error happening</div>
   if (isLoading) return <div className="loading_container">
-    <Image src="/loading.svg" alt="Loading..." width={80} height={80}/>
+    <Image src="/loading.svg" alt="Loading..." width={80} height={80} priority />
 </div>
 
   if (!data?.length) {

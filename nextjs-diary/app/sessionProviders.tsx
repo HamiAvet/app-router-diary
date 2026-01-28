@@ -1,34 +1,10 @@
 "use client"
 
 import { useEffect } from "react"
+import { useState } from "react"
+import { redirect } from "next/navigation"
+import { usePathname } from "next/navigation"
 
-export default function SessionProvider({ children }: { children: React.ReactNode }) {
-  // On component mount, clear local storage if there is no active session
-  
-  useEffect(() => {
-    const clearStorageIfNoSession = async () => {
-        // Make an API call to check for an active user session
-        const userSession = await fetch('/api/sessionProviders', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-        
-        // If there is no active user session, clear local storage
-        if (userSession.status === 200) {
-            if (typeof window !== "undefined") {
-                localStorage.removeItem("userId");
-                localStorage.removeItem("username");
-            }
-        }
-    };
-    clearStorageIfNoSession();
-  }, [])
-    return <>{children}</>
-}
-
-/*
 export default function SessionProvider({ children }: { children: React.ReactNode }) {
     const [isChecked, setIsChecked] = useState(false);
     const [isAuthed, setIsAuthed] = useState(false);
@@ -48,32 +24,34 @@ export default function SessionProvider({ children }: { children: React.ReactNod
                 } else {
                     setIsAuthed(false);
                 }
+                setIsChecked(true);
             } catch {
                 setIsAuthed(false);
-            } finally {
-                setIsChecked(true);
-            }
+            } 
         };
         checkSession();
+        
     }, [pathname]);
 
-    useEffect(() => {
-        if (!isChecked) return;
+    if (isChecked) {
         if (isAuthed) {
-            if (["/", "/login", "/register"].includes(pathname)) {
+            console.log("is Authed :", isAuthed);
+            if (pathname === "/" || pathname === "/login" || pathname === "/register") {
+                console.log("the pathname is :", pathname);
                 redirect("/diary");
             }
-        } else {
-            if (["/diary", "/diary/create", "/settings", "/settings/changePassword/null"].includes(pathname)) {
+        }
+        if (!isAuthed) {
+            console.log("is Not Authed :", isAuthed);
+            if ((pathname === "/diary" || pathname === "/diary/create" || pathname === "/settings") || pathname === "/settings/changePassword/null") {
+                console.log("the pathname is :", pathname);
                 redirect("/login");
             }
         }
-    }, [isChecked, isAuthed, pathname]);
-
+    }
     if (!isChecked) {
         return null;
     }
     return <>{children}</>;
 }
 
-*/

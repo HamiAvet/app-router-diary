@@ -36,17 +36,24 @@ export default function SessionProvider({ children }: { children: React.ReactNod
     if (isChecked) {
         if (isAuthed) {
             console.log("is Authed :", isAuthed);
-            if (pathname === "/" || pathname === "/login" || pathname === "/register") {
-                console.log("the pathname is :", pathname);
+            console.log("the pathname is :", pathname);
+
+            // this block is working went pathname is not /settings/changePassword/null           
+            if (["/", "/login", "/register"].includes(pathname) || (pathname.startsWith("/settings/changePassword/") && pathname !== "/settings/changePassword/null")) {
+                console.log("redirecting to /diary from");
                 redirect("/diary");
             }
+            ///////////////////////////////////////////////////////////////////////////
         }
         if (!isAuthed) {
             console.log("is Not Authed :", isAuthed);
+            
+            // this block is don't working went pathname is /settings/changePassword/null, but it should work
             if ((pathname === "/diary" || pathname === "/diary/create" || pathname === "/settings") || pathname === "/settings/changePassword/null") {
                 console.log("the pathname is :", pathname);
                 redirect("/login");
             }
+            ///////////////////////////////////////////////////////////////////////////
         }
     }
     if (!isChecked) {

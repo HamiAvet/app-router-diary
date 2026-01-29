@@ -44,9 +44,9 @@ export default function ChangePassword() {
                         "Content-Type": "application/json"
                     },
                 });
-                if (response.status === 400) {
+                /*if (response.status === 400) {
                     redirect("/login");
-                }
+                }*/
                 const result = await response.json();
                 if (result.tokenData && result.tokenData[0]?.userid && result.tokenData[0]?.token) {
                     setTokenValid({

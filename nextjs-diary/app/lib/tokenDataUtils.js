@@ -37,6 +37,9 @@ export async function getTokenData(token) {
             FROM tokens
             WHERE token = ${token}
         `;
+        /*if (tokenData.length === 0) {
+            return ["No token found"];
+        }*/
         console.log("Token data retrieved:", tokenData);
         
         return tokenData;

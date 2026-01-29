@@ -12,7 +12,6 @@ export async function GET(request) {
     const tokenData = await getTokenData(token);
     console.log("The tokenData is :", tokenData);
     
-    
     // If token data is not found, return error
     if (tokenData.length === 0) {
         return NextResponse.json({ error: 'Invalid or expired token' }, { status: 400 });

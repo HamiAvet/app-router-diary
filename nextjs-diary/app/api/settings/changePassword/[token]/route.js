@@ -5,7 +5,7 @@ import { getTokenData } from '@/app/lib/tokenDataUtils';
 export async function GET(request) {
     // Extract token from the URL
     const token = request.url.split('/').pop();
-
+    
     // Get token data from the database
     console.log("The token is :", token);
     

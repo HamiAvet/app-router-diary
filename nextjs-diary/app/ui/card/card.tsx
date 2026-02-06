@@ -24,7 +24,7 @@ export default function Card({ currentPage }: { currentPage: number }) {
   const [localStatus, setLocalStatus] = useState<Record<number, string>>({});
   const id = localStorage.getItem("userId") || "";
   // Fetch events data with SWR (SWR is always usuing GET method)
-  const { data, error, isLoading } = useSWR(`/api/diary/${id}`, fetcher, { refreshInterval: 1000 });
+  const { data, error, isLoading } = useSWR(`/api/diary/allEvents/${id}`, fetcher, { refreshInterval: 1000 });
   const searchParams = useSearchParams();
   const query = searchParams.get('query') || '';
 
@@ -65,8 +65,8 @@ export default function Card({ currentPage }: { currentPage: number }) {
     try {
       const nextStatus = (localStatus[event.id] ?? event.status) === "Active" ? "Done" : "Active";
 
-      await fetch(`/api/diary/${(event.id, event.status)}`, { 
-            method: 'PUT', 
+      await fetch(`/api/diary/concreteEvent/${event.id, event.status}`, { 
+            method: 'PATCH', // Because we are updating only the status of the event
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({ event })
 
@@ -83,13 +83,13 @@ export default function Card({ currentPage }: { currentPage: number }) {
 
   const handleDelete = async (event: Event) => {
     try {
-      await fetch(`/api/diary/${event.id}`, {
+      await fetch(`/api/diary/concreteEvent/${event.id}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: event.id })
       });
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -150,9 +150,14 @@ export default function Card({ currentPage }: { currentPage: number }) {
                   </div>
                 </div>
               </div>
-              <button className="delete" onClick={() => handleDelete(event)}>
-                <Image src="/delete-bin-7-line.svg" alt="delete" width={20} height={20} />
-              </button>
+              <div className="event_actions">
+                <a className="edit" href={`/diary/edit/${event.id}`}>
+                  <Image src="/edit-line.svg" alt="edit" width={25} height={25} />
+                </a>
+                <button className="delete" onClick={() => handleDelete(event)}>
+                  <Image src="/delete-bin-7-line.svg" alt="delete" width={25} height={25} />
+                </button>                
+              </div>
             </div>
           </div>
         );

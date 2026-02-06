@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { addEvent, getEvent } from '@/app/lib/eventDataUtils'
+import { addEvent, verifyEventExistence } from '@/app/lib/eventDataUtils'
 
 
 // Handle POST request to add a new event
@@ -33,11 +33,11 @@ export async function POST(request) {
     }    
 
     // Testing if the event is already existing
-    const existingEvent = await getEvent(data);
+    const existingEvent = await verifyEventExistence(data);
     
     // If event already exists, return error
     if (existingEvent && existingEvent.length > 0) {
-        errors.alreadyExists = 'This event is already exists';
+        errors.alreadyExists = 'This event already exists';
         return NextResponse.json(errors, { status: 400});
     }
 

@@ -3,7 +3,7 @@
 import NavBar from "@/app/ui/navbar/navbar";
 import Footer from "@/app/ui/footer/footer";
 import { FormEvent } from "react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { redirect } from "next/navigation";
 import Link from "next/link"
 import "@/app/diary/create/page.css"

@@ -65,7 +65,6 @@ export async function PATCH(request) {
 export async function PUT(request) {
   // Get event data from request body
   const  data  = await request.json();
-  console.log(data);
   
   // If event or event ID is not provided, return error
   if (!data || !data.id) {
@@ -91,7 +90,6 @@ export async function PUT(request) {
       dateTimePassedError: eventDateTime < now ? "The selected date and time has already passed" : null,
       alreadyExists: data.alreadyExists || ""
   };
-  console.log("errors", errors);
   
   // If there are validation errors, return them
   if (errors.topicError != null || errors.dateError != null || errors.dateTimePassedError != null) {
@@ -100,12 +98,11 @@ export async function PUT(request) {
 
   // Testing if the event is already existing
   const existingEvent = await verifyEventExistence(data);
-  console.log(existingEvent);
   
   // If event already exists, return error
   if (existingEvent && existingEvent.length > 0) {
       errors.alreadyExists = 'This event already exists';
-      return NextResponse.json(errors, { status: 404});
+      return NextResponse.json(errors, { status: 400});
   }
 
   // Update event status in database

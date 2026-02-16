@@ -77,9 +77,7 @@ export default function EditEventForm() {
                 },
                 // No body needed for GET request
             })
-            const result = await response.json(); // Get event data
-            console.log(result[0]);
-            
+            const result = await response.json(); // Get event data from response
             setEventData(result[0]); // Update state with event data
         }
         fetchEventData(); // Call the async function to fetch event data
@@ -125,8 +123,9 @@ export default function EditEventForm() {
         if (eventData?.hour !== data.hour && (typeof data.hour === "string" || data.hour === null)) {
             updatedData.newHour = data.hour;
         }
+        console.log(updatedData);
         
-        if (Object.keys(updatedData).length === 1) { // If no changes were made
+        if (Object.keys(updatedData).length === 2) { // If no changes were made
             redirect('/diary'); // Redirect to diary page
         }
 

@@ -7,7 +7,7 @@ import { useState } from "react";
 import { redirect } from "next/navigation";
 import DeleteAccountButton from "@/app/ui/deleteAccountButton/deleteAccountButton"
 import Link from "next/link";
-import { useFcmToken, getNotificationPermission } from "@/app/hooks/useFcmToken";
+import useFcmToken from "@/app/hooks/useFcmToken";
 import "./page.css";
 
 // Define the types of error messages
@@ -79,12 +79,8 @@ export default function Settings() {
     */
 
     const handlerNotification = async () => {
-        await getNotificationPermission(); // Call the function to handle notification permission and get the FCM token
-    };
-
-    const sendTestNotification = async () => {
-        console.log("I GOT YOU HOMIE");
-                const response = await fetch("/api/sendNotification", {
+        // Send a notification to the user about the activation of notifications
+        await fetch("/api/sendNotification", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -96,9 +92,10 @@ export default function Settings() {
                 link: "/diary" // You can include a link in the notification payload if needed
              })
         });
-        
-        const result = await response.json();
-        console.log("sendNotification result:", result);
+    };
+
+    const sendTestNotification = async () => {
+        await handlerNotification();
     };
     
     // Handle form submission
@@ -160,6 +157,19 @@ export default function Settings() {
             return; // Exit the function if there are errors
         } else if (response.status === 200) { // Else if there are no errors
             if (nameWasChanged) localStorage.setItem('username', data.newUsername as string); // Update username in localStorage if it was changed
+                        // Send a notification to the user about the updated event
+            await fetch("/api/sendNotification", {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json"
+              },
+              body: JSON.stringify({ 
+                  token: token,
+                  title: "Account Updated",
+                  message: `Your account have been updated successfully!`,
+                  link: "/diary" // You can include a link in the notification payload if needed
+              })
+            });
             redirect('/diary'); // Redirect to diary page
         }
     };

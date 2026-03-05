@@ -7,6 +7,7 @@ import { useState } from "react";
 import { redirect } from "next/navigation";
 import Link from "next/link"
 import "@/app/diary/create/page.css"
+import useFcmToken from "@/app/hooks/useFcmToken";
 
 // Define the types of error messages
 type Errors = {
@@ -24,6 +25,9 @@ export default function CreateEventForm() {
         topicError: "",
         alreadyExists: ""
     });
+
+    const { token } = useFcmToken(); // Custom hook to manage FCM token and notification permission
+    
 
     /*
     // Authentication check
@@ -97,6 +101,19 @@ export default function CreateEventForm() {
                 alreadyExists: result?.alreadyExists || ""
             });            
         } else if (response.status === 201) { // Else if there are no errors
+            // Send a notification to the user about the created event
+            await fetch("/api/sendNotification", {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json"
+              },
+              body: JSON.stringify({ 
+                  token: token,
+                  title: "New event was created",
+                  message: `Your event "${data.topic}" has been created successfully!`,
+                  link: "/diary" // You can include a link in the notification payload if needed
+              })
+            });
             redirect('/diary'); // Redirect to diary page
         }
     };

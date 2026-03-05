@@ -5,6 +5,7 @@ import Image from "next/image"
 import { useSearchParams } from 'next/navigation';
 import useSWR from "swr";
 import './card.css'
+import useFcmToken from "@/app/hooks/useFcmToken";
 //import notificationapi from 'notificationapi-node-server-sdk'
 // If you can't use import => const notificationapi = require('notificationapi-node-server-sdk').default
 
@@ -27,6 +28,8 @@ export default function Card({ currentPage }: { currentPage: number }) {
   const { data, error, isLoading } = useSWR(`/api/diary/allEvents/${id}`, fetcher, { refreshInterval: 1000 });
   const searchParams = useSearchParams();
   const query = searchParams.get('query') || '';
+  const { token, notificationPermission } = useFcmToken(); // Custom hook to manage FCM token and notification permission
+  
 
   const Categories: { [key: string]: string } = {
     hobbies: "#8e44ad",
@@ -53,7 +56,22 @@ export default function Card({ currentPage }: { currentPage: number }) {
         }
         
         if (eventDateTime < now) {            
-            handleDelete(event);
+          const notif = async (event: Event) => {
+            await fetch("/api/sendNotification", {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json"
+              },
+              body: JSON.stringify({ 
+                  token: token,
+                  title: "Event Status was deleted",
+                  message: `Your event "${event.topic}" has been deleted.`,
+                  link: "/diary" // You can include a link in the notification payload if needed
+              })
+            });
+          };
+          notif(event);
+          handleDelete(event);
         } 
     });
 
@@ -73,7 +91,19 @@ export default function Card({ currentPage }: { currentPage: number }) {
       });            
 
       setLocalStatus(prev => ({ ...prev, [event.id]: nextStatus }));
-
+      
+      await fetch("/api/sendNotification", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ 
+                token: token,
+                title: "Event Status was changed",
+                message: `Your event "${event.topic}" is ${nextStatus} now!`,
+                link: "/diary" // You can include a link in the notification payload if needed
+             })
+        });
     } catch (e) {
       console.error(e);
     } finally {
@@ -87,6 +117,19 @@ export default function Card({ currentPage }: { currentPage: number }) {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: event.id })
+      });
+      // Send a notification to the user about the deleted event
+      await fetch("/api/sendNotification", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ 
+            token: token,
+            title: "Event was deleted",
+            message: `Your event "${event.topic}" has been deleted.`,
+            link: "/diary" // You can include a link in the notification payload if needed
+        })
       });
     } catch (error) {
       console.error(error);

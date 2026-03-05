@@ -1,16 +1,15 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { getMessaging, onMessage, Unsubscribe } from "firebase/messaging";
-import { firebaseApp, messaging, fetchToken } from "@/app/lib/firebase";
+import { onMessage, Unsubscribe } from "firebase/messaging";
+import { messaging, fetchToken } from "@/app/lib/firebase";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 // Function to handle notification permission and to get the FCM token
-export async function getNotificationPermission() {
+async function getNotificationPermission() {
     // Step 1: Check if the browser supports notifications
     if (!("Notification" in window)) {
-        console.log("This browser does not support notifications.");
         return null;
     }
 
@@ -28,11 +27,10 @@ export async function getNotificationPermission() {
     }
 
     // If permission is denied, log an error and return null
-    console.log("Notification permission denied.");
     return null;
 }
 
-export function useFcmToken() {
+export default function useFcmToken() {
     const router = useRouter(); // Initialize the router for navigation
     const [token, setToken] = useState<string | null>(null); // State to hold the FCM token
     const [notificationPermission, setNotificationPermission] = useState<NotificationPermission | null>(null); // State to hold the notification permission status
@@ -46,27 +44,26 @@ export function useFcmToken() {
 
         isLoading.current = true; // Mark that we are currently loading the token
         const token = await getNotificationPermission(); // Get notification permission and token
-        
         // Step 5: Handle the case where permission is denied
         if (Notification.permission === "denied") {
             // If permission is denied, set the notification permission state and show an error message
             setNotificationPermission("denied");
-            toast.error("Notification permission denied. Please enable it in your browser settings.");
+            toast.error(`Notification permission denied :
+                Please enable it in your browser settings.`);
             isLoading.current = false;
-            return        
+            return;
         }
 
         // Step 6: Retry fetching the token if it fails, up to a maximum of 3 attempts
         // This step is typical initially as the service worker may not be ready/installed yet.
         if (!token) {
             if (retryLoadToken.current >= 3) { // Retry up more that to 3 times
-            alert("Unable to load fcmToken. Please refresh the browser.");
-            toast.error("Notification issue - unable to load fcmToken after 3 attempts. Please refresh the browser.");
+            toast.error(`Notification issue : 
+                Unable to load fcmToken after 3 attempts. Please refresh the browser.`);
             isLoading.current = false;
             return;
             }
             retryLoadToken.current += 1;
-            console.log("An error occurred while loading the fcmToken. Retrying...", retryLoadToken.current);
             isLoading.current = false;
             return;
         }
@@ -88,44 +85,36 @@ export function useFcmToken() {
         const setupListener = async () => {
             if (!token) return; // Exit if token is not available
 
-            console.log(`onMessage registered with token token ${token}`);
             const fcmMessaging = await messaging(); // Get the messaging instance
+
             if (!fcmMessaging) return; // Exit if messaging is not supported
 
             // Step 9: Register a listener for incoming FCM messages
             const unsubscribe: Unsubscribe = onMessage(fcmMessaging, (payload) => {
                 if (Notification.permission !== "granted") return; // Exit if notifications are not permitted
-                console.log("Message received. ", payload);
-                console.log("hhhhhhhhhhh");
-                
-                console.log(payload.notification?.body)
                 // Get the link from the payload, which it came from the FCM service or from the data (application itself)
                 const link = payload.fcmOptions?.link || payload.data?.link;
 
                 if (link) {
                     // Show a toast notification with the title and body from the payload, and include an action to navigate to the link when clicked
-                    toast.info(`${payload.notification?.title}: ${payload.notification?.body}`,
+                    toast.info(`${payload.notification?.title}: 
+                        ${payload.notification?.body}`,
                     {
                         action: {
-                            label: "Visit",
+                            label: "Close",
                             onClick: () => {
-                                const link = payload.fcmOptions?.link || payload.data?.link; // Get the link again to ensure it's available in the onClick handler
-                                if (link) {
-                                    router.push(link); // Navigate to the link when the action is clicked
-                                }
-                                console.log(payload.notification?.body)
+                                toast.dismiss(); // Dismiss the toast when the action button is clicked
                             },
                         },
-                    });
+                    }); 
                 } else {
                     // If no link is provided, just show the notification without an action
-                    toast.info(`${payload.notification?.title}: ${payload.notification?.body}`); // Show a toast notification with the title and body from the payload
-                    
-                    
+                    toast.info(`${payload.notification?.title}: 
+                        ${payload.notification?.body}`); // Show a toast notification with the title and body from the payload
                 }
 
                 // --------------------------------------------------------
-                // Disable this if you only want toast notifications
+                /* Disable this if you only want toast notifications
                 const notif = new Notification(
                     payload.notification?.title || "New Notification",
                     {
@@ -144,8 +133,9 @@ export function useFcmToken() {
                     } else {
                         console.log("No link provided in the notification payload."); // Log if no link is provided
                     }
-                // --------------------------------------------------------                        
-                };                
+                                 
+                };   
+                // -------------------------------------------------------- */               
             });
 
 

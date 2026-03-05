@@ -6,6 +6,7 @@ import { redirect, useParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import "./page.css";
+import useFcmToken from "@/app/hooks/useFcmToken";
 
 // Define the types of error messages
 type Errors = {
@@ -33,12 +34,14 @@ export default function ChangePassword() {
     const [ showPasswordConfirm, setShowPasswordConfirm ] = useState<boolean>(false);
     // Vérification du token uniquement
     const [tokenValid, setTokenValid] = useState<TokenValid | null>(null);
-    const token = params.token as string;
+    const passwordUpdateToken = params.token as string;
+
+    const { token } = useFcmToken(); // Custom hook to manage FCM token and notification permission
 
     useEffect(() => {
         async function verifyToken() {
             try {
-                const response = await fetch(`/api/settings/changePassword/${token}`, {
+                const response = await fetch(`/api/settings/changePassword/${passwordUpdateToken}`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json"
@@ -61,7 +64,7 @@ export default function ChangePassword() {
             }
         }
         verifyToken();
-    }, [token]);
+    }, [passwordUpdateToken]);
     // Handle password visibility toggle
     const handlePasswordVisibility = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault(); // For not reloading the page on button click
@@ -110,6 +113,19 @@ export default function ChangePassword() {
             });
             return;
         } else if (response.status === 200) {
+            // Send a notification to the user about the updated password
+            await fetch("/api/sendNotification", {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json"
+              },
+              body: JSON.stringify({ 
+                  token: token,
+                  title: "Password was updated",
+                  message: `Your password has been updated successfully!`,
+                  link: "/login" // You can include a link in the notification payload if needed
+              })
+            });
             redirect('/login');
         }
     };

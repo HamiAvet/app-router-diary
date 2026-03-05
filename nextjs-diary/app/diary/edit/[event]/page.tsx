@@ -6,6 +6,7 @@ import { useState, useEffect, FormEvent } from "react";
 import { redirect, useParams } from "next/navigation";
 import Link from "next/link"
 import "./page.css";
+import useFcmToken from "@/app/hooks/useFcmToken";
 
 // Define the types of error messages
 type Errors = {
@@ -35,6 +36,9 @@ export default function EditEventForm() {
     });
 
     const [ eventData, setEventData ] = useState<Event | null>(null); // State to hold event data
+
+    const { token } = useFcmToken(); // Custom hook to manage FCM token and notification permission
+    
 
     /*     
     // Authentication check
@@ -138,7 +142,7 @@ export default function EditEventForm() {
             body : JSON.stringify(data) // The stringified JSON data that we want to send
         }
         
-        // Send POST request to create a new diary event
+        // Send PUT request to update the diary event
         const response = await fetch(`/api/diary/concreteEvent/${id}`, options);
         
         if (response.status === 400) { // If there are validation errors
@@ -151,6 +155,19 @@ export default function EditEventForm() {
                 alreadyExists: result?.alreadyExists || ""
             });
         } else if (response.status === 202) { // Else if there are no errors
+            // Send a notification to the user about the updated event
+            await fetch("/api/sendNotification", {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json"
+              },
+              body: JSON.stringify({ 
+                  token: token,
+                  title: "Event was updated",
+                  message: `Your event has been updated successfully!`,
+                  link: "/diary" // You can include a link in the notification payload if needed
+              })
+            });
             redirect('/diary'); // Redirect to diary page            
         }
     };

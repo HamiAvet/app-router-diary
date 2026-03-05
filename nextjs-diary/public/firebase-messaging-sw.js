@@ -20,7 +20,7 @@ const messaging = firebase.messaging();
 
 // Handle background messages received through Firebase Cloud Messaging
 messaging.onBackgroundMessage((payload) => {
-  console.log('Received background message: ', payload);
+  // console.log('Received background message: ', payload);
 
   // Prepering the notification options
 
@@ -41,7 +41,7 @@ messaging.onBackgroundMessage((payload) => {
 
 // Handle notification click events to navigate the user to the appropriate page when they click on the notification
 self.addEventListener("notificationclick", (event) => {
-  console.log("Notification clicked:", event);
+  // console.log("Notification clicked:", event);
   // Close the notification
   event.notification.close(); 
   

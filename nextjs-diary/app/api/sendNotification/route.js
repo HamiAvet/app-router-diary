@@ -11,21 +11,7 @@ if (!admin.apps.length) {
 
 export async function POST(request) {
     const { token, title, message, link } = await request.json();
-    console.log(token, title, message, link);
     
-    /*if (typeof token !== "string" || token.trim() === "") {
-        return NextResponse.json({ error: "Invalid or missing token",  status: 400});
-    }
-
-    const message = {
-        token: token.trim(),
-        notification: {
-            title: typeof title === "string" && title.trim() !== "" ? title : "Diary",
-            body: typeof message === "string" && message.trim() !== "" ? message : "Notifications enabled",
-        },
-        ...(link && typeof link === "string" ? { link } : {}),
-    };*/
-
     const payload = {
         token: token,
         notification: {

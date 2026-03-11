@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from "react"
+import { use, useState } from "react"
 import Image from "next/image"
 import { useSearchParams } from 'next/navigation';
 import useSWR from "swr";
@@ -28,8 +28,7 @@ export default function Card({ currentPage }: { currentPage: number }) {
   const { data, error, isLoading } = useSWR(`/api/diary/allEvents/${id}`, fetcher, { refreshInterval: 1000 });
   const searchParams = useSearchParams();
   const query = searchParams.get('query') || '';
-  const { token, notificationPermission } = useFcmToken(); // Custom hook to manage FCM token and notification permission
-  
+  const { fcmToken } = useFcmToken(); // Custom hook to manage FCM token and notification permission
 
   const Categories: { [key: string]: string } = {
     hobbies: "#8e44ad",
@@ -42,7 +41,7 @@ export default function Card({ currentPage }: { currentPage: number }) {
     festivities: "#f1c40f"
   };
 
-    useEffect(() => {
+    /*useEffect(() => {
       if (!data?.length) return;
       const now = new Date();
       
@@ -75,7 +74,7 @@ export default function Card({ currentPage }: { currentPage: number }) {
         } 
     });
 
-    }, [data])
+    }, [data])*/
 
   const handlesStatus = async (event: Event) => {
     setPending(p => ({ ...p, [event.id]: true }));
@@ -92,13 +91,15 @@ export default function Card({ currentPage }: { currentPage: number }) {
 
       setLocalStatus(prev => ({ ...prev, [event.id]: nextStatus }));
       
+      
       await fetch("/api/sendNotification", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({ 
-                token: token,
+                token: fcmToken,
+                userId: id,
                 title: "Event Status was changed",
                 message: `Your event "${event.topic}" is ${nextStatus} now!`,
                 link: "/diary" // You can include a link in the notification payload if needed
@@ -125,7 +126,8 @@ export default function Card({ currentPage }: { currentPage: number }) {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({ 
-            token: token,
+            token: fcmToken,
+            userId: id,
             title: "Event was deleted",
             message: `Your event "${event.topic}" has been deleted.`,
             link: "/diary" // You can include a link in the notification payload if needed

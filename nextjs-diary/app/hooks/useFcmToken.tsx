@@ -32,7 +32,7 @@ async function getNotificationPermission() {
 
 export default function useFcmToken() {
     const router = useRouter(); // Initialize the router for navigation
-    const [token, setToken] = useState<string | null>(null); // State to hold the FCM token
+    const [fcmToken, setFcmToken] = useState<string | null>(null); // State to hold the FCM token
     const [notificationPermission, setNotificationPermission] = useState<NotificationPermission | null>(null); // State to hold the notification permission status
     const retryLoadToken = useRef(0); // Ref to track the number of retries for loading the token
     const isLoading = useRef(false); // Ref to track if the token is currently being loaded
@@ -43,7 +43,7 @@ export default function useFcmToken() {
         if (isLoading.current) return;
 
         isLoading.current = true; // Mark that we are currently loading the token
-        const token = await getNotificationPermission(); // Get notification permission and token
+        const fcmToken = await getNotificationPermission(); // Get notification permission and token
         // Step 5: Handle the case where permission is denied
         if (Notification.permission === "denied") {
             // If permission is denied, set the notification permission state and show an error message
@@ -56,7 +56,7 @@ export default function useFcmToken() {
 
         // Step 6: Retry fetching the token if it fails, up to a maximum of 3 attempts
         // This step is typical initially as the service worker may not be ready/installed yet.
-        if (!token) {
+        if (!fcmToken) {
             if (retryLoadToken.current >= 3) { // Retry up more that to 3 times
             toast.error(`Notification issue : 
                 Unable to load fcmToken after 3 attempts. Please refresh the browser.`);
@@ -70,7 +70,7 @@ export default function useFcmToken() {
 
         // Step 7: If token is successfully fetched, set the token and notification permission state
         setNotificationPermission(Notification.permission || "granted");
-        setToken(token);
+        setFcmToken(fcmToken);
         isLoading.current = false; // Mark that loading is done
     };
 
@@ -83,7 +83,7 @@ export default function useFcmToken() {
 
     useEffect(() => {
         const setupListener = async () => {
-            if (!token) return; // Exit if token is not available
+            if (!fcmToken) return; // Exit if token is not available
 
             const fcmMessaging = await messaging(); // Get the messaging instance
 
@@ -152,22 +152,22 @@ export default function useFcmToken() {
         });
 
         return () => unsubscribe?.(); // Cleanup the listener when the component unmounts or when token changes
-    }, [token, router, toast]);
+    }, [fcmToken, router, toast]);
     
-    return { token, notificationPermission }; // Return the token and notification permission status from the hook
+    return { fcmToken, notificationPermission }; // Return the token and notification permission status from the hook
 };
 
 // Example usage of the useFcmToken hook in a component
 /*
-    const { token, notificationPermission } = useFcmToken(); // Use the custom hook to get the FCM token and notification permission status
+    const { fcmToken, notificationPermission } = useFcmToken(); // Use the custom hook to get the FCM token and notification permission status
 
-    // You can use the token and notificationPermission in your component as needed
-    console.log("FCM Token:", token);
+    // You can use the fcmToken and notificationPermission in your component as needed
+    console.log("FCM Token:", fcmToken);
     console.log("Notification Permission:", notificationPermission);
 
     // For example, you can display the token and permission status in the UI
     <div>
-        <p>FCM Token: {token ? token : "No token available"}</p>
+        <p>FCM Token: {fcmToken ? fcmToken : "No token available"}</p>
         <p>Notification Permission: {notificationPermission}</p>
     </div>      
 

@@ -24,7 +24,7 @@ export default function Settings() {
     const [ userData, setUserData ] = useState<{ username: string; email: string; } | null>(null); // State to hold user data
     const [ hasNoChanged , setHasChanged ] = useState<boolean>(false); // State to track if any changes were made
 
-    const { token, notificationPermission } = useFcmToken(); // Custom hook to manage FCM token and notification permission
+    const { fcmToken, notificationPermission } = useFcmToken(); // Custom hook to manage FCM token and notification permission
     /*
     // Authentication check
     const [checked, setChecked] = useState(false);
@@ -86,7 +86,7 @@ export default function Settings() {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({ 
-                token: token,
+                token: fcmToken,
                 title: "Test Notification",
                 message: "This is a test notification from your diary app!",
                 link: "/diary" // You can include a link in the notification payload if needed
@@ -164,7 +164,7 @@ export default function Settings() {
                   "Content-Type": "application/json"
               },
               body: JSON.stringify({ 
-                  token: token,
+                  token: fcmToken,
                   title: "Account Updated",
                   message: `Your account have been updated successfully!`,
                   link: "/diary" // You can include a link in the notification payload if needed

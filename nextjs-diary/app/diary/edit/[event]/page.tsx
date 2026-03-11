@@ -39,7 +39,6 @@ export default function EditEventForm() {
 
     const { token } = useFcmToken(); // Custom hook to manage FCM token and notification permission
     
-
     /*     
     // Authentication check
     const [checked, setChecked] = useState(false);

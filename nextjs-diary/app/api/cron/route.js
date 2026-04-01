@@ -19,5 +19,5 @@ export async function GET(request) {
         status: 401,
     });
     console.log("Cron Job Ran at: ", new Date());
-    return new NextResponse("cron ran", { status: 200 });
+    return NextResponse.json({ message: `Cron Job Ran at ${new Date()}` }, { status: 200 });
 }

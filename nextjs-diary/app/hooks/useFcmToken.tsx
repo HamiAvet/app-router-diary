@@ -15,14 +15,43 @@ async function getNotificationPermission() {
 
     // Step 2: Check if the permission is already granted
     if (Notification.permission === "granted") {
-        return await fetchToken();
+        // If permission is granted, fetch the FCM token
+        const fcmtoken = await fetchToken();
+        console.log(fcmtoken);
+        
+        // Get the user ID from local storage
+        const userId = localStorage.getItem("userId"); 
+        // If user ID and token are available, send the token to the server to save it in the database
+        if (userId && fcmtoken) {
+            // Send the token to the server to save it in the database
+            await fetch("/api/pushFcm", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ userId, fcmtoken }),
+            });
+        }        
+        return fcmtoken;
     }
 
     // Step 3: If permission is not granted, request permission from the user
     if (Notification.permission !== "denied") {
         const permission = await Notification.requestPermission();
         if (permission === "granted") {
-            return await fetchToken();
+            const fcmtoken = await fetchToken();
+            const userId = localStorage.getItem("userId"); // Get the user ID from local storage
+            if (userId && fcmtoken) {
+                // Send the token to the server to save it in the database
+                await fetch("/api/pushFcm", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ userId, token: fcmtoken }),
+                });
+            }
+            return fcmtoken;
         }
     }
 
@@ -43,7 +72,8 @@ export default function useFcmToken() {
         if (isLoading.current) return;
 
         isLoading.current = true; // Mark that we are currently loading the token
-        const fcmToken = await getNotificationPermission(); // Get notification permission and token
+        const fcmToken = await getNotificationPermission(); // Get notification permission and token        
+
         // Step 5: Handle the case where permission is denied
         if (Notification.permission === "denied") {
             // If permission is denied, set the notification permission state and show an error message
@@ -86,7 +116,7 @@ export default function useFcmToken() {
             if (!fcmToken) return; // Exit if token is not available
 
             const fcmMessaging = await messaging(); // Get the messaging instance
-
+            
             if (!fcmMessaging) return; // Exit if messaging is not supported
 
             // Step 9: Register a listener for incoming FCM messages

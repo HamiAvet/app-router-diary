@@ -1,8 +1,18 @@
 import { NextResponse } from "next/server";
-import { saveFcmToken, getFcmTokensByUserId } from "@/app/lib/fcmDataUtils";
+import { addFcmToken, getFcmTokenByUserId, updateFcmTokenByUserId, deleteFcmToken } from "@/app/lib/fcmDataUtils";
 
 export async function POST(request) {
-    const { userId, token } = await request.json();
-    const fcm = await getFcmTokensByUserId(userId);
-    return NextResponse.json(fcm, { status: 200 });
+    // Get user ID and FCM token from request body
+    const { userId, fcmtoken } = await request.json();
+
+    // Validate input data    
+    if (!userId || !fcmtoken) {
+        return NextResponse.json({ message: "User ID and FCM token are required" }, { status: 400 });
+    }
+
+    // Save the FCM token in the database
+    await addFcmToken(userId, fcmtoken);
+    
+    // Return successful response
+    return NextResponse.json({ status: 201 });
 }

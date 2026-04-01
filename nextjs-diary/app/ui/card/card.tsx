@@ -1,6 +1,6 @@
 'use client'
 
-import { use, useState } from "react"
+import { use, useEffect, useState } from "react"
 import Image from "next/image"
 import { useSearchParams } from 'next/navigation';
 import useSWR from "swr";
@@ -23,9 +23,9 @@ type Event = {
 export default function Card({ currentPage }: { currentPage: number }) {
   const [pending, setPending] = useState<Record<number, boolean>>({});
   const [localStatus, setLocalStatus] = useState<Record<number, string>>({});
-  const id = localStorage.getItem("userId") || "";
+  const userId = localStorage.getItem("userId") || "";
   // Fetch events data with SWR (SWR is always usuing GET method)
-  const { data, error, isLoading } = useSWR(`/api/diary/allEvents/${id}`, fetcher, { refreshInterval: 1000 });
+  const { data, error, isLoading } = useSWR(`/api/diary/allEvents/${userId}`, fetcher, { refreshInterval: 1000 });
   const searchParams = useSearchParams();
   const query = searchParams.get('query') || '';
   const { fcmToken } = useFcmToken(); // Custom hook to manage FCM token and notification permission
@@ -41,7 +41,7 @@ export default function Card({ currentPage }: { currentPage: number }) {
     festivities: "#f1c40f"
   };
 
-    /*useEffect(() => {
+    useEffect(() => {
       if (!data?.length) return;
       const now = new Date();
       
@@ -62,7 +62,7 @@ export default function Card({ currentPage }: { currentPage: number }) {
                   "Content-Type": "application/json"
               },
               body: JSON.stringify({ 
-                  token: token,
+                  token: fcmToken,
                   title: "Event Status was deleted",
                   message: `Your event "${event.topic}" has been deleted.`,
                   link: "/diary" // You can include a link in the notification payload if needed
@@ -74,7 +74,7 @@ export default function Card({ currentPage }: { currentPage: number }) {
         } 
     });
 
-    }, [data])*/
+    }, [data])
 
   const handlesStatus = async (event: Event) => {
     setPending(p => ({ ...p, [event.id]: true }));
@@ -85,7 +85,7 @@ export default function Card({ currentPage }: { currentPage: number }) {
       await fetch(`/api/diary/concreteEvent/${event.id, event.status}`, { 
             method: 'PATCH', // Because we are updating only the status of the event
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ event })
+            body: JSON.stringify({ event, userId }) // Send the whole event object with the updated status
 
       });            
 
@@ -93,18 +93,18 @@ export default function Card({ currentPage }: { currentPage: number }) {
       
       
       await fetch("/api/sendNotification", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ 
-                token: fcmToken,
-                userId: id,
-                title: "Event Status was changed",
-                message: `Your event "${event.topic}" is ${nextStatus} now!`,
-                link: "/diary" // You can include a link in the notification payload if needed
-             })
-        });
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ 
+              token: fcmToken,
+              userId: userId,
+              title: "Event Status was changed",
+              message: `Your event "${event.topic}" is ${nextStatus} now!`,
+              link: "/diary" // You can include a link in the notification payload if needed
+           })
+      });
     } catch (e) {
       console.error(e);
     } finally {
@@ -127,7 +127,7 @@ export default function Card({ currentPage }: { currentPage: number }) {
         },
         body: JSON.stringify({ 
             token: fcmToken,
-            userId: id,
+            userId: userId,
             title: "Event was deleted",
             message: `Your event "${event.topic}" has been deleted.`,
             link: "/diary" // You can include a link in the notification payload if needed

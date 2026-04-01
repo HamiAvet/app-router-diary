@@ -1,13 +1,15 @@
 import { NextResponse } from 'next/server';
 import { getAllEvents } from '@/app/lib/eventDataUtils'
-import useFcmToken from "@/app/hooks/useFcmToken";
+import { getFcmTokenByUserId } from "@/app/lib/fcmDataUtils";
 
 // Handle GET request to retrieve all events
 export async function GET(request, { params }) { // The _request parameter is unused
     // Get user ID from params
-    const { id } = await params;
+    const { userId } = await params;
+    console.log(userId);
+    
     // Get all events for the user from database
-    const events = await getAllEvents(id);
+    const events = await getAllEvents(userId);
     
     /////////////////////////////////////////////
 
@@ -39,19 +41,22 @@ export async function GET(request, { params }) { // The _request parameter is un
                 body: JSON.stringify({ id: event.id })
             });
             // Send a notification to the user about the deleted event
-            const token = await useFcmToken();
-            await fetch(new URL("/api/sendNotification", request.url), {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ 
-                    token: token,
-                    title: "Event was deleted",
-                    message: `Your event "${event.topic}" has been deleted.`,
-                    link: "/diary" // You can include a link in the notification payload if needed
-                })
-            });
+            const fcmToken = await getFcmTokenByUserId(userId);
+            
+            if (fcmToken && fcmToken !== "null") {
+                await fetch(new URL("/api/sendNotification", request.url), {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ 
+                        token: fcmToken,
+                        title: "Event was deleted",
+                        message: `Your event "${event.topic}" has been deleted.`,
+                        link: "/diary" // You can include a link in the notification payload if needed
+                    })
+                });
+            }
         };
     });
 

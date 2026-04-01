@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { deleteEvent, updateEventStatus, updateEvent, getEvent, verifyEventExistence} from '@/app/lib/eventDataUtils'
+import { deleteEvent, updateEventStatus, updateEvent, getEvent, verifyEventExistence} from '@/app/lib/eventDataUtils';
+import { getFcmTokenByUserId } from "@/app/lib/fcmDataUtils";
 
 // Handle GET request to retrieve all events
 export async function GET(_request, { params }) { // The _request parameter is unused
@@ -35,7 +36,8 @@ export async function DELETE(request) {
 // Handle PUT request to update event status
 export async function PATCH(request) {
   // Get event data from request body
-  const { event } = await request.json();
+  const { event, userId } = await request.json();
+  console.log(userId);
   
   // If event or event ID is not provided, return error
   if (!event || !event.id) {
@@ -56,6 +58,8 @@ export async function PATCH(request) {
 
   // Update event status in database
   await updateEventStatus(event);
+
+  
 
   // Return successful response
   return NextResponse.json({ success: true }, { status: 202 });

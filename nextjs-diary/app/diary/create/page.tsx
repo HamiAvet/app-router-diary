@@ -26,7 +26,7 @@ export default function CreateEventForm() {
         alreadyExists: ""
     });
 
-    const { token } = useFcmToken(); // Custom hook to manage FCM token and notification permission
+    const { fcmToken } = useFcmToken(); // Custom hook to manage FCM token and notification permission
     
 
     /*
@@ -108,7 +108,7 @@ export default function CreateEventForm() {
                   "Content-Type": "application/json"
               },
               body: JSON.stringify({ 
-                  token: token,
+                  token: fcmToken,
                   title: "New event was created",
                   message: `Your event "${data.topic}" has been created successfully!`,
                   link: "/diary" // You can include a link in the notification payload if needed

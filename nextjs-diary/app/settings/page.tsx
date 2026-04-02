@@ -7,6 +7,7 @@ import { useState } from "react";
 import { redirect } from "next/navigation";
 import DeleteAccountButton from "@/app/ui/deleteAccountButton/deleteAccountButton"
 import Link from "next/link";
+import useFcmToken from "@/app/hooks/useFcmToken";
 import "./page.css";
 
 // Define the types of error messages
@@ -23,6 +24,8 @@ export default function Settings() {
     const [ userData, setUserData ] = useState<{ username: string; email: string; } | null>(null); // State to hold user data
     const [ hasNoChanged , setHasChanged ] = useState<boolean>(false); // State to track if any changes were made
 
+    const { fcmToken, notificationPermission } = useFcmToken(); // Custom hook to manage FCM token and notification permission
+    /*
     // Authentication check
     const [checked, setChecked] = useState(false);
     const [isAuthed, setIsAuthed] = useState(false);
@@ -73,8 +76,28 @@ export default function Settings() {
     if (!checked || !isAuthed) {
         return null; 
     }
+    */
 
+    const handlerNotification = async () => {
+        // Send a notification to the user about the activation of notifications
+        await fetch("/api/sendNotification", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ 
+                token: fcmToken,
+                title: "Test Notification",
+                message: "This is a test notification from your diary app!",
+                link: "/diary" // You can include a link in the notification payload if needed
+             })
+        });
+    };
 
+    const sendTestNotification = async () => {
+        await handlerNotification();
+    };
+    
     // Handle form submission
     const handleForm = async (user: FormEvent<HTMLFormElement>) => {  
         user.preventDefault(); // For not reloading the page on form submit
@@ -134,6 +157,19 @@ export default function Settings() {
             return; // Exit the function if there are errors
         } else if (response.status === 200) { // Else if there are no errors
             if (nameWasChanged) localStorage.setItem('username', data.newUsername as string); // Update username in localStorage if it was changed
+                        // Send a notification to the user about the updated event
+            await fetch("/api/sendNotification", {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json"
+              },
+              body: JSON.stringify({ 
+                  token: fcmToken,
+                  title: "Account Updated",
+                  message: `Your account have been updated successfully!`,
+                  link: "/diary" // You can include a link in the notification payload if needed
+              })
+            });
             redirect('/diary'); // Redirect to diary page
         }
     };
@@ -145,6 +181,14 @@ export default function Settings() {
             <div className="settings_container">
                 <h1>Account Settings</h1>
                 <DeleteAccountButton />
+                {notificationPermission === "granted" ? (
+                    <p>Notifications are enabled.</p>
+                ) : notificationPermission === "denied" ? (
+                    <p>Notifications are disabled.</p>
+                ) : (
+                    <button onClick={handlerNotification}>Enable Notifications</button>
+                )}
+                <button onClick={sendTestNotification}>Send Test Notification</button>
                 <form className="settings_form" onSubmit={handleForm}>
                     <div className="input_container">
                         <label htmlFor="username">Username</label>

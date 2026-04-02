@@ -2,11 +2,10 @@
 
 import NavBar from "@/app/ui/navbar/navbar";
 import Footer from "@/app/ui/footer/footer";
-import { FormEvent } from "react";
-import { useState } from "react";
-import { redirect } from "next/navigation";
+import { useState, useEffect, FormEvent } from "react";
+import { redirect, useParams } from "next/navigation";
 import Link from "next/link"
-import "@/app/diary/create/page.css"
+import "./page.css";
 import useFcmToken from "@/app/hooks/useFcmToken";
 
 // Define the types of error messages
@@ -17,7 +16,17 @@ type Errors = {
     alreadyExists: string;
 }
 
-export default function CreateEventForm() {
+type Event = {
+    id: number;
+    topic: string;
+    category: string;
+    date: string;
+    hour: string;
+    status: string;
+    userId: string;
+}
+
+export default function EditEventForm() {
     // State to hold error messages
     const [ errors, setErrors ] = useState<Errors | null>({ 
         dateTimePassedError: "", 
@@ -26,10 +35,11 @@ export default function CreateEventForm() {
         alreadyExists: ""
     });
 
-    const { fcmToken } = useFcmToken(); // Custom hook to manage FCM token and notification permission
-    
+    const [ eventData, setEventData ] = useState<Event | null>(null); // State to hold event data
 
-    /*
+    const { token } = useFcmToken(); // Custom hook to manage FCM token and notification permission
+    
+    /*     
     // Authentication check
     const [checked, setChecked] = useState(false);
     const [isAuthed, setIsAuthed] = useState(false);
@@ -58,6 +68,25 @@ export default function CreateEventForm() {
       return null; 
     }
     */
+    const params = useParams();
+    const id = params.event as string;
+
+    useEffect(() => {
+        async function fetchEventData() {
+            const response = await fetch(`/api/diary/concreteEvent/${id}`, { 
+                method: "GET", // Because we are getting data from the server
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                // No body needed for GET request
+            })
+            const result = await response.json(); // Get event data from response
+            setEventData(result[0]); // Update state with event data
+        }
+        fetchEventData(); // Call the async function to fetch event data
+    }, [id]);
+    
+
     // Handle form submission
     const handleForm = async (event: FormEvent<HTMLFormElement>) => {  
         event.preventDefault(); // For not reloading the page on form submit
@@ -69,27 +98,51 @@ export default function CreateEventForm() {
             topicError: "",
             alreadyExists: ""
         });
+        // Get event ID from params
+        const eventId = id; 
+
+        // Get user ID from local storage
         const userId = localStorage.getItem("userId") || "";
         // Get form data
         const formData = new FormData(event.currentTarget);  
+        // Add eventId to form data
+        formData.append("id", eventId);
         // Add userId to form data
-        formData.append("userId", userId);
+        formData.append("userId", userId); // Append userId or empty string if userId is null
         // Convert form data to object
         const data = Object.fromEntries(formData); 
-        // Convert data to JSON
-        const JSONData = JSON.stringify(data);  
+
+        // Create an object with the updated event data
+        const updatedData = {id : eventId, userId: userId} as {id: string, userId: string | null, newTopic?: string | null, newCategory?: string, newDate?: string, newHour?: string};
+        if (eventData?.topic !== data.topic && typeof data.topic === "string" && data.topic.trim() !== "") {
+            updatedData.newTopic = data.topic;
+        }
+        if (eventData?.category !== data.category && typeof data.category === "string") {
+            updatedData.newCategory = data.category;
+        }
+        if (eventData?.date !== data.date && typeof data.date === "string" && data.date.trim() !== "") {
+            updatedData.newDate = data.date;
+        }
+        if (eventData?.hour !== data.hour && (typeof data.hour === "string" || data.hour === null)) {
+            updatedData.newHour = data.hour;
+        }
+        console.log(updatedData);
+        
+        if (Object.keys(updatedData).length === 2) { // If no changes were made
+            redirect('/diary'); // Redirect to diary page
+        }
 
         // Define request options
         const options = {
-            method: "POST", // Because we are posting data to the server
+            method: "PUT", // Because we are putting (replaces) data to the server
             headers: {
                 "Content-Type": "application/json"
             },
-            body : JSONData // The JSON data that we want to send
+            body : JSON.stringify(data) // The stringified JSON data that we want to send
         }
-
-        // Send POST request to create a new diary event
-        const response = await fetch("/api/diary/", options);
+        
+        // Send PUT request to update the diary event
+        const response = await fetch(`/api/diary/concreteEvent/${id}`, options);
         
         if (response.status === 400) { // If there are validation errors
             const result = await response.json(); // Get errors          
@@ -99,35 +152,35 @@ export default function CreateEventForm() {
                 dateError: result?.dateError || "",
                 topicError: result?.topicError || "",
                 alreadyExists: result?.alreadyExists || ""
-            });            
-        } else if (response.status === 201) { // Else if there are no errors
-            // Send a notification to the user about the created event
+            });
+        } else if (response.status === 202) { // Else if there are no errors
+            // Send a notification to the user about the updated event
             await fetch("/api/sendNotification", {
               method: "POST",
               headers: {
                   "Content-Type": "application/json"
               },
               body: JSON.stringify({ 
-                  token: fcmToken,
-                  title: "New event was created",
-                  message: `Your event "${data.topic}" has been created successfully!`,
+                  token: token,
+                  title: "Event was updated",
+                  message: `Your event has been updated successfully!`,
                   link: "/diary" // You can include a link in the notification payload if needed
               })
             });
-            redirect('/diary'); // Redirect to diary page
+            redirect('/diary'); // Redirect to diary page            
         }
     };
 
-    // Return the create event form JSX
+    // Return the edit event form JSX
     return (
         <>
             <NavBar />
-            <div className="createEvent_container">
-                <h1>Create a new event</h1>
-                <form className="createEvent_form" onSubmit={handleForm}>
+            <div className="editEvent_container">
+                <h1>Edit your event</h1>
+                <form className="editEvent_form" onSubmit={handleForm}>
                     <div className="input_div">
                         <label htmlFor="topic">Topic</label>
-                        <input name="topic" id="topic" type="text" maxLength={60} onSubmit={() =>
+                        <input name="topic" id="topic" type="text" maxLength={60} defaultValue={eventData?.topic || ""} onSubmit={() =>
                                 setErrors(prev => ({
                                     ...(prev ?? { dateTimePassedError: "", dateError: "", topicError: "", alreadyExists: "" }),
                                     dateTimePassedError: "",
@@ -140,7 +193,7 @@ export default function CreateEventForm() {
                     </div>
                     <div className="input_div">
                         <label>Category</label>
-                        <select name="category">
+                        <select name="category" defaultValue={eventData?.category || "hobbies"}>
                             <option value="hobbies">hobbies</option>
                             <option value="work">work</option>
                             <option value="health">health</option>
@@ -153,7 +206,7 @@ export default function CreateEventForm() {
                     </div>
                     <div className="input_div">
                         <label htmlFor="date">Date</label>
-                        <input name="date" id="date" type="date" className="date_input" onChange={() =>
+                        <input name="date" id="date" type="date" className="date_input" defaultValue={eventData?.date || ""} onChange={() =>
                                 setErrors(prev => ({
                                     ...(prev ?? { dateTimePassedError: "", dateError: "", topicError: "", alreadyExists: "" }),
                                     dateTimePassedError: "",
@@ -166,7 +219,7 @@ export default function CreateEventForm() {
                     </div>
                     <div className="input_div">
                         <label htmlFor="hour">Hour *</label>
-                        <input name="hour" id="hour" type="time" className="hour_input" />
+                        <input name="hour" id="hour" type="time" className="hour_input" defaultValue={eventData?.hour || ""}/>
                         { errors?.dateTimePassedError && <p className="error_message">{errors.dateTimePassedError}</p> }
                         { errors?.alreadyExists && <p className="error_message">{errors.alreadyExists}</p> }                        
                     </div>

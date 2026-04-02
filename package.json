@@ -1,6 +1,9 @@
 {
 	"dependencies": {
 		"@notificationapi/react": "^1.4.1",
+		"firebase": "^12.9.0",
+		"firebase-admin": "^13.6.1",
+		"nextjs-toast-notify": "^1.58.0",
 		"nodemailer": "^7.0.12"
 	}
 }

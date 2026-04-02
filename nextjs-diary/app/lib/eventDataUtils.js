@@ -31,13 +31,13 @@ export async function addEvent(event) {
     }
 }
 
-export async function getAllEvents(id) {
+export async function getAllEvents(userId) {
     // Get all events from the database function
     try {
         // Get all events ordered by date and hour
         return await sql`
             SELECT * FROM events 
-            WHERE userId = ${id}
+            WHERE userId = ${userId}
             ORDER BY date, hour
         `;        
     } catch (error) {
@@ -49,20 +49,32 @@ export async function getAllEvents(id) {
 export async function getEvent(event) {
     // Get a specific event from the database function
     try {
+        // Get event by ID
+        return await sql`
+            SELECT * FROM events 
+            WHERE id = ${event}
+        `;        
+    } catch (error) {
+        console.log("Error retrieving event:", error);
+        return error;
+    }
+}
+
+export async function verifyEventExistence(event) {
+    // Verify if an event exists in the database function
+    try {
         // If hour is not provided
         if (event.hour === "") { 
             // Get event without hour
             return await sql`
                 SELECT * FROM events 
-                WHERE topic = ${event.topic} AND category = ${event.category} AND date = ${event.date} AND hour IS NULL
-                ORDER BY date, hour
+                WHERE userId = ${event.userId} AND topic = ${event.topic} AND category = ${event.category} AND date = ${event.date} AND hour IS NULL
             `;      
         } else {
             // Get event with hour
             return await sql`
                 SELECT * FROM events 
-                WHERE topic = ${event.topic} AND category = ${event.category} AND date = ${event.date} AND hour = ${event.hour}
-                ORDER BY date, hour
+                WHERE userId = ${event.userId} AND topic = ${event.topic} AND category = ${event.category} AND date = ${event.date} AND hour = ${event.hour}
             `;        
         }
     } catch (error) {
@@ -86,6 +98,21 @@ export async function deleteEvent(event) {
     }
 }
 
+export async function deleteAllUserEvents(userId) {
+    // Delete an event from the database function
+    try {
+        // Delete event by ID
+        return await sql`
+            DELETE FROM events 
+            WHERE userId = ${userId}
+        `;
+    } catch (error) {
+        console.log("Error deleting event:", error);
+        return error;
+        
+    }
+}
+
 export async function updateEventStatus(event) {
     // Update the status of an event function
     try {
@@ -97,6 +124,21 @@ export async function updateEventStatus(event) {
         `;
     } catch (error) {
         console.log("Error updating event status:", error);
+        return error;
+    }
+}
+
+export async function updateEvent(event) {
+    // Update an event in the database function
+    try {
+        // Update event by ID
+        await sql`
+            UPDATE events
+            SET topic = ${event.topic}, category = ${event.category}, date = ${event.date}, hour = ${event.hour ? event.hour : null}
+            WHERE id = ${event.id}
+        `;
+    } catch (error) {
+        console.log("Error updating event:", error);
         return error;
     }
 }

@@ -1,10 +1,11 @@
 'use client'
 
-import { useState, useEffect } from "react"
+import { use, useEffect, useState } from "react"
 import Image from "next/image"
 import { useSearchParams } from 'next/navigation';
 import useSWR from "swr";
 import './card.css'
+import useFcmToken from "@/app/hooks/useFcmToken";
 //import notificationapi from 'notificationapi-node-server-sdk'
 // If you can't use import => const notificationapi = require('notificationapi-node-server-sdk').default
 
@@ -22,11 +23,12 @@ type Event = {
 export default function Card({ currentPage }: { currentPage: number }) {
   const [pending, setPending] = useState<Record<number, boolean>>({});
   const [localStatus, setLocalStatus] = useState<Record<number, string>>({});
-  const id = localStorage.getItem("userId") || "";
+  const userId = localStorage.getItem("userId") || "";
   // Fetch events data with SWR (SWR is always usuing GET method)
-  const { data, error, isLoading } = useSWR(`/api/diary/${id}`, fetcher, { refreshInterval: 1000 });
+  const { data, error, isLoading } = useSWR(`/api/diary/allEvents/${userId}`, fetcher, { refreshInterval: 1000 });
   const searchParams = useSearchParams();
   const query = searchParams.get('query') || '';
+  const { fcmToken } = useFcmToken(); // Custom hook to manage FCM token and notification permission
 
   const Categories: { [key: string]: string } = {
     hobbies: "#8e44ad",
@@ -53,7 +55,22 @@ export default function Card({ currentPage }: { currentPage: number }) {
         }
         
         if (eventDateTime < now) {            
-            handleDelete(event);
+          const notif = async (event: Event) => {
+            await fetch("/api/sendNotification", {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json"
+              },
+              body: JSON.stringify({ 
+                  token: fcmToken,
+                  title: "Event Status was deleted",
+                  message: `Your event "${event.topic}" has been deleted.`,
+                  link: "/diary" // You can include a link in the notification payload if needed
+              })
+            });
+          };
+          notif(event);
+          handleDelete(event);
         } 
     });
 
@@ -65,15 +82,29 @@ export default function Card({ currentPage }: { currentPage: number }) {
     try {
       const nextStatus = (localStatus[event.id] ?? event.status) === "Active" ? "Done" : "Active";
 
-      await fetch(`/api/diary/${(event.id, event.status)}`, { 
-            method: 'PUT', 
+      await fetch(`/api/diary/concreteEvent/${event.id, event.status}`, { 
+            method: 'PATCH', // Because we are updating only the status of the event
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ event })
+            body: JSON.stringify({ event, userId }) // Send the whole event object with the updated status
 
       });            
 
       setLocalStatus(prev => ({ ...prev, [event.id]: nextStatus }));
-
+      
+      
+      await fetch("/api/sendNotification", {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ 
+              token: fcmToken,
+              userId: userId,
+              title: "Event Status was changed",
+              message: `Your event "${event.topic}" is ${nextStatus} now!`,
+              link: "/diary" // You can include a link in the notification payload if needed
+           })
+      });
     } catch (e) {
       console.error(e);
     } finally {
@@ -83,19 +114,33 @@ export default function Card({ currentPage }: { currentPage: number }) {
 
   const handleDelete = async (event: Event) => {
     try {
-      await fetch(`/api/diary/${event.id}`, {
+      await fetch(`/api/diary/concreteEvent/${event.id}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: event.id })
       });
-    } catch (e) {
-      console.error(e);
+      // Send a notification to the user about the deleted event
+      await fetch("/api/sendNotification", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ 
+            token: fcmToken,
+            userId: userId,
+            title: "Event was deleted",
+            message: `Your event "${event.topic}" has been deleted.`,
+            link: "/diary" // You can include a link in the notification payload if needed
+        })
+      });
+    } catch (error) {
+      console.error(error);
     }
   };
 
   if (error) return <div className="error">An error happening</div>
   if (isLoading) return <div className="loading_container">
-    <Image src="/loading.svg" alt="Loading..." width={80} height={80}/>
+    <Image src="/loading.svg" alt="Loading..." width={80} height={80} priority />
 </div>
 
   if (!data?.length) {
@@ -150,9 +195,14 @@ export default function Card({ currentPage }: { currentPage: number }) {
                   </div>
                 </div>
               </div>
-              <button className="delete" onClick={() => handleDelete(event)}>
-                <Image src="/delete-bin-7-line.svg" alt="delete" width={20} height={20} />
-              </button>
+              <div className="event_actions">
+                <a className="edit" href={`/diary/edit/${event.id}`}>
+                  <Image src="/edit-line.svg" alt="edit" width={25} height={25} />
+                </a>
+                <button className="delete" onClick={() => handleDelete(event)}>
+                  <Image src="/delete-bin-7-line.svg" alt="delete" width={25} height={25} />
+                </button>                
+              </div>
             </div>
           </div>
         );

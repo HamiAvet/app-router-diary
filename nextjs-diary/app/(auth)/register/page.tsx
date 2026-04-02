@@ -30,6 +30,7 @@ export default function RegisterPage() {
     const [ showPassword, setShowPassword ] = useState<boolean>(false);
     const [ showPasswordConfirm, setShowPasswordConfirm ] = useState<boolean>(false);
 
+    /*
     // Authentication check
     const [checked, setChecked] = useState(false);
     const [isAuthed, setIsAuthed] = useState(false);
@@ -57,6 +58,7 @@ export default function RegisterPage() {
     if (!checked || isAuthed) {
         return null; 
     }
+    */
 
     // Handle password visibility toggle
     const handlePasswordVisibility = (event: React.MouseEvent<HTMLButtonElement>) => {

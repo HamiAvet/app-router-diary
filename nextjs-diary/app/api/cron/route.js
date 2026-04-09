@@ -1,11 +1,16 @@
 import { NextResponse } from "next/server";
 import { getExpiredEvents, deleteEventById } from "@/app/lib/eventDataUtils";
 import { getFcmTokenByUserId, deleteFcmToken } from "@/app/lib/fcmDataUtils";
-import { getFirebaseAdmin } from "@/app/lib/firebaseAdmin";
+import admin from "firebase-admin";
 
 export const runtime = "nodejs";
 
-const admin = getFirebaseAdmin();
+if (!admin.apps.length) {
+  const serviceAccount = require("@/serviceAccountKey.json");
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+  });
+}
 
 export async function GET(request) {
     const authHeader = request.headers.get("authorization");

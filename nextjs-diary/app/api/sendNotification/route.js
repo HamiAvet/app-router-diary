@@ -1,9 +1,13 @@
+import admin from "firebase-admin";
 import { NextResponse } from 'next/server';
-import { getFirebaseAdmin } from "@/app/lib/firebaseAdmin";
 
-export const runtime = "nodejs";
-
-const admin = getFirebaseAdmin();
+// Initialize Firebase Admin SDK
+if (!admin.apps.length) {
+    const serviceAccount = require("@/serviceAccountKey.json");
+    admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount)
+    });
+}
 
 export async function POST(request) {
     const { token, title, message, link } = await request.json();

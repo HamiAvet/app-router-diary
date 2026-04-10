@@ -39,7 +39,8 @@ export async function POST(request) {
             }
         }
     };
-    
+    console.log(payload);
+        
 
     try {
         const message = await admin.messaging().send(payload);

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import Image from "next/image"
 import { useSearchParams } from 'next/navigation';
 import useSWR from "swr";
@@ -77,7 +77,7 @@ export default function Card({ currentPage }: { currentPage: number }) {
     }
   };
 
-  const handleDelete = async (event: Event) => {
+  const handleDelete = useCallback(async (event: Event) => {
     try {
       await fetch(`/api/diary/concreteEvent/${event.id}`, {
         method: 'DELETE',
@@ -101,7 +101,7 @@ export default function Card({ currentPage }: { currentPage: number }) {
     } catch (error) {
       console.error(error);
     }
-  };
+  }, [fcmToken, userId]);
 
     useEffect(() => {
     if (!data?.length) return;
@@ -136,7 +136,7 @@ export default function Card({ currentPage }: { currentPage: number }) {
       } 
   });
 
-  }, [data, fcmToken, handleDelete]);
+  }, [data, fcmToken, handleDelete])
 
   if (error) return <div className="error">An error happening</div>
   if (isLoading) return <div className="loading_container">

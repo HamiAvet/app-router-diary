@@ -37,7 +37,7 @@ export default function EditEventForm() {
 
     const [ eventData, setEventData ] = useState<Event | null>(null); // State to hold event data
 
-    const { token } = useFcmToken(); // Custom hook to manage FCM token and notification permission
+    const { fcmToken } = useFcmToken(); // Custom hook to manage FCM token and notification permission
     
     /*     
     // Authentication check
@@ -126,7 +126,6 @@ export default function EditEventForm() {
         if (eventData?.hour !== data.hour && (typeof data.hour === "string" || data.hour === null)) {
             updatedData.newHour = data.hour;
         }
-        console.log(updatedData);
         
         if (Object.keys(updatedData).length === 2) { // If no changes were made
             redirect('/diary'); // Redirect to diary page
@@ -161,7 +160,7 @@ export default function EditEventForm() {
                   "Content-Type": "application/json"
               },
               body: JSON.stringify({ 
-                  token: token,
+                  token: fcmToken,
                   title: "Event was updated",
                   message: `Your event has been updated successfully!`,
                   link: "/diary" // You can include a link in the notification payload if needed

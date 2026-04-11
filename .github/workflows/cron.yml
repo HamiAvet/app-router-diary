@@ -1,0 +1,15 @@
+name: Cron cleanup
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+jobs:
+  call-cron:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call cron endpoint
+        run: |
+          curl -sS -X GET "${{ secrets.CRON_URL }}" \
+            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}"

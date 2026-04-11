@@ -36,7 +36,7 @@ export default function ChangePassword() {
     const [tokenValid, setTokenValid] = useState<TokenValid | null>(null);
     const passwordUpdateToken = params.token as string;
 
-    const { token } = useFcmToken(); // Custom hook to manage FCM token and notification permission
+    const { fcmToken } = useFcmToken(); // Custom hook to manage FCM token and notification permission
 
     useEffect(() => {
         async function verifyToken() {
@@ -121,7 +121,7 @@ export default function ChangePassword() {
                   "Content-Type": "application/json"
               },
               body: JSON.stringify({ 
-                  token: token,
+                  token: fcmToken,
                   title: "Password was updated",
                   message: `Your password has been updated successfully!`,
                   link: "/login" // You can include a link in the notification payload if needed

@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { deleteEvent, updateEventStatus, updateEvent, getEvent, verifyEventExistence} from '@/app/lib/eventDataUtils';
-import { getFcmTokenByUserId } from "@/app/lib/fcmDataUtils";
 
 // Handle GET request to retrieve all events
 export async function GET(_request, { params }) { // The _request parameter is unused

@@ -2,7 +2,7 @@
 
 import NavBar from "@/app/ui/navbar/navbar";
 import Footer from "@/app/ui/footer/footer";
-import { useState, useEffect, FormEvent } from "react";
+import { useState, FormEvent } from "react";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";

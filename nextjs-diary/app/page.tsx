@@ -3,8 +3,6 @@
 import Footer from "@/app/ui/footer/footer";
 import Link from "next/link";
 import Image from "next/image";
-import { redirect } from "next/navigation";
-import { useEffect, useState } from "react";
 import "./page.css";
 
 export default function Home() {

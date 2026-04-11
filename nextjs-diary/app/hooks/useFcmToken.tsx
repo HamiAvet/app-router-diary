@@ -182,7 +182,7 @@ export default function useFcmToken() {
         });
 
         return () => unsubscribe?.(); // Cleanup the listener when the component unmounts or when token changes
-    }, [fcmToken, router, toast]);
+    }, [fcmToken, router]); // Re-run the effect if the token or router changes
     
     return { fcmToken, notificationPermission }; // Return the token and notification permission status from the hook
 };

@@ -1,6 +1,6 @@
 'use client'
 
-import { use, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import Image from "next/image"
 import { useSearchParams } from 'next/navigation';
 import useSWR from "swr";
@@ -74,7 +74,7 @@ export default function Card({ currentPage }: { currentPage: number }) {
         } 
     });
 
-    }, [data])
+    }, [data, fcmToken])
 
   const handlesStatus = async (event: Event) => {
     setPending(p => ({ ...p, [event.id]: true }));

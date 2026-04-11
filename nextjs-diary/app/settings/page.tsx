@@ -2,7 +2,7 @@
 
 import NavBar from "@/app/ui/navbar/navbar";
 import Footer from "@/app/ui/footer/footer";
-import { FormEvent, useEffect } from "react";
+import { FormEvent } from "react";
 import { useState } from "react";
 import { redirect } from "next/navigation";
 import DeleteAccountButton from "@/app/ui/deleteAccountButton/deleteAccountButton"
@@ -21,7 +21,7 @@ export default function Settings() {
         emailError: "",
     });
 
-    const [ userData, setUserData ] = useState<{ username: string; email: string; } | null>(null); // State to hold user data
+    const [ userData, _setUserData ] = useState<{ username: string; email: string; } | null>(null); // State to hold user data
     const [ hasNoChanged , setHasChanged ] = useState<boolean>(false); // State to track if any changes were made
 
     const { fcmToken, notificationPermission } = useFcmToken(); // Custom hook to manage FCM token and notification permission

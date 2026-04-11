@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { addFcmToken, getFcmTokenByUserId, updateFcmTokenByUserId, deleteFcmToken } from "@/app/lib/fcmDataUtils";
+import { addFcmToken } from "@/app/lib/fcmDataUtils";
 
 export async function POST(request) {
     // Get user ID and FCM token from request body

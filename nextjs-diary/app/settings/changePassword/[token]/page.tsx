@@ -60,6 +60,7 @@ export default function ChangePassword() {
                     redirect("/login");
                 }
             } catch (error) {
+                console.error("Error verifying token:", error);
                 redirect("/login");
             }
         }

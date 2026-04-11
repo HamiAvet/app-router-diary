@@ -1,6 +1,4 @@
 import { NextResponse } from "next/server";
-import { getExpiredEvents, deleteEventById } from "@/app/lib/eventDataUtils";
-import { getFcmTokenByUserId, deleteFcmToken } from "@/app/lib/fcmDataUtils";
 import admin from "firebase-admin";
 
 export const runtime = "nodejs";

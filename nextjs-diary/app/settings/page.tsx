@@ -3,7 +3,7 @@
 import NavBar from "@/app/ui/navbar/navbar";
 import Footer from "@/app/ui/footer/footer";
 import { FormEvent } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { redirect } from "next/navigation";
 import DeleteAccountButton from "@/app/ui/deleteAccountButton/deleteAccountButton"
 import Link from "next/link";
@@ -21,10 +21,44 @@ export default function Settings() {
         emailError: "",
     });
 
-    const [ userData, _setUserData ] = useState<{ username: string; email: string; } | null>(null); // State to hold user data
+    const [ userData, setUserData ] = useState<{ username: string; email: string; } | null>(null); // State to hold user data
     const [ hasNoChanged , setHasChanged ] = useState<boolean>(false); // State to track if any changes were made
 
     const { fcmToken, notificationPermission } = useFcmToken(); // Custom hook to manage FCM token and notification permission
+
+    // Fetch user data on component mount (for input placeholders and change detection).
+    useEffect(() => {
+        async function fetchUserData() {
+            const userId = localStorage.getItem('userId');
+            if (!userId) return;
+
+            try {
+                const response = await fetch(`/api/settings/${userId}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                });
+
+                if (!response.ok) return;
+
+                const result = await response.json();
+                const record = Array.isArray(result) ? result[0] : result;
+
+                if (
+                    record &&
+                    typeof record.username === 'string' &&
+                    typeof record.email === 'string'
+                ) {
+                    setUserData({ username: record.username, email: record.email });
+                }
+            } catch {
+                // Ignore fetch errors; the form can still be used without placeholders.
+            }
+        }
+
+        fetchUserData();
+    }, []);
     /*
     // Authentication check
     const [checked, setChecked] = useState(false);

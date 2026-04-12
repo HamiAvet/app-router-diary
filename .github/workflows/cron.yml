@@ -12,4 +12,4 @@ jobs:
       - name: Call cron endpoint
         run: |
           curl -fsS "${{ secrets.CRON_URL }}" \
-            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}"
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"

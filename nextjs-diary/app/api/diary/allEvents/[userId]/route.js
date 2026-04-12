@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server';
 import { getAllEvents } from '@/app/lib/eventDataUtils'
-import { getFcmTokenByUserId } from "@/app/lib/fcmDataUtils";
+
+export const runtime = "nodejs";
 
 // Handle GET request to retrieve all events
-export async function GET(request, { params }) { // The _request parameter is unused
+export async function GET(_request, { params }) { // The _request parameter is unused
     // Get user ID from params
     const { userId } = await params;
-    console.log(userId);
     
     // Get all events for the user from database
     const events = await getAllEvents(userId);
@@ -20,8 +20,8 @@ export async function GET(request, { params }) { // The _request parameter is un
 
     // Get current date and time
     const now = new Date();
-
-    // For each event, check if the event date and time has already passed
+    /*
+     // For each event, check if the event date and time has already passed
     events.forEach(async (event) => {
         // Initialize eventDateTime variable
         let eventDateTime;
@@ -60,6 +60,17 @@ export async function GET(request, { params }) { // The _request parameter is un
         };
     });
 
-    // Return events with successful response
-    return NextResponse.json(events, {status: 200});
+    */
+    
+    // Read-only filter: do not return expired events.
+    // Cleanup/deletion + notification should be handled by a cron job.
+    const activeEvents = events.filter((event) => {
+        const eventDateTime = !event.hour
+            ? new Date(`${event.date}T23:59:00`)
+            : new Date(`${event.date}T${event.hour}`);
+
+        return eventDateTime >= now;
+    });
+
+    return NextResponse.json(activeEvents, { status: 200 });
 }

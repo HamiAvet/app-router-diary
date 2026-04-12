@@ -23,11 +23,78 @@ if (!admin.apps.length) {
 }
 
 export async function GET(request) {
-    const authHeader = request.headers.get("authorization");
+    /*const authHeader = request.headers.get("authorization");
     if (authHeader != `Bearer ${process.env.CRON_SECRET}`)
         return new Response("Unauthorized", {
         status: 401,
     });
-    console.log("Cron Job Ran at: ", new Date());
-    return NextResponse.json({ message: `Cron Job Ran at ${new Date()}` }, { status: 200 });
+    console.log(process.env.CRON_SECRET, new Date());
+    return NextResponse.json({ message: `Cron Job Ran at ${new Date()}` }, { status: 200 });*/
+    /*
+    const provided = request.headers.get("x-cron-secret");
+
+    console.log({
+      hasCronSecret: Boolean(process.env.CRON_SECRET),
+      providedPresent: Boolean(provided),
+      providedLength: provided?.length ?? 0,
+    });
+    
+    if (!process.env.CRON_SECRET || provided !== process.env.CRON_SECRET) {
+      return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+    }    
+    
+    return NextResponse.json({ provider: provided, key: process.env.CRON_SECRET, date: new Date().toISOString() }, { status: 200 });
+    */
+
+    /*const provided = request.headers.get("x-cron-secret");
+
+
+    return NextResponse.json({
+      hasCronSecret: Boolean(process.env.CRON_SECRET),
+      envLength: process.env.CRON_SECRET?.length ?? 0,
+      providedPresent: Boolean(provided),
+      providedLength: provided?.length ?? 0,
+    });*/
+
+    /*const auth = request.headers.get("authorization");
+    if (!process.env.CRON_SECRET || auth !== `Bearer ${process.env.CRON_SECRET}`) {
+      return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+    }
+
+    return NextResponse.json({ ok: true, message: `Cron Job Ran at ${new Date().toISOString()}` }, { status: 200 });
+    */
+
+  // More secure version 
+
+  const expected = process.env.CRON_SECRET?.trim();
+  const auth = request.headers.get("authorization")?.trim();
+
+  if (!expected || auth !== `Bearer ${expected}`) {
+    return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { token, title, message, link } = await request.json();
+      
+      const payload = {
+          token: token,
+          notification: {
+              title: title,
+              body: message
+          },
+          webpush: link && {
+              fcmOptions: {
+                  link, // This will be used in the service worker to handle notification clicks
+              }
+          }
+      };
+      console.log(payload);
+          
+  
+      try {
+          const message = await admin.messaging().send(payload);
+          return NextResponse.json({ ok: true, ranAt: new Date().toISOString() }, { status: 200 });
+      } catch (error) {
+          console.error("Error sending notification:", error);
+          return NextResponse.json({ ok: false, error: error?.message }, { status: 500 });
+      }
 }

@@ -56,45 +56,23 @@ export async function GET(request) {
       providedLength: provided?.length ?? 0,
     });*/
 
-    /*const auth = request.headers.get("authorization");
+    const auth = request.headers.get("authorization");
     if (!process.env.CRON_SECRET || auth !== `Bearer ${process.env.CRON_SECRET}`) {
       return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
     }
 
     return NextResponse.json({ ok: true, message: `Cron Job Ran at ${new Date().toISOString()}` }, { status: 200 });
-    */
+    
 
-  // More secure version 
+    // More secure version 
 
-  const expected = process.env.CRON_SECRET?.trim();
+  /*const expected = process.env.CRON_SECRET?.trim();
   const auth = request.headers.get("authorization")?.trim();
 
   if (!expected || auth !== `Bearer ${expected}`) {
     return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
   }
 
-  const { token, title, message, link } = await request.json();
-      
-      const payload = {
-          token: token,
-          notification: {
-              title: title,
-              body: message
-          },
-          webpush: link && {
-              fcmOptions: {
-                  link, // This will be used in the service worker to handle notification clicks
-              }
-          }
-      };
-      console.log(payload);
-          
-  
-      try {
-          const message = await admin.messaging().send(payload);
-          return NextResponse.json({ ok: true, ranAt: new Date().toISOString(), message: message }, { status: 200 });
-      } catch (error) {
-          console.error("Error sending notification:", error);
-          return NextResponse.json({ ok: false, error: error?.message }, { status: 500 });
-      }
+  return NextResponse.json({ ok: true, ranAt: new Date().toISOString() }, { status: 200 });
+  */
 }

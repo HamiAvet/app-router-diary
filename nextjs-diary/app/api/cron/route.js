@@ -92,7 +92,7 @@ export async function GET(request) {
   
       try {
           const message = await admin.messaging().send(payload);
-          return NextResponse.json({ ok: true, ranAt: new Date().toISOString() }, { status: 200 });
+          return NextResponse.json({ ok: true, ranAt: new Date().toISOString(), message: message }, { status: 200 });
       } catch (error) {
           console.error("Error sending notification:", error);
           return NextResponse.json({ ok: false, error: error?.message }, { status: 500 });

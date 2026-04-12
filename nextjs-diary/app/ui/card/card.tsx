@@ -132,11 +132,11 @@ export default function Card({ currentPage }: { currentPage: number }) {
           });
         };
         notif(event);
-        handleDelete(event);
+        //handleDelete(event);
       } 
   });
 
-  }, [data, fcmToken, handleDelete])
+  }, [data, fcmToken, /*handleDelete*/]);
 
   if (error) return <div className="error">An error happening</div>
   if (isLoading) return <div className="loading_container">

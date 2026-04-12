@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import admin from "firebase-admin";
+import { getAllExpiredEvents } from "@/app/lib/eventDataUtils";
+import { getFcmTokenByUserId } from "@/app/lib/fcmDataUtils";
 
 export const runtime = "nodejs";
 
@@ -23,6 +25,76 @@ if (!admin.apps.length) {
 }
 
 export async function GET(request) {
+  const auth = request.headers.get("authorization");
+  console.log(auth, process.env.CRON_SECRET);
+  if (!process.env.CRON_SECRET || auth !== `Bearer ${process.env.CRON_SECRET}`) {
+    return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+  }
+
+  let usersList = [];
+  const events = await getAllExpiredEvents();
+  if (events || events.length !== 0) {
+    
+    events.forEach((event) => {
+      if (!usersList.includes(event.userid)) {
+        usersList.push(event.userid);
+      }
+    });
+  }
+
+  let fcmTokensList = [];
+  for (const userId of usersList) {
+    const fcmToken = await getFcmTokenByUserId(userId);
+    if (fcmToken && fcmToken !== "null") {
+      fcmTokensList.push(fcmToken);
+    }
+  }
+
+  fcmTokensList.forEach(async (token, index) => {
+    const payload = {
+      token: token,
+      notification: {
+        title: "Event was expired",
+        body: `Your event "${events[index].topic}" has expired.`,
+      },
+      webpush: {
+        fcmOptions: {
+          link: new URL("/diary", request.url).toString(),
+        },
+      },
+    };
+    try {
+      await admin.messaging().send(payload);
+    } catch (error) {
+      console.error("Error sending notification:", error);
+    }
+
+  });
+
+  return NextResponse.json({ auth: auth, secret: process.env.CRON_SECRET, date: new Date().toISOString(), events: events, usersList: usersList, fcmTokensList: fcmTokensList }, { status: 200 });
+
+  /*if (events.length !== 0) {
+    for (const event of events) {
+      const fcmToken = await getFcmTokenByUserId(event.userid);
+
+      if (fcmToken && fcmToken !== "null") {
+        await fetch(new URL("/api/sendNotification", request.url), {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            token: fcmToken,
+            title: "Event was expired",
+            message: `Your event "${event.topic}" has expired.`,
+            link: "/diary", // You can include a link in the notification payload if needed
+          }),
+        });
+      }
+    }
+  }*/
+  
+  
   /*const expected = process.env.CRON_SECRET?.trim();
   const auth = request.headers.get("authorization")?.trim();
 
@@ -81,13 +153,6 @@ export async function GET(request) {
     );
   }*/
   
-  const auth = request.headers.get("authorization");
-  console.log(auth, process.env.CRON_SECRET);
-  if (!process.env.CRON_SECRET || auth !== `Bearer ${process.env.CRON_SECRET}`) {
-    return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
-  }
-
-  return NextResponse.json({ auth: auth, secret: process.env.CRON_SECRET, date: new Date().toISOString() }, { status: 200 });
 
     /*
     //////////////////////////////////////////////////////////

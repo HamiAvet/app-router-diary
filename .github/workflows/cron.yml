@@ -2,7 +2,7 @@ name: Cron (every 5 minutes)
 
 on:
   schedule:
-    - cron: "* * * * *"
+    - cron: "*/5 * * * *"
   workflow_dispatch:
 
 jobs:

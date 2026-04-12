@@ -142,3 +142,18 @@ export async function updateEvent(event) {
         return error;
     }
 }
+
+export async function getAllEventsForCron() {
+    // Get all events that haven't been notified as expired yet (global, not per user)
+    try {
+        return await sql`
+            SELECT id, topic, category, date, hour, status, userid
+            FROM events
+            WHERE status IS NULL OR status <> ${'ExpiredNotified'}
+            ORDER BY date, hour
+        `;
+    } catch (error) {
+        console.log("Error retrieving events for cron:", error);
+        return error;
+    }
+}

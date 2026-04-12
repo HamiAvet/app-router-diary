@@ -87,7 +87,7 @@ export async function GET(request) {
     return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
   }
 
-  return NextResponse.json({ ok: true, message: `Cron Job Ran at ${new Date().toISOString()}` }, { status: 200 });
+  return NextResponse.json({ auth: auth, secret: process.env.CRON_SECRET, date: new Date().toISOString() }, { status: 200 });
 
     /*
     //////////////////////////////////////////////////////////

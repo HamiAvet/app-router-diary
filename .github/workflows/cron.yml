@@ -1,0 +1,15 @@
+name: Cron (every 5 minutes)
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+jobs:
+  call-cron:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call cron endpoint
+        run: |
+          curl -fsS "${{ secrets.CRON_URL }}" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"

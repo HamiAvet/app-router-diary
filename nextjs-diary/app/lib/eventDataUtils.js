@@ -66,10 +66,7 @@ export async function getAllExpiredEvents() {
         // Get all events ordered by date and hour
         return await sql`
             SELECT * FROM events
-            WHERE to_timestamp(
-                date || ' ' || COALESCE(hour, '23:59'),
-                'YYYY-MM-DD HH24:MI'
-            ) < NOW()
+            WHERE CONCAT(date, ' ', COALESCE(hour, '23:59')) < (NOW() AT TIME ZONE 'Europe/Paris')::text;
         `;        
     } catch (error) {
         console.log("Error retrieving events:", error);

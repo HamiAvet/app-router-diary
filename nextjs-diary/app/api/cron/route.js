@@ -1,12 +1,17 @@
 import { NextResponse } from "next/server";
 import admin from "firebase-admin";
-import { getAllExpiredEvents } from "@/app/lib/eventDataUtils";
+import { getAllExpiredEvents, updateEventStatus, deleteEvent } from "@/app/lib/eventDataUtils";
 import { getFcmTokenByUserId } from "@/app/lib/fcmDataUtils";
 
+// Set runtime to Node.js for server-side operations
 export const runtime = "nodejs";
 
+// Initialize Firebase Admin SDK if not already initialized
 if (!admin.apps.length) {
+  // Replace escaped newlines in the private key with actual newlines
   const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n");
+
+  // Create service account object using environment variables
   const serviceAccount = {
     type: "service_account",
     project_id: process.env.FIREBASE_PROJECT_ID,
@@ -19,195 +24,92 @@ if (!admin.apps.length) {
     auth_provider_x509_cert_url: process.env.FIREBASE_AUTH_PROVIDER_X509_CERT_URL,
     client_x509_cert_url: process.env.FIREBASE_CLIENT_X509_CERT_URL,
   };
+
+  // Initialize Firebase Admin SDK with the service account credentials
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
   });
 }
 
 export async function GET(request) {
+  // Check for authorization header
   const auth = request.headers.get("authorization");
-  console.log(auth, process.env.CRON_SECRET);
+
+  // If the CRON_SECRET is not set or the authorization header does not match, return unauthorized response
   if (!process.env.CRON_SECRET || auth !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
   }
 
-  let usersList = [];
+  // Get all expired events
   const events = await getAllExpiredEvents();
-  if (events || events.length !== 0) {
-    
-    events.forEach((event) => {
-      if (!usersList.includes(event.userid)) {
-        usersList.push(event.userid);
-      }
-    });
+  
+  // If there are no expired events, return a message indicating that there are no expired events
+  if (!Array.isArray(events) || events.length === 0) {
+    return NextResponse.json({ ok: true, message: "No expired events", date: new Date().toISOString() }, { status: 200 });
   }
 
-  let fcmTokensList = [];
-  for (const userId of usersList) {
+  // Create variable to track notification results for debugging
+  let notified = 0;
+  let deleted = 0;
+  let skipped = 0;
+
+  // Process each expired event
+  for (const event of events) {
+    // Get the user ID associated with the event
+    const userId = event.userid;
+
+    // If the event is already marked as 'Expired'
+    if (event.status === 'Expired') {
+      // Already notified → delete the event
+      await deleteEvent({ id: event.id });
+      // Increment deleted count for debugging
+      deleted++;
+      // Continue to the next event
+      continue;
+    }
+
+    // If the event is not marked as 'Expired'
+
+    // Get the FCM token for the user
     const fcmToken = await getFcmTokenByUserId(userId);
+
+    // If the FCM token exists and is not "null", send a notification
     if (fcmToken && fcmToken !== "null") {
-      fcmTokensList.push(fcmToken);
-    }
-  }
-
-  fcmTokensList.forEach(async (token, index) => {
-    const payload = {
-      token: token,
-      notification: {
-        title: "Event was expired",
-        body: `Your event "${events[index].topic}" has expired.`,
-      },
-      webpush: {
-        fcmOptions: {
-          link: new URL("/diary", request.url).toString(),
-        },
-      },
-    };
-    try {
-      await admin.messaging().send(payload);
-    } catch (error) {
-      console.error("Error sending notification:", error);
-    }
-
-  });
-
-  return NextResponse.json({ auth: auth, secret: process.env.CRON_SECRET, date: new Date().toISOString(), events: events, usersList: usersList, fcmTokensList: fcmTokensList }, { status: 200 });
-
-  /*if (events.length !== 0) {
-    for (const event of events) {
-      const fcmToken = await getFcmTokenByUserId(event.userid);
-
-      if (fcmToken && fcmToken !== "null") {
-        await fetch(new URL("/api/sendNotification", request.url), {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
+      try {
+        // Send a notification to the user about the expired event
+        await admin.messaging().send({
+          token: fcmToken,
+          notification: {
+            title: "Event expired",
+            body: `Your event "${event.topic}" has expired.`,
           },
-          body: JSON.stringify({
-            token: fcmToken,
-            title: "Event was expired",
-            message: `Your event "${event.topic}" has expired.`,
-            link: "/diary", // You can include a link in the notification payload if needed
-          }),
+          // Include a link in the notification payload to direct the user to the diary page
+          webpush: {
+            fcmOptions: {
+              link: new URL("/diary", request.url).toString(),
+            },
+          },
         });
+        // Increment notified count for debugging
+        notified++;
+      } catch (error) {
+        // Log any errors that occur while sending the notification
+        console.error("Error sending notification:", error);
       }
+    } else {
+      // Increment skipped count for debugging
+      skipped++;
     }
-  }*/
-  
-  
-  /*const expected = process.env.CRON_SECRET?.trim();
-  const auth = request.headers.get("authorization")?.trim();
-
-  if (!expected || auth !== `Bearer ${expected}`) {
-    return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+    // Mark the event as 'Expired' to indicate that the user has been notified (or attempted to be notified)
+    await updateEventStatus({ id: event.id, status: 'Expired' });
   }
 
-  const url = new URL(request.url);
-  const token = url.searchParams.get("token") ?? process.env.CRON_FCM_TOKEN;
-  const title = url.searchParams.get("title") ?? "Notification";
-  const body = url.searchParams.get("message") ?? `Cron ping: ${new Date().toISOString()}`;
-  const linkParam = url.searchParams.get("link") ?? "/diary";
-
-  if (!token) {
-    return NextResponse.json(
-      { ok: false, error: "Missing FCM token (use ?token=... or CRON_FCM_TOKEN)" },
-      { status: 400 }
-    );
-  }
-
-  const link = linkParam ? new URL(linkParam, request.url).toString() : undefined;
-
-  const payload = {
-    token,
-    notification: {
-      title,
-      body,
-    },
-    webpush: link
-      ? {
-        fcmOptions: {
-          link,
-        },
-      }
-      : undefined,
-  };
-
-  try {
-    const messageId = await admin.messaging().send(payload);
-    return NextResponse.json({ ok: true, messageId, link }, { status: 200 });
-  } catch (error) {
-    const code = error?.code ?? error?.errorInfo?.code;
-    const message = error?.message ?? "Unknown error";
-
-    if (code === "messaging/registration-token-not-registered") {
-      return NextResponse.json(
-        { ok: false, error: "NotRegistered", code, message },
-        { status: 410 }
-      );
-    }
-
-    console.error("Error sending cron notification:", error);
-    return NextResponse.json(
-      { ok: false, error: "Send failed", code, message },
-      { status: 500 }
-    );
-  }*/
-  
-
-    /*
-    //////////////////////////////////////////////////////////
-    const authHeader = request.headers.get("authorization");
-    if (authHeader != `Bearer ${process.env.CRON_SECRET}`)
-        return new Response("Unauthorized", {
-        status: 401,
-    });
-    console.log(process.env.CRON_SECRET, new Date());
-    return NextResponse.json({ message: `Cron Job Ran at ${new Date()}` }, { status: 200 });
-    
-    /////////////////////////////////////////////////////////
-    const provided = request.headers.get("x-cron-secret");
-
-    console.log({
-      hasCronSecret: Boolean(process.env.CRON_SECRET),
-      providedPresent: Boolean(provided),
-      providedLength: provided?.length ?? 0,
-    });
-    
-    if (!process.env.CRON_SECRET || provided !== process.env.CRON_SECRET) {
-      return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
-    }    
-    
-    return NextResponse.json({ provider: provided, key: process.env.CRON_SECRET, date: new Date().toISOString() }, { status: 200 });
-    
-    ////////////////////////////////////////////////////////////
-    const provided = request.headers.get("x-cron-secret");
-
-
-    return NextResponse.json({
-      hasCronSecret: Boolean(process.env.CRON_SECRET),
-      envLength: process.env.CRON_SECRET?.length ?? 0,
-      providedPresent: Boolean(provided),
-      providedLength: provided?.length ?? 0,
-    });
-    ////////////////////////////////////////////////////////////
-  const auth = request.headers.get("authorization");
-  if (!process.env.CRON_SECRET || auth !== `Bearer ${process.env.CRON_SECRET}`) {
-    return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
-  }
-
-  return NextResponse.json({ ok: true, message: `Cron Job Ran at ${new Date().toISOString()}` }, { status: 200 });
-  //////////////////////////////////////////////////////////////
-
-  // More secure version 
-
-  const expected = process.env.CRON_SECRET?.trim();
-
-  const auth = request.headers.get("authorization")?.trim();
-
-  if (!expected || auth !== `Bearer ${expected}`) {
-    return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
-  }
-
-  return NextResponse.json({ ok: true, ranAt: new Date().toISOString() }, { status: 200 });
-  */
+  // Return a response indicating the results of the cron job, including counts of notified, deleted, and skipped events for debugging purposes
+  return NextResponse.json({
+    success: true,
+    date: new Date().toISOString(),
+    notified,
+    deleted,
+    skipped,
+  }, { status: 200 });
 }

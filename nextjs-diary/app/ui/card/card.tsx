@@ -103,40 +103,40 @@ export default function Card({ currentPage }: { currentPage: number }) {
     }
   }, [fcmToken, userId]);
 
-    useEffect(() => {
-    if (!data?.length) return;
-    const now = new Date();
-    
-    data.forEach((event: Event) => {
-      let eventDateTime;
-      if (!event.hour) {
-        eventDateTime = new Date(`${event.date}T23:59`);  
-
+  /*
+  TO DELETE: It will be replaced in backend function
+  useEffect(() => {
+  if (!data?.length) return;
+  const now = new Date();
+  
+  data.forEach((event: Event) => {
+    let eventDateTime;
+    if (!event.hour) {
+      eventDateTime = new Date(`${event.date}T23:59`);  
     } else {
-        eventDateTime = new Date(`${event.date}T${event.hour}`);  
-      }
-      
-      if (eventDateTime < now) {            
-        const notif = async (event: Event) => {
-          await fetch("/api/sendNotification", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ 
-                token: fcmToken,
-                title: "Event Status was deleted",
-                message: `Your event "${event.topic}" has been deleted.`,
-                link: "/diary" // You can include a link in the notification payload if needed
-            })
-          });
-        };
-        notif(event);
-        //handleDelete(event);
-      } 
+      eventDateTime = new Date(`${event.date}T${event.hour}`);  
+    }
+    
+    if (eventDateTime < now) {            
+      const notif = async (event: Event) => {
+        await fetch("/api/sendNotification", {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ 
+              token: fcmToken,
+              title: "Event Status was deleted",
+              message: `Your event "${event.topic}" has been deleted.`,
+              link: "/diary" // You can include a link in the notification payload if needed
+          })
+        });
+      };
+      notif(event);
+    } 
   });
 
-  }, [data, fcmToken, /*handleDelete*/]);
+  }, [data, fcmToken]);*/
 
   if (error) return <div className="error">An error happening</div>
   if (isLoading) return <div className="loading_container">

@@ -1,16 +1,16 @@
 'use client'
 
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useState } from "react"
 import Image from "next/image"
 import { useSearchParams } from 'next/navigation';
 import useSWR from "swr";
-import './card.css'
 import useFcmToken from "@/app/hooks/useFcmToken";
-//import notificationapi from 'notificationapi-node-server-sdk'
-// If you can't use import => const notificationapi = require('notificationapi-node-server-sdk').default
+import './card.css'
 
+// Fetcher function for SWR to get data from the API
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
+// Define the structure of an Event object
 type Event = {
   id: number;
   topic: string;
@@ -102,41 +102,6 @@ export default function Card({ currentPage }: { currentPage: number }) {
       console.error(error);
     }
   }, [fcmToken, userId]);
-
-  /*
-  TO DELETE: It will be replaced in backend function
-  useEffect(() => {
-  if (!data?.length) return;
-  const now = new Date();
-  
-  data.forEach((event: Event) => {
-    let eventDateTime;
-    if (!event.hour) {
-      eventDateTime = new Date(`${event.date}T23:59`);  
-    } else {
-      eventDateTime = new Date(`${event.date}T${event.hour}`);  
-    }
-    
-    if (eventDateTime < now) {            
-      const notif = async (event: Event) => {
-        await fetch("/api/sendNotification", {
-          method: "POST",
-          headers: {
-              "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ 
-              token: fcmToken,
-              title: "Event Status was deleted",
-              message: `Your event "${event.topic}" has been deleted.`,
-              link: "/diary" // You can include a link in the notification payload if needed
-          })
-        });
-      };
-      notif(event);
-    } 
-  });
-
-  }, [data, fcmToken]);*/
 
   if (error) return <div className="error">An error happening</div>
   if (isLoading) return <div className="loading_container">

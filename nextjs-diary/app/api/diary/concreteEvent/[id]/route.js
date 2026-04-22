@@ -35,8 +35,7 @@ export async function DELETE(request) {
 // Handle PUT request to update event status
 export async function PATCH(request) {
   // Get event data from request body
-  const { event, userId } = await request.json();
-  console.log(userId);
+  const { event } = await request.json();
   
   // If event or event ID is not provided, return error
   if (!event || !event.id) {

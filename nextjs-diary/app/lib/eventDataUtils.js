@@ -136,6 +136,8 @@ export async function updateEventStatus(event) {
             SET status = ${event.status}
             WHERE id = ${event.id}
         `;
+        console.log("Event status updated successfully");
+        
     } catch (error) {
         console.log("Error updating event status:", error);
         return error;

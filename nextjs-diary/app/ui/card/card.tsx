@@ -70,6 +70,8 @@ export default function Card({ currentPage }: { currentPage: number }) {
               link: "/diary" // You can include a link in the notification payload if needed
            })
       });
+      console.log(`Notification sent for event "${event.topic}" with status "${nextStatus}"`);
+      
     } catch (e) {
       console.error(e);
     } finally {
@@ -98,6 +100,7 @@ export default function Card({ currentPage }: { currentPage: number }) {
             link: "/diary" // You can include a link in the notification payload if needed
         })
       });
+      console.log(`Notification sent for event "${event.topic}" about deletion`);
     } catch (error) {
       console.error(error);
     }

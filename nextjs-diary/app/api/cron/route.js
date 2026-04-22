@@ -102,6 +102,8 @@ export async function GET(request) {
     }
     // Mark the event as 'Expired' to indicate that the user has been notified (or attempted to be notified)
     await updateEventStatus({ id: event.id, status: 'Expired' });
+    console.log(`Event with ID ${event.id} marked as 'Expired'`);
+    
   }
 
   // Return a response indicating the results of the cron job, including counts of notified, deleted, and skipped events for debugging purposes

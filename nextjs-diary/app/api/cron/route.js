@@ -60,6 +60,7 @@ export async function GET(request) {
 
     // If the event is already marked as 'Expired'
     if (event.status === 'Expired') {
+          console.log("Event is deleted");
       // Already notified → delete the event
       await deleteEvent({ id: event.id });
       // Increment deleted count for debugging
@@ -67,6 +68,7 @@ export async function GET(request) {
       // Continue to the next event
       continue;
     }
+
 
     // If the event is not marked as 'Expired'
 
@@ -102,7 +104,7 @@ export async function GET(request) {
     }
     // Mark the event as 'Expired' to indicate that the user has been notified (or attempted to be notified)
     await updateEventStatus({ id: event.id, status: 'Expired' });
-    console.log(`Event with ID ${event.id} marked as 'Expired'`);
+    console.log(`Event is 'Expired'`);
     
   }
 

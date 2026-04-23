@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import Image from "next/image"
 import { useSearchParams } from 'next/navigation';
 import useSWR from "swr";
@@ -30,6 +30,10 @@ export default function Card({ currentPage }: { currentPage: number }) {
   const query = searchParams.get('query') || '';
   const { fcmToken } = useFcmToken(); // Custom hook to manage FCM token and notification permission
 
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
+    
   const Categories: { [key: string]: string } = {
     hobbies: "#8e44ad",
     work: "#427ffa",
@@ -100,7 +104,6 @@ export default function Card({ currentPage }: { currentPage: number }) {
             link: "/diary" // You can include a link in the notification payload if needed
         })
       });
-      console.log(`Notification sent for event "${event.topic}" about deletion`);
     } catch (error) {
       console.error(error);
     }

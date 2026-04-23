@@ -23,7 +23,8 @@ export async function GET(request, { params }) {
 
     // Create an array to hold active events that will be returned in the response
     const activeEvents = [];
-
+    console.log(`test 1`);
+    
     // Process each event to check if it's expired and send notification if necessary
     for (const event of events) {
         // Determine the event's date and time, treating events without a specified hour as expiring at the end of the day (23:59)
@@ -32,11 +33,14 @@ export async function GET(request, { params }) {
         // If the event is still active, add it to the activeEvents array to be returned in the response
         if (eventDateTime >= now) {
             // Event is still active
+            
+   
             activeEvents.push(event);
         } else if (event.status !== 'Expired') {
+
             // Get fcm token for the user to send notification
             const fcmToken = await getFcmTokenByUserId(userId);
-
+            
             // If a valid FCM token exists, send a notification to the user about the expired event
             if (fcmToken && fcmToken !== "null") {
                 await fetch(new URL("/api/sendNotification", request.url), {

@@ -71,7 +71,7 @@ export async function GET(request) {
 
 
     // If the event is not marked as 'Expired'
-
+    //
     // Get the FCM token for the user
     const fcmToken = await getFcmTokenByUserId(userId);
 

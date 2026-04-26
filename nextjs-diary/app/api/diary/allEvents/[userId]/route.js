@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getAllEvents, updateEventStatus } from '@/app/lib/eventDataUtils'
+import { getAllActiveEvents, updateEventStatus } from '@/app/lib/eventDataUtils'
 import { getFcmTokenByUserId } from '@/app/lib/fcmDataUtils';
 
 // Set runtime to Node.js for server-side operations
@@ -11,7 +11,7 @@ export async function GET(request, { params }) {
     const { userId } = await params;
 
     // Get all events for the user from database
-    const events = await getAllEvents(userId);
+    const events = await getAllActiveEvents(userId);
 
     // If no events found, return message
     if (!events || events.length === 0) {

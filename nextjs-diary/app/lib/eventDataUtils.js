@@ -31,13 +31,13 @@ export async function addEvent(event) {
     }
 }
 
-export async function getAllEvents(userId) {
-    // Get all events from the database function
+export async function getAllActiveEvents(userId) {
+    // Get all active events from the database function
     try {
-        // Get all events ordered by date and hour
+        // Get all active events ordered by date and hour
         return await sql`
             SELECT * FROM events 
-            WHERE userId = ${userId}
+            WHERE userId = ${userId} AND (status = 'Active' OR status = 'Done')
             ORDER BY date, hour
         `;        
     } catch (error) {

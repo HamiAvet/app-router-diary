@@ -17,7 +17,7 @@ async function getNotificationPermission() {
     if (Notification.permission === "granted") {
         // If permission is granted, fetch the FCM token
         const fcmtoken = await fetchToken();
-        console.log(fcmtoken);
+        // console.log(fcmtoken);
         
         // Get the user ID from local storage
         const userId = localStorage.getItem("userId"); 

@@ -25,13 +25,18 @@ messaging.onBackgroundMessage((payload) => {
   // Prepering the notification options
 
   // Checking if a link exists in the payload using fcmOptions or data, and using it for the notification click action
-  const link = payload.fcmOptions.link || payload.data?.link
-  
+  const link = payload.fcmOptions?.link || payload.data?.link;
+
+  const title = payload.data?.title || payload.notification?.title || "Notification";
+  const body = payload.data?.body || payload.notification?.body || "";
+  const icon = payload.data?.icon || "/diary-icon.png";
+  const badge = payload.data?.badge || "/diary-icon.png";
   // Setting up the notification title and options
-  const notificationTitle = payload.notification.title;
+  const notificationTitle = title;
   const notificationOptions = { 
-    body: payload.notification.body,
-    icon: '/diary-icon.svg',
+    body: body,
+    icon: icon, // You can specify an icon for the notification
+    badge: badge, // You can specify a badge for the notification
     data: { url: link } // You can put whatever data you want here
   };
   

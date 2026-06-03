@@ -1,6 +1,7 @@
 "use client"
 
 import Footer from "@/app/ui/footer/footer";
+import NavBar from "@/app/ui/navbar/navbar";
 import { useState, useEffect, FormEvent } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
@@ -51,8 +52,6 @@ export default function ChangePassword() {
                             "Content-Type": "application/json"
                         },
                     });
-
-                    console.log(response.status === 400);
                     
                     // if user is not authenticated and if the token is invalid, redirect to login page
                     if (response.status === 400) {
@@ -71,11 +70,13 @@ export default function ChangePassword() {
                             token: result.tokenData[0].token
                         });
                     }
-                    setIsChecked(true); // Set isChecked to true after token verification is complete
                 } else {
                     console.log("No token provided in the URL.");
-                    return;
+                    console.log(tokenValid);
+                    
                 }
+
+                setIsChecked(true); // Set isChecked to true after token verification is complete
             } catch (error) {
                 console.error("Error verifying token:", error);
             }
@@ -135,7 +136,7 @@ export default function ChangePassword() {
             });
             return;
         } else if (response.status === 200) {
-            // Send a s to the user about the updated password
+            // Send a notification to the user about the updated password
             await fetch("/api/sendNotification", {
               method: "POST",
               headers: {
@@ -145,6 +146,7 @@ export default function ChangePassword() {
                   token: fcmToken,
                   title: "Password was updated",
                   message: `Your password has been updated successfully!`,
+                  imageUrl: "/diary-icon.svg", // You can include an image URL in the notification payload if needed
                   link: "/diary" // You can include a link in the notification payload if needed
               })
             });
@@ -155,6 +157,7 @@ export default function ChangePassword() {
 
     return (
         <>
+            <NavBar />
             <div className="changePassword_container">
                 <h2>Change your Password</h2>
                 <form className="changePassword_form" onSubmit={handleForm}>

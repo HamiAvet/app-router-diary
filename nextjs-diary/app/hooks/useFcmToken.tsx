@@ -65,7 +65,6 @@ export default function useFcmToken() {
     const [notificationPermission, setNotificationPermission] = useState<NotificationPermission | null>(null); // State to hold the notification permission status
     const retryLoadToken = useRef(0); // Ref to track the number of retries for loading the token
     const isLoading = useRef(false); // Ref to track if the token is currently being loaded
-
     // Function to load the FCM token and handle notification permission
     const loadToken = async () => {
         // Step 4: Prevent multiple fetches if already fetching or in process
@@ -73,6 +72,7 @@ export default function useFcmToken() {
 
         isLoading.current = true; // Mark that we are currently loading the token
         const fcmToken = await getNotificationPermission(); // Get notification permission and token        
+            console.log("FCM Token Hook Initialized:", fcmToken); // Log when the hook is initialized
 
         // Step 5: Handle the case where permission is denied
         if (Notification.permission === "denied") {
@@ -125,10 +125,19 @@ export default function useFcmToken() {
                 // Get the link from the payload, which it came from the FCM service or from the data (application itself)
                 const link = payload.fcmOptions?.link || payload.data?.link;
 
+                const toastTitle =
+                    payload.notification?.title ||
+                    payload.data?.title ||
+                    "Notification";
+                const toastBody =
+                    payload.notification?.body ||
+                    payload.data?.body ||
+                    "";
+
                 if (link) {
                     // Show a toast notification with the title and body from the payload, and include an action to navigate to the link when clicked
-                    toast.info(`${payload.notification?.title}: 
-                        ${payload.notification?.body}`,
+                    toast.info(`${toastTitle}: 
+                        ${toastBody}`,
                     {
                         action: {
                             label: "Close",
@@ -139,8 +148,8 @@ export default function useFcmToken() {
                     }); 
                 } else {
                     // If no link is provided, just show the notification without an action
-                    toast.info(`${payload.notification?.title}: 
-                        ${payload.notification?.body}`); // Show a toast notification with the title and body from the payload
+                    toast.info(`${toastTitle}: 
+                        ${toastBody}`); // Show a toast notification with the title and body from the payload
                 }
 
                 // --------------------------------------------------------

@@ -141,7 +141,7 @@ export default function RegisterPage() {
                     <div className="input_container">
                         <label htmlFor="email">Email</label>
                         <div className="input_div">
-                            <input name="email" id="email" type="email" maxLength={50} autoComplete="off" onChange={() => {
+                            <input name="email" id="email" type="email" maxLength={100} autoComplete="off" onChange={() => {
                                 setErrors(prev => ({
                                     ...(prev ?? {emailError: ""}),
                                         usernameError: errors?.usernameError || "",

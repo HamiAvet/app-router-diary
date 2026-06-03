@@ -26,27 +26,44 @@ if (!admin.apps.length) {
 
 export async function POST(request) {
     const { token, title, message, link } = await request.json();
-    
+
+    // Important: When sending a notification, we need to ensure that the link is an absolute URL.
+    // If the link is a relative URL, we need to prepend the app's base URL to it.
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+    // If the link is provided, we create an absolute URL. If it's not provided, we can leave it as undefined.
+    const clickLink = link
+        ? new URL(link, appUrl).toString()
+        : undefined;
+
+    // Construct the notification payload
     const payload = {
-        token: token,
-        notification: {
-            title: title,
-            body: message
+        token,
+        data: {
+            title: title || "Notification",
+            body: message || "",
+            link: clickLink || "", // Include the link in the data payload for use in the service worker
+            icon: "/diary-icon.png", // You can specify an icon for the notification
+            badge: "/diary-icon.png", // You can specify a badge for the notification
         },
-        webpush: link && {
-            fcmOptions: {
-                link, // This will be used in the service worker to handle notification clicks
-            }
-        }
+        webpush: {
+            notification: {
+                title: title || "Notification",
+                body: message || "",
+                icon: "/diary-icon.png", // You can specify an icon for the notification
+                badge: "/diary-icon.png", // You can specify a badge for the notification
+            },
+            fcmOptions: clickLink ? { link: clickLink } : undefined, // Include the link in fcmOptions for use in the service worker's notification click handling
+        },
     };
-    console.log(payload);
-        
 
     try {
-        const message = await admin.messaging().send(payload);
-        return NextResponse.json({ success: true, message: message });
+        const messageId = await admin.messaging().send(payload);
+        return NextResponse.json({ success: true, message: messageId });
     } catch (error) {
         console.error("Error sending notification:", error);
-        return NextResponse.json({ success: false, error: error?.message }, { status: 500 });
+        return NextResponse.json(
+            { success: false, error: error?.message },
+            { status: 500 }
+        );
     }
 }

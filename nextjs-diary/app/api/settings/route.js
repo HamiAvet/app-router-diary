@@ -30,9 +30,12 @@ export async function POST(request) {
             errors.newEmailError = 'Email already in use';
         }
     }
+
     // Update password if provided
-    if (data.newPassword) {
-        if (!data.newPasswordConfirm) {
+    if (data.newPassword && data.newPasswordConfirm) {
+        if (!data.newPassword) {
+            errors.newPasswordError = 'Please enter a new password';
+        } else if (!data.newPasswordConfirm) {
             errors.newPasswordConfirmError = 'Please confirm your new password';
         } else if (data.newPasswordConfirm && data.newPassword !== data.newPasswordConfirm) {      
             errors.newPasswordConfirmError = 'Passwords do not match';

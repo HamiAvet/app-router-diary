@@ -72,7 +72,7 @@ export default function useFcmToken() {
 
         isLoading.current = true; // Mark that we are currently loading the token
         const fcmToken = await getNotificationPermission(); // Get notification permission and token        
-            console.log("FCM Token Hook Initialized:", fcmToken); // Log when the hook is initialized
+        console.log("FCM Token Hook Initialized:", fcmToken); // Log when the hook is initialized
 
         // Step 5: Handle the case where permission is denied
         if (Notification.permission === "denied") {
@@ -134,47 +134,17 @@ export default function useFcmToken() {
                     payload.data?.body ||
                     "";
 
-                if (link) {
-                    // Show a toast notification with the title and body from the payload, and include an action to navigate to the link when clicked
-                    toast.info(`${toastTitle}: 
-                        ${toastBody}`,
-                    {
+                toast.info(`${toastTitle}: ${toastBody}`, link
+                    ? {
                         action: {
                             label: "Close",
                             onClick: () => {
                                 toast.dismiss(); // Dismiss the toast when the action button is clicked
                             },
                         },
-                    }); 
-                } else {
-                    // If no link is provided, just show the notification without an action
-                    toast.info(`${toastTitle}: 
-                        ${toastBody}`); // Show a toast notification with the title and body from the payload
-                }
-
-                // --------------------------------------------------------
-                /* Disable this if you only want toast notifications
-                const notif = new Notification(
-                    payload.notification?.title || "New Notification",
-                    {
-                        body: payload.notification?.body || "You have a new notification.",
-                        // You can also include an icon or other options here
-                        data: link ? { url: link } : undefined, // Include the link in the notification data if it exists
                     }
+                    : undefined
                 );
-
-                // Step 10: Handle the notification click event to navigate to the link if it exists
-                notif.onclick = (event) => {
-                    event.preventDefault(); // To not refresh the page when notification is clicked
-                    const link = (event.target as any)?.data?.url; // Get the link from the notification data
-                    if (link) {
-                        router.push(link); // Navigate to the link when the notification is clicked
-                    } else {
-                        console.log("No link provided in the notification payload."); // Log if no link is provided
-                    }
-                                 
-                };   
-                // -------------------------------------------------------- */               
             });
 
 

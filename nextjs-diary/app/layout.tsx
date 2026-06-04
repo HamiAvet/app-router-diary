@@ -37,7 +37,31 @@ export default function RootLayout({
         <SessionProvider>
           {children}
         </SessionProvider>
-        <Toaster />
+        <Toaster
+          toastOptions={{
+            actionButtonStyle: {
+              background: "#427ffa",
+              color: "#fff",
+              fontWeight: "bold",
+              borderRadius: "8px",
+              padding: "10px 14px",
+              cursor: "pointer",
+            },
+            cancelButtonStyle: {
+              background: "#E5E7EB",
+              color: "#111827",
+              fontWeight: "bold",
+              padding: "10px 14px",
+              borderRadius: "8px",
+              cursor: "pointer",
+            },
+            style: {
+              background: "#fff",
+              color: "#111827",
+              fontSize: "14px",
+            },
+          }}
+        />
       </body>
     </html>
   );

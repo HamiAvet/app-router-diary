@@ -14,47 +14,6 @@ function DiaryContent() {
   const searchParams = useSearchParams() ; // get search params
   const currentPage = Number(searchParams?.get("page")) || 1; // get current page from search params, default to 1
 
-  /*
-  // Authentication check
-  const [checked, setChecked] = useState(false);
-  const [isAuthed, setIsAuthed] = useState(false);
-
-  // On component mount, check for user authentication
-  useEffect(() => {
-    const verifySession = async () => {
-      const response = await fetch('/api/sessionProviders', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      if (response.status === 200) {
-        redirect('/login'); // Redirect to login if user is not authenticated
-      } else {
-        setIsAuthed(true); // Mark that user is authenticated
-      }
-      setChecked(true); // Mark that the check is done
-    };
-    verifySession();
-  }, []);
-  /*
-  useEffect(() => {
-    const user = localStorage.getItem("userId") || null;
-    if (!user) {
-      redirect('/'); // Redirect to home if not authenticated
-    } else {
-      setIsAuthed(true); // User is authenticated
-    }
-      setChecked(true); // Mark that the check is done
-  }, []);
-  
-
-  // If authentication check is not done yet, return null
-  if (!checked || !isAuthed) {
-    return null; 
-  }
-  */
-
   // Return the diary page JSX
   return (
     <>

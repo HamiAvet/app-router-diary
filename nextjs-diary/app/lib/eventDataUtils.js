@@ -74,6 +74,19 @@ export async function getAllExpiredEvents() {
     }
 }
 
+export async function getAllEvents() {
+    // Get all user's events from the database function
+    try {
+        // Get all user's events
+        return await sql`
+            SELECT * FROM events
+        `;        
+    } catch (error) {
+        console.log("Error retrieving events:", error);
+        return error;
+    }
+}
+
 export async function verifyEventExistence(event) {
     // Verify if an event exists in the database function
     try {
@@ -155,6 +168,19 @@ export async function updateEvent(event) {
         `;
     } catch (error) {
         console.log("Error updating event:", error);
+        return error;
+    }
+}
+
+export async function updateEventReminderSent(event) {
+    try {
+        await sql`
+            UPDATE events
+            SET reminder_sent = ${event.reminder_sent}
+            WHERE id = ${event.id}
+        `;
+    } catch (error) {
+        console.log("Error updating event reminder:", error);
         return error;
     }
 }

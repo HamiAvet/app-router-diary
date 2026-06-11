@@ -17,6 +17,7 @@
     "jose": "^6.1.0",
     "next": "15.3.8",
     "nextjs-toast-notify": "^1.58.0",
+    "nextjs-toploader": "^3.9.17",
     "nodemailer": "^7.0.12",
     "notificationapi-node-server-sdk": "^2.5.1",
     "postgres": "^3.4.7",

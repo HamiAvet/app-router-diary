@@ -3,7 +3,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import SessionProvider from "./sessionProviders";
 import { Toaster } from "sonner";
 
-
 import "./globals.css";
 
 // Import Geist and Geist Mono fonts from Google Fonts
